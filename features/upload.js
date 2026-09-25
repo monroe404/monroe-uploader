@@ -9,11 +9,11 @@ const {
 } = require("discord.js");
 
 // ========================================
-// GIF
+// DEFAULT DESCRIPTION
 // ========================================
 
-const GIF_URL =
-  "https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif";
+const DEFAULT_DESCRIPTION =
+  "File telah dipersiapkan dan siap digunakan untuk melengkapi kebutuhan kamu. Setiap detail dibuat dengan tujuan memberikan hasil yang lebih nyaman, menarik, dan sesuai kebutuhan. Silakan gunakan dengan bijak dan nikmati hasil akhirnya.";
 
 // ========================================
 // PROOF URL
@@ -48,17 +48,26 @@ function getProofUrls(proofLinks) {
 
 function buildComponents({
   credits,
-  description,
   proofUrls
 }) {
   const container =
     new ContainerBuilder()
       .setAccentColor(0xFF7A00);
 
+  // ======================================
+  // TITLE
+  // ======================================
+
   container.addTextDisplayComponents(
     new TextDisplayBuilder()
-      .setContent("# File Share")
+      .setContent(
+        "# File Share"
+      )
   );
+
+  // ======================================
+  // SEPARATOR
+  // ======================================
 
   container.addSeparatorComponents(
     new SeparatorBuilder()
@@ -67,11 +76,15 @@ function buildComponents({
       )
   );
 
+  // ======================================
+  // CREDIT + DESCRIPTION
+  // ======================================
+
   container.addTextDisplayComponents(
     new TextDisplayBuilder()
       .setContent(
-        `**Credits :** ${credits || "-"}\n` +
-        `**Deskripsi :** ${description || "-"}`
+        `🎨 **Credits :** ${credits || "-"}\n\n` +
+        DEFAULT_DESCRIPTION
       )
   );
 
@@ -79,36 +92,27 @@ function buildComponents({
     container
   ];
 
-  // ========================================
-  // GIF
-  // ========================================
-
-  const gifGallery =
-    new MediaGalleryBuilder();
-
-  gifGallery.addItems(
-    new MediaGalleryItemBuilder()
-      .setURL(GIF_URL)
-  );
-
-  components.push(gifGallery);
-
-  // ========================================
+  // ======================================
   // PROOF / CDN
-  // ========================================
+  // ======================================
 
   if (proofUrls.length > 0) {
+
     const proofGallery =
       new MediaGalleryBuilder();
 
     for (const url of proofUrls) {
+
       proofGallery.addItems(
         new MediaGalleryItemBuilder()
           .setURL(url)
       );
+
     }
 
-    components.push(proofGallery);
+    components.push(
+      proofGallery
+    );
   }
 
   return components;
@@ -123,9 +127,9 @@ async function sendUploadedFile({
   channelId,
   files,
   credits,
-  description,
   proofLinks
 }) {
+
   const channel =
     await client.channels.fetch(
       channelId
@@ -144,34 +148,42 @@ async function sendUploadedFile({
   }
 
   const proofUrls =
-    getProofUrls(proofLinks);
+    getProofUrls(
+      proofLinks
+    );
 
-  // ========================================
-  // 1. SEND COMPONENTS V2
-  // ========================================
+  // ======================================
+  // COMPONENTS V2 MESSAGE
+  // ======================================
 
   const components =
     buildComponents({
       credits,
-      description,
       proofUrls
     });
 
   await channel.send({
     components,
-    flags: MessageFlags.IsComponentsV2
+    flags:
+      MessageFlags.IsComponentsV2
   });
 
-  // ========================================
-  // 2. SEND FILE
-  // ========================================
+  // ======================================
+  // SEND FILE
+  // ======================================
 
-  if (files && files.length > 0) {
+  if (
+    files &&
+    files.length > 0
+  ) {
 
     const attachments =
       files.map(file => ({
-        attachment: file.buffer,
-        name: file.originalname
+        attachment:
+          file.buffer,
+
+        name:
+          file.originalname
       }));
 
     await channel.send({
