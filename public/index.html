@@ -1,1 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
 
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>File Share</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+    }
+
+    .box {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #111;
+      color: white;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 13px;
+      border: 0;
+      border-radius: 8px;
+      background: #ff7a00;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #result {
+      margin-top: 15px;
+      white-space: pre-wrap;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>File Share</h1>
+
+    <div class="box">
+
+      <form id="uploadForm">
+
+        <label>
+          Channel ID
+        </label>
+
+        <input
+          type="text"
+          name="channelId"
+          placeholder="Masukkan Channel ID"
+          required
+        >
+
+        <label>
+          Credits
+        </label>
+
+        <input
+          type="text"
+          name="credits"
+          placeholder="Contoh: Rell"
+        >
+
+        <label>
+          Deskripsi
+        </label>
+
+        <textarea
+          name="description"
+          placeholder="Tulis deskripsi..."
+        ></textarea>
+
+        <label>
+          File
+        </label>
+
+        <input
+          type="file"
+          name="files"
+          multiple
+          required
+        >
+
+        <button
+          type="submit"
+          id="submitButton"
+        >
+          Upload
+        </button>
+
+      </form>
+
+      <div id="result"></div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const form =
+      document.getElementById("uploadForm");
+
+    const button =
+      document.getElementById("submitButton");
+
+    const result =
+      document.getElementById("result");
+
+    form.addEventListener(
+      "submit",
+      async function (e) {
+
+        e.preventDefault();
+
+        button.disabled = true;
+        button.textContent = "Uploading...";
+        result.textContent = "";
+
+        try {
+
+          const formData =
+            new FormData(form);
+
+          const response =
+            await fetch(
+              "/upload",
+              {
+                method: "POST",
+                body: formData
+              }
+            );
+
+          const data =
+            await response.json();
+
+          if (!data.success) {
+            throw new Error(
+              data.message ||
+              "Upload gagal."
+            );
+          }
+
+          const text =
+            data.results
+              .map(item => {
+                if (item.success) {
+                  return `✅ ${item.file}`;
+                }
+
+                return `❌ ${item.file}: ${item.error}`;
+              })
+              .join("\n");
+
+          result.textContent =
+            "Selesai!\n\n" + text;
+
+          form.reset();
+
+        } catch (error) {
+
+          result.textContent =
+            "❌ " + error.message;
+
+        } finally {
+
+          button.disabled = false;
+          button.textContent = "Upload";
+
+        }
+      }
+    );
+  </script>
+
+</body>
+
+</html>
