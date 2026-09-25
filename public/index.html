@@ -2,6 +2,7 @@
 <html lang="id">
 
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -9,9 +10,10 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>File Share</title>
+  <title>Monroe Upload Panel</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -19,7 +21,15 @@
     body {
       margin: 0;
       padding: 25px 18px;
-      background: #202124;
+
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(255, 122, 0, 0.10),
+          transparent 35%
+        ),
+        #202124;
+
       color: white;
       font-family: Arial, sans-serif;
     }
@@ -32,34 +42,65 @@
 
     h1 {
       text-align: center;
+
       color: #ff7a00;
+
       font-size: 34px;
-      margin: 10px 0 45px;
+
+      margin:
+        10px 0 45px;
+
       font-weight: 800;
+
+      text-shadow:
+        0 0 12px
+        rgba(255, 122, 0, 0.25);
     }
 
-    label {
+    label,
+    .section-title {
       display: block;
-      font-size: 23px;
+
+      font-size: 22px;
+
       font-weight: bold;
-      margin: 22px 0 10px;
+
+      margin:
+        22px 0 10px;
     }
 
     input,
     textarea,
     select {
       width: 100%;
-      border: none;
+
+      border:
+        1px solid #3b3b3b;
+
       outline: none;
+
       border-radius: 12px;
+
       background: #f4f4f4;
+
       color: #222;
+
       padding: 17px;
+
       font-size: 18px;
+
+      transition: 0.2s;
     }
 
-    select {
-      appearance: auto;
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color:
+        #ff7a00;
+
+      box-shadow:
+        0 0 0 2px
+        rgba(255, 122, 0, 0.15);
     }
 
     textarea {
@@ -72,16 +113,11 @@
       cursor: pointer;
     }
 
-    .section-title {
-      font-size: 23px;
-      font-weight: bold;
-      margin-top: 30px;
-      margin-bottom: 10px;
-    }
-
     .proof-row {
       display: flex;
+
       gap: 10px;
+
       margin-bottom: 12px;
     }
 
@@ -90,82 +126,158 @@
     }
 
     .remove-proof {
-      width: 75px;
+      width: 70px;
+
       border: none;
+
       border-radius: 12px;
+
       background: #d62828;
+
       color: white;
+
       font-size: 24px;
+
       font-weight: bold;
+
       cursor: pointer;
     }
 
     .add-proof {
       width: 100%;
-      border: none;
+
+      border:
+        1px solid #4a4a4a;
+
       border-radius: 12px;
-      background: #303030;
-      color: white;
+
+      background: #292929;
+
+      color: #ff9a3c;
+
       padding: 18px;
+
       font-size: 19px;
+
       font-weight: bold;
+
       cursor: pointer;
-      margin-top: 8px;
+
+      transition: 0.2s;
+    }
+
+    .add-proof:hover {
+      background: #33271f;
+
+      border-color:
+        #ff7a00;
     }
 
     .send-button {
       width: 100%;
+
       border: none;
+
       border-radius: 12px;
-      background: #ff7a00;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ff7a00,
+          #ff941f
+        );
+
       color: white;
+
       padding: 18px;
+
       font-size: 20px;
+
       font-weight: bold;
+
       cursor: pointer;
+
       margin-top: 30px;
+
+      box-shadow:
+        0 5px 18px
+        rgba(255, 122, 0, 0.22);
+
+      transition: 0.2s;
+    }
+
+    .send-button:hover {
+      transform:
+        translateY(-1px);
+
+      box-shadow:
+        0 7px 22px
+        rgba(255, 122, 0, 0.32);
     }
 
     .send-button:disabled {
       opacity: 0.5;
+
+      transform: none;
+
       cursor: not-allowed;
     }
 
     #status {
       margin-top: 18px;
-      padding: 15px;
-      border-radius: 10px;
-      background: #181818;
-      white-space: pre-wrap;
-      font-size: 15px;
-    }
 
-    .hidden {
-      display: none;
+      padding: 15px;
+
+      border-radius: 10px;
+
+      background: #181818;
+
+      border-left:
+        3px solid #ff7a00;
+
+      white-space: pre-wrap;
     }
 
     @media (max-width: 500px) {
+
+      body {
+        padding:
+          20px 15px;
+      }
+
       h1 {
         font-size: 30px;
+
+        margin-bottom:
+          35px;
       }
 
       label,
       .section-title {
         font-size: 20px;
       }
+
+      input,
+      textarea,
+      select {
+        font-size: 16px;
+      }
+
     }
+
   </style>
+
 </head>
 
 <body>
 
   <div class="container">
 
-    <h1>MONROE UPLOAD PANEL</h1>
+    <h1>
+      MONROE UPLOAD PANEL
+    </h1>
 
     <form id="uploadForm">
-
-      <!-- CHANNEL -->
 
       <label>
         CHANNEL TUJUAN
@@ -176,49 +288,49 @@
         name="channelId"
         required
       >
+
         <option value="">
           Memuat channel...
         </option>
+
       </select>
 
-      <!-- CREDIT -->
 
       <label>
         MAKER BY / CREDIT
       </label>
 
       <input
+        id="credits"
         type="text"
         name="credits"
         placeholder="Contoh: Rasya"
       >
 
-      <!-- DESCRIPTION -->
 
       <label>
         DESKRIPSI
       </label>
 
       <textarea
+        id="description"
         name="description"
         placeholder="Tulis deskripsi file..."
       ></textarea>
 
-      <!-- MAIN FILE -->
 
       <div class="section-title">
         📁 PILIH FILE UTAMA
       </div>
 
       <input
+        id="mainFiles"
         type="file"
         name="files"
-        id="mainFiles"
         multiple
         required
       >
 
-      <!-- PROOF -->
 
       <div class="section-title">
         🖼️ FOTO PROOF / CDN DISCORD
@@ -227,6 +339,7 @@
       <div id="proofContainer">
 
         <div class="proof-row">
+
           <input
             type="text"
             name="proofLinks"
@@ -240,9 +353,11 @@
           >
             ×
           </button>
+
         </div>
 
       </div>
+
 
       <button
         type="button"
@@ -252,85 +367,97 @@
         + Tambah Foto
       </button>
 
-      <!-- SEND -->
 
       <button
+        id="sendButton"
         type="submit"
         class="send-button"
-        id="sendButton"
       >
         KIRIM KE DISCORD
       </button>
 
     </form>
 
-    <div
-      id="status"
-      class="hidden"
-    ></div>
+
+    <div id="status"></div>
 
   </div>
 
+
   <script>
 
-    // =========================================
+    // ========================================
     // LOAD CHANNEL
-    // =========================================
+    // ========================================
 
     async function loadChannels() {
 
       const select =
-        document.getElementById("channelId");
+        document.getElementById(
+          "channelId"
+        );
 
       try {
 
         const response =
-          await fetch("/channels");
+          await fetch(
+            "/channels"
+          );
 
         const data =
           await response.json();
 
         if (!data.success) {
+
           throw new Error(
-            data.message ||
-            "Gagal mengambil channel."
+            data.message
           );
+
         }
 
         select.innerHTML =
           '<option value="">Pilih Channel</option>';
 
-        data.channels.forEach(channel => {
+        data.channels.forEach(
+          channel => {
 
-          const option =
-            document.createElement("option");
+            const option =
+              document.createElement(
+                "option"
+              );
 
-          option.value =
-            channel.id;
+            option.value =
+              channel.id;
 
-          option.textContent =
-            "#" + channel.name;
+            option.textContent =
+              "#" + channel.name;
 
-          select.appendChild(option);
+            select.appendChild(
+              option
+            );
 
-        });
+          }
+        );
 
       } catch (error) {
+
+        console.error(
+          error
+        );
 
         select.innerHTML =
           '<option value="">Gagal memuat channel</option>';
 
-        console.error(error);
-
       }
+
     }
 
     loadChannels();
 
 
-    // =========================================
-    // PROOF
-    // =========================================
+    // ========================================
+    // ADD PROOF
+    // ========================================
 
     function addProof() {
 
@@ -340,7 +467,9 @@
         );
 
       const row =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       row.className =
         "proof-row";
@@ -361,9 +490,16 @@
         </button>
       `;
 
-      container.appendChild(row);
+      container.appendChild(
+        row
+      );
+
     }
 
+
+    // ========================================
+    // REMOVE PROOF
+    // ========================================
 
     function removeProof(button) {
 
@@ -377,145 +513,270 @@
           ".proof-row"
         );
 
-      if (rows.length <= 1) {
+      if (rows.length === 1) {
+
         rows[0]
           .querySelector("input")
           .value = "";
 
         return;
+
       }
 
-      button.parentElement.remove();
+      button
+        .parentElement
+        .remove();
+
     }
 
 
-    // =========================================
+    // ========================================
     // SUBMIT
-    // =========================================
+    // ========================================
 
-    const form =
-      document.getElementById(
+    document
+      .getElementById(
         "uploadForm"
-      );
+      )
+      .addEventListener(
+        "submit",
+        async function(event) {
 
-    const sendButton =
-      document.getElementById(
-        "sendButton"
-      );
+          event.preventDefault();
 
-    const status =
-      document.getElementById(
-        "status"
-      );
-
-
-    form.addEventListener(
-      "submit",
-      async function(event) {
-
-        event.preventDefault();
-
-        const files =
-          document.getElementById(
-            "mainFiles"
-          ).files;
-
-        const channelId =
-          document.getElementById(
-            "channelId"
-          ).value;
-
-        if (!channelId) {
-          alert(
-            "Pilih channel tujuan dulu."
-          );
-          return;
-        }
-
-        if (!files.length) {
-          alert(
-            "Pilih file utama dulu."
-          );
-          return;
-        }
-
-        sendButton.disabled = true;
-        sendButton.textContent =
-          "MENGIRIM...";
-
-        status.classList.remove(
-          "hidden"
-        );
-
-        status.textContent =
-          "⏳ Sedang mengirim file...";
-
-        try {
-
-          const formData =
-            new FormData(form);
-
-          const response =
-            await fetch(
-              "/upload",
-              {
-                method: "POST",
-                body: formData
-              }
+          const channelSelect =
+            document.getElementById(
+              "channelId"
             );
 
-          const data =
-            await response.json();
+          const channelId =
+            channelSelect.value;
 
-          if (!data.success) {
-            throw new Error(
-              data.message ||
-              "Upload gagal."
+          const files =
+            document.getElementById(
+              "mainFiles"
+            ).files;
+
+          const creditsInput =
+            document.getElementById(
+              "credits"
             );
+
+          const descriptionInput =
+            document.getElementById(
+              "description"
+            );
+
+          const sendButton =
+            document.getElementById(
+              "sendButton"
+            );
+
+          const status =
+            document.getElementById(
+              "status"
+            );
+
+          if (!channelId) {
+
+            alert(
+              "Pilih channel tujuan."
+            );
+
+            return;
+
           }
 
-          let resultText =
-            "✅ Berhasil dikirim!\n\n";
+          if (!files.length) {
 
-          data.results.forEach(
-            item => {
+            alert(
+              "Pilih file utama."
+            );
 
-              if (item.success) {
+            return;
 
-                resultText +=
-                  `✅ ${item.file}\n`;
+          }
 
-              } else {
+          // CHANNEL DISIMPAN
 
-                resultText +=
-                  `❌ ${item.file}: ${item.error}\n`;
+          const selectedChannel =
+            channelId;
 
-              }
-
-            }
-          );
-
-          status.textContent =
-            resultText;
-
-          form.reset();
-
-        } catch (error) {
-
-          status.textContent =
-            "❌ " + error.message;
-
-        } finally {
-
-          sendButton.disabled = false;
+          sendButton.disabled =
+            true;
 
           sendButton.textContent =
-            "KIRIM KE DISCORD";
+            "MENGIRIM...";
+
+          status.textContent =
+            "⏳ Mengirim file ke Discord...";
+
+          try {
+
+            const formData =
+              new FormData();
+
+            formData.append(
+              "channelId",
+              channelId
+            );
+
+            formData.append(
+              "credits",
+              creditsInput.value
+            );
+
+            formData.append(
+              "description",
+              descriptionInput.value
+            );
+
+
+            // MAIN FILE
+
+            for (
+              const file of files
+            ) {
+
+              formData.append(
+                "files",
+                file
+              );
+
+            }
+
+
+            // PROOF LINKS
+
+            const proofInputs =
+              document.querySelectorAll(
+                'input[name="proofLinks"]'
+              );
+
+            proofInputs.forEach(
+              input => {
+
+                const value =
+                  input.value.trim();
+
+                if (value) {
+
+                  formData.append(
+                    "proofLinks",
+                    value
+                  );
+
+                }
+
+              }
+            );
+
+
+            const response =
+              await fetch(
+                "/upload",
+                {
+                  method: "POST",
+
+                  body: formData
+                }
+              );
+
+
+            const data =
+              await response.json();
+
+
+            if (
+              !response.ok ||
+              !data.success
+            ) {
+
+              throw new Error(
+                data.message ||
+                "Upload gagal."
+              );
+
+            }
+
+
+            status.textContent =
+              "✅ Berhasil dikirim ke Discord!";
+
+
+            // RESET CREDIT
+
+            creditsInput.value =
+              "";
+
+
+            // RESET DESCRIPTION
+
+            descriptionInput.value =
+              "";
+
+
+            // RESET FILE
+
+            document.getElementById(
+              "mainFiles"
+            ).value =
+              "";
+
+
+            // RESET PROOF
+
+            document.getElementById(
+              "proofContainer"
+            ).innerHTML = `
+              <div class="proof-row">
+
+                <input
+                  type="text"
+                  name="proofLinks"
+                  placeholder="Paste link CDN Discord..."
+                >
+
+                <button
+                  type="button"
+                  class="remove-proof"
+                  onclick="removeProof(this)"
+                >
+                  ×
+                </button>
+
+              </div>
+            `;
+
+
+            // CHANNEL TETAP
+
+            channelSelect.value =
+              selectedChannel;
+
+
+          } catch (error) {
+
+            console.error(
+              error
+            );
+
+            status.textContent =
+              "❌ " +
+              error.message;
+
+          } finally {
+
+            sendButton.disabled =
+              false;
+
+            sendButton.textContent =
+              "KIRIM KE DISCORD";
+
+          }
 
         }
-
-      }
-    );
+      );
 
   </script>
 
