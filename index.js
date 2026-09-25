@@ -14,18 +14,22 @@ const {
 } = require("./config");
 
 const {
-  uploadProofs,
   sendUploadedFile
 } = require("./features/upload");
 
-// =========================
+// ========================================
 // EXPRESS
-// =========================
+// ========================================
 
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  express.urlencoded({
+    extended: true
+  })
+);
 
 app.use(
   express.static(
@@ -33,20 +37,21 @@ app.use(
   )
 );
 
-// =========================
-// UPLOAD STORAGE
-// =========================
+// ========================================
+// MULTER
+// ========================================
 
 const upload = multer({
-  dest: path.join(__dirname, "uploads"),
+  storage: multer.memoryStorage(),
+
   limits: {
     fileSize: 100 * 1024 * 1024
   }
 });
 
-// =========================
-// DISCORD CLIENT
-// =========================
+// ========================================
+// DISCORD
+// ========================================
 
 const client = new Client({
   intents: [
@@ -54,85 +59,94 @@ const client = new Client({
   ]
 });
 
-// =========================
-// GET CHANNELS
-// =========================
+// ========================================
+// CHANNEL LIST
+// ========================================
 
-app.get("/channels", async (req, res) => {
-  try {
-    const guild =
-      await client.guilds.fetch(GUILD_ID);
+app.get(
+  "/channels",
+  async (req, res) => {
 
-    if (!guild) {
-      return res.status(404).json({
-        success: false,
-        message: "Server tidak ditemukan."
-      });
-    }
+    try {
 
-    const channels =
-      await guild.channels.fetch();
-
-    const result =
-      channels
-        .filter(channel =>
-          channel &&
-          (
-            channel.type === ChannelType.GuildText ||
-            channel.type === ChannelType.GuildAnnouncement
-          )
-        )
-        .map(channel => ({
-          id: channel.id,
-          name: channel.name
-        }))
-        .sort((a, b) =>
-          a.name.localeCompare(b.name)
+      const guild =
+        await client.guilds.fetch(
+          GUILD_ID
         );
 
-    res.json({
-      success: true,
-      channels: result
-    });
+      if (!guild) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Server tidak ditemukan."
+        });
+      }
 
-  } catch (error) {
-    console.error(
-      "Channel Error:",
-      error
-    );
+      const channels =
+        await guild.channels.fetch();
 
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+      const result =
+        channels
+          .filter(channel =>
+            channel &&
+            (
+              channel.type ===
+                ChannelType.GuildText ||
+
+              channel.type ===
+                ChannelType.GuildAnnouncement
+            )
+          )
+          .map(channel => ({
+            id: channel.id,
+            name: channel.name
+          }))
+          .sort((a, b) =>
+            a.name.localeCompare(
+              b.name
+            )
+          );
+
+      res.json({
+        success: true,
+        channels: result
+      });
+
+    } catch (error) {
+
+      console.error(
+        "Channel Error:",
+        error
+      );
+
+      res.status(500).json({
+        success: false,
+        message: error.message
+      });
+
+    }
+
   }
-});
+);
 
-// =========================
+// ========================================
 // UPLOAD
-// =========================
+// ========================================
 
 app.post(
   "/upload",
-  upload.fields([
-    {
-      name: "files",
-      maxCount: 20
-    },
-    {
-      name: "proofFiles",
-      maxCount: 20
-    }
-  ]),
+
+  upload.array(
+    "files",
+    20
+  ),
+
   async (req, res) => {
 
     try {
 
       const files =
-        req.files?.files || [];
-
-      const proofFiles =
-        req.files?.proofFiles || [];
+        req.files || [];
 
       const channelId =
         req.body.channelId;
@@ -143,27 +157,51 @@ app.post(
       const description =
         req.body.description || "";
 
-      // =========================
+      let proofLinks =
+        req.body.proofLinks || [];
+
+      // ==================================
+      // NORMALIZE PROOF LINKS
+      // ==================================
+
+      if (
+        !Array.isArray(proofLinks)
+      ) {
+        proofLinks = [
+          proofLinks
+        ];
+      }
+
+      proofLinks =
+        proofLinks
+          .map(link =>
+            String(link).trim()
+          )
+          .filter(Boolean);
+
+      // ==================================
       // VALIDATION
-      // =========================
+      // ==================================
 
       if (!channelId) {
         return res.status(400).json({
           success: false,
-          message: "Channel belum dipilih."
+          message:
+            "Channel belum dipilih."
         });
       }
 
       if (files.length === 0) {
         return res.status(400).json({
           success: false,
-          message: "File utama belum dipilih."
+          message:
+            "File belum dipilih."
         });
       }
 
-      // =========================
-      // GET CHANNEL
-      // =========================
+      // ==================================
+      // CHECK CHANNEL
+      // ==================================
 
       const channel =
         await client.channels.fetch(
@@ -173,84 +211,49 @@ app.post(
       if (!channel) {
         return res.status(404).json({
           success: false,
-          message: "Channel tidak ditemukan."
+          message:
+            "Channel tidak ditemukan."
         });
       }
 
       if (!channel.isTextBased()) {
         return res.status(400).json({
           success: false,
-          message: "Channel bukan text channel."
+          message:
+            "Channel bukan text channel."
         });
       }
 
-      // =========================
-      // UPLOAD PROOF
-      // =========================
+      // ==================================
+      // SEND
+      // ==================================
 
-      let proofUrls = [];
+      const message =
+        await sendUploadedFile({
+          client,
+          channelId,
+          files,
+          credits,
+          description,
+          proofLinks
+        });
 
-      if (proofFiles.length > 0) {
-
-        proofUrls =
-          await uploadProofs({
-            channel,
-            proofFiles
-          });
-
-      }
-
-      // =========================
-      // SEND MAIN FILE
-      // =========================
-
-      const results = [];
-
-      for (const file of files) {
-
-        try {
-
-          const message =
-            await sendUploadedFile({
-              client,
-              channelId,
-              file,
-              credits,
-              description,
-              proofUrls
-            });
-
-          results.push({
-            file: file.originalname,
-            success: true,
-            messageId: message.id
-          });
-
-        } catch (error) {
-
-          console.error(
-            `Gagal mengirim ${file.originalname}:`,
-            error
-          );
-
-          results.push({
-            file: file.originalname,
-            success: false,
-            error: error.message
-          });
-
-        }
-
-      }
-
-      // =========================
+      // ==================================
       // RESPONSE
-      // =========================
+      // ==================================
 
       res.json({
         success: true,
-        proofUrls,
-        results
+        messageId: message.id,
+
+        files:
+          files.map(
+            file =>
+              file.originalname
+          ),
+
+        proofUrls:
+          proofLinks
       });
 
     } catch (error) {
@@ -270,49 +273,62 @@ app.post(
   }
 );
 
-// =========================
+// ========================================
 // HOME
-// =========================
+// ========================================
 
-app.get("/", (req, res) => {
+app.get(
+  "/",
+  (req, res) => {
 
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "index.html"
-    )
-  );
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "index.html"
+      )
+    );
 
-});
+  }
+);
 
-// =========================
-// SERVER
-// =========================
+// ========================================
+// WEB SERVER
+// ========================================
 
-app.listen(PORT, () => {
+app.listen(
+  PORT,
+  () => {
 
-  console.log(
-    `🌐 Web uploader berjalan di port ${PORT}`
-  );
+    console.log(
+      `🌐 Web uploader berjalan di port ${PORT}`
+    );
 
-});
+  }
+);
 
-// =========================
+// ========================================
 // DISCORD READY
-// =========================
+// ========================================
 
-client.once("ready", () => {
+client.once(
+  "ready",
+  () => {
 
-  console.log(
-    `🤖 Bot login sebagai ${client.user.tag}`
-  );
+    console.log(
+      `🤖 Bot login sebagai ${client.user.tag}`
+    );
 
-});
+    console.log(
+      `🏠 Guild ID: ${GUILD_ID}`
+    );
 
-// =========================
+  }
+);
+
+// ========================================
 // LOGIN
-// =========================
+// ========================================
 
 client.login(
   process.env.DISCORD_TOKEN
