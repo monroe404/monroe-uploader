@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Monroe Upload Panel</title>
+  <title>File Share</title>
 
   <style>
 
@@ -31,7 +31,10 @@
         #202124;
 
       color: white;
-      font-family: Arial, sans-serif;
+
+      font-family:
+        Arial,
+        sans-serif;
     }
 
     .container {
@@ -70,7 +73,6 @@
     }
 
     input,
-    textarea,
     select {
       width: 100%;
 
@@ -89,27 +91,28 @@
 
       font-size: 18px;
 
-      transition: 0.2s;
+      transition:
+        0.2s;
     }
 
     input:focus,
-    textarea:focus,
     select:focus {
       border-color:
         #ff7a00;
 
       box-shadow:
         0 0 0 2px
-        rgba(255, 122, 0, 0.15);
-    }
-
-    textarea {
-      min-height: 145px;
-      resize: vertical;
+        rgba(
+          255,
+          122,
+          0,
+          0.15
+        );
     }
 
     input[type="file"] {
       padding: 14px;
+
       cursor: pointer;
     }
 
@@ -163,11 +166,13 @@
 
       cursor: pointer;
 
-      transition: 0.2s;
+      transition:
+        0.2s;
     }
 
     .add-proof:hover {
-      background: #33271f;
+      background:
+        #33271f;
 
       border-color:
         #ff7a00;
@@ -201,9 +206,15 @@
 
       box-shadow:
         0 5px 18px
-        rgba(255, 122, 0, 0.22);
+        rgba(
+          255,
+          122,
+          0,
+          0.22
+        );
 
-      transition: 0.2s;
+      transition:
+        0.2s;
     }
 
     .send-button:hover {
@@ -212,7 +223,12 @@
 
       box-shadow:
         0 7px 22px
-        rgba(255, 122, 0, 0.32);
+        rgba(
+          255,
+          122,
+          0,
+          0.32
+        );
     }
 
     .send-button:disabled {
@@ -220,7 +236,8 @@
 
       transform: none;
 
-      cursor: not-allowed;
+      cursor:
+        not-allowed;
     }
 
     #status {
@@ -235,7 +252,8 @@
       border-left:
         3px solid #ff7a00;
 
-      white-space: pre-wrap;
+      white-space:
+        pre-wrap;
     }
 
     @media (max-width: 500px) {
@@ -258,7 +276,6 @@
       }
 
       input,
-      textarea,
       select {
         font-size: 16px;
       }
@@ -274,10 +291,12 @@
   <div class="container">
 
     <h1>
-      MONROE UPLOAD PANEL
+      FILE SHARE
     </h1>
 
     <form id="uploadForm">
+
+      <!-- CHANNEL -->
 
       <label>
         CHANNEL TUJUAN
@@ -296,6 +315,8 @@
       </select>
 
 
+      <!-- CREDIT -->
+
       <label>
         MAKER BY / CREDIT
       </label>
@@ -304,23 +325,14 @@
         id="credits"
         type="text"
         name="credits"
-        placeholder="Contoh: Rasya"
+        placeholder="Contoh: Rell"
       >
 
 
-      <label>
-        DESKRIPSI
-      </label>
-
-      <textarea
-        id="description"
-        name="description"
-        placeholder="Tulis deskripsi file..."
-      ></textarea>
-
+      <!-- FILE -->
 
       <div class="section-title">
-        📁 PILIH FILE UTAMA
+        📁 PILIH FILE
       </div>
 
       <input
@@ -331,6 +343,8 @@
         required
       >
 
+
+      <!-- PROOF -->
 
       <div class="section-title">
         🖼️ FOTO PROOF / CDN DISCORD
@@ -367,6 +381,8 @@
         + Tambah Foto
       </button>
 
+
+      <!-- SEND -->
 
       <button
         id="sendButton"
@@ -430,7 +446,8 @@
               channel.id;
 
             option.textContent =
-              "#" + channel.name;
+              "#" +
+              channel.name;
 
             select.appendChild(
               option
@@ -442,6 +459,7 @@
       } catch (error) {
 
         console.error(
+          "Channel Error:",
           error
         );
 
@@ -501,7 +519,9 @@
     // REMOVE PROOF
     // ========================================
 
-    function removeProof(button) {
+    function removeProof(
+      button
+    ) {
 
       const container =
         document.getElementById(
@@ -513,10 +533,14 @@
           ".proof-row"
         );
 
-      if (rows.length === 1) {
+      if (
+        rows.length === 1
+      ) {
 
         rows[0]
-          .querySelector("input")
+          .querySelector(
+            "input"
+          )
           .value = "";
 
         return;
@@ -562,11 +586,6 @@
               "credits"
             );
 
-          const descriptionInput =
-            document.getElementById(
-              "description"
-            );
-
           const sendButton =
             document.getElementById(
               "sendButton"
@@ -590,7 +609,7 @@
           if (!files.length) {
 
             alert(
-              "Pilih file utama."
+              "Pilih file."
             );
 
             return;
@@ -616,23 +635,23 @@
             const formData =
               new FormData();
 
+            // CHANNEL
+
             formData.append(
               "channelId",
               channelId
             );
+
+
+            // CREDIT
 
             formData.append(
               "credits",
               creditsInput.value
             );
 
-            formData.append(
-              "description",
-              descriptionInput.value
-            );
 
-
-            // MAIN FILE
+            // FILE
 
             for (
               const file of files
@@ -646,7 +665,7 @@
             }
 
 
-            // PROOF LINKS
+            // PROOF CDN
 
             const proofInputs =
               document.querySelectorAll(
@@ -671,6 +690,8 @@
               }
             );
 
+
+            // SEND
 
             const response =
               await fetch(
@@ -704,13 +725,17 @@
               "✅ Berhasil dikirim ke Discord!";
 
 
+            // ==================================
             // RESET CREDIT
+            // ==================================
 
             creditsInput.value =
               "";
 
 
+            // ==================================
             // RESET FILE
+            // ==================================
 
             document.getElementById(
               "mainFiles"
@@ -718,7 +743,9 @@
               "";
 
 
-            // RESET PROOF
+            // ==================================
+            // RESET CDN
+            // ==================================
 
             document.getElementById(
               "proofContainer"
@@ -743,7 +770,9 @@
             `;
 
 
+            // ==================================
             // CHANNEL TETAP
+            // ==================================
 
             channelSelect.value =
               selectedChannel;
@@ -752,6 +781,7 @@
           } catch (error) {
 
             console.error(
+              "Upload Error:",
               error
             );
 
