@@ -3,15 +3,55 @@ const {
   TextDisplayBuilder,
   SeparatorBuilder,
   SeparatorSpacingSize,
+  MediaGalleryBuilder,
+  MediaGalleryItemBuilder,
   MessageFlags
 } = require("discord.js");
 
-function buildUploadComponents({
+// ========================================
+// VALIDATE CDN LINKS
+// ========================================
+
+function getProofUrls(proofLinks) {
+  if (!proofLinks) {
+    return [];
+  }
+
+  const links = Array.isArray(proofLinks)
+    ? proofLinks
+    : [proofLinks];
+
+  return links
+    .map(link => String(link).trim())
+    .filter(link => {
+      try {
+        const url = new URL(link);
+
+        return (
+          url.protocol === "https:" ||
+          url.protocol === "http:"
+        );
+      } catch {
+        return false;
+      }
+    });
+}
+
+// ========================================
+// BUILD COMPONENTS V2
+// ========================================
+
+function buildComponents({
   credits,
   description,
-  proofUrls = []
+  proofUrls
 }) {
-  const container = new ContainerBuilder();
+  const components = [];
+
+  // MAIN CONTAINER
+
+  const container =
+    new ContainerBuilder();
 
   container.addTextDisplayComponents(
     new TextDisplayBuilder().setContent(
@@ -21,64 +61,57 @@ function buildUploadComponents({
 
   container.addSeparatorComponents(
     new SeparatorBuilder()
-      .setSpacing(SeparatorSpacingSize.Small)
+      .setSpacing(
+        SeparatorSpacingSize.Small
+      )
   );
-
-  let text =
-    `**Credits :** ${credits || ""}\n` +
-    `**Deskripsi :** ${description || ""}`;
-
-  if (proofUrls.length > 0) {
-    text +=
-      "\n\n**Proof :**\n" +
-      proofUrls.map(url => url).join("\n");
-  }
 
   container.addTextDisplayComponents(
-    new TextDisplayBuilder().setContent(text)
+    new TextDisplayBuilder().setContent(
+      `**Credits :** ${credits || ""}\n` +
+      `**Deskripsi :** ${description || ""}`
+    )
   );
 
-  return [container];
-}
+  components.push(container);
 
-async function uploadProofs({
-  channel,
-  proofFiles
-}) {
-  if (!proofFiles || proofFiles.length === 0) {
-    return [];
-  }
+  // ========================================
+  // PROOF / CDN
+  // ========================================
 
-  const urls = [];
+  if (proofUrls.length > 0) {
+    const gallery =
+      new MediaGalleryBuilder();
 
-  for (const file of proofFiles) {
-    const message = await channel.send({
-      files: [
-        {
-          attachment: file.path,
-          name: file.originalname
-        }
-      ]
-    });
-
-    for (const attachment of message.attachments.values()) {
-      urls.push(attachment.url);
+    for (const url of proofUrls) {
+      gallery.addItems(
+        new MediaGalleryItemBuilder()
+          .setURL(url)
+      );
     }
+
+    components.push(gallery);
   }
 
-  return urls;
+  return components;
 }
+
+// ========================================
+// SEND FILE
+// ========================================
 
 async function sendUploadedFile({
   client,
   channelId,
-  file,
+  files,
   credits,
   description,
-  proofUrls = []
+  proofLinks
 }) {
   const channel =
-    await client.channels.fetch(channelId);
+    await client.channels.fetch(
+      channelId
+    );
 
   if (!channel) {
     throw new Error(
@@ -92,22 +125,26 @@ async function sendUploadedFile({
     );
   }
 
+  const proofUrls =
+    getProofUrls(proofLinks);
+
   const components =
-    buildUploadComponents({
+    buildComponents({
       credits,
       description,
       proofUrls
     });
 
+  const attachments =
+    files.map(file => ({
+      attachment: file.buffer,
+      name: file.originalname
+    }));
+
   const message =
     await channel.send({
       components,
-      files: [
-        {
-          attachment: file.path,
-          name: file.originalname
-        }
-      ],
+      files: attachments,
       flags: MessageFlags.IsComponentsV2
     });
 
@@ -115,7 +152,7 @@ async function sendUploadedFile({
 }
 
 module.exports = {
-  buildUploadComponents,
-  uploadProofs,
+  getProofUrls,
+  buildComponents,
   sendUploadedFile
 };
