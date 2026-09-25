@@ -14,8 +14,13 @@ const {
 } = require("./config");
 
 const {
+  uploadProofs,
   sendUploadedFile
 } = require("./features/upload");
+
+// =========================
+// EXPRESS
+// =========================
 
 const app = express();
 
@@ -29,7 +34,7 @@ app.use(
 );
 
 // =========================
-// MULTER
+// UPLOAD STORAGE
 // =========================
 
 const upload = multer({
@@ -40,7 +45,7 @@ const upload = multer({
 });
 
 // =========================
-// DISCORD
+// DISCORD CLIENT
 // =========================
 
 const client = new Client({
@@ -55,7 +60,8 @@ const client = new Client({
 
 app.get("/channels", async (req, res) => {
   try {
-    const guild = await client.guilds.fetch(GUILD_ID);
+    const guild =
+      await client.guilds.fetch(GUILD_ID);
 
     if (!guild) {
       return res.status(404).json({
@@ -64,23 +70,25 @@ app.get("/channels", async (req, res) => {
       });
     }
 
-    const channels = await guild.channels.fetch();
+    const channels =
+      await guild.channels.fetch();
 
-    const result = channels
-      .filter(channel =>
-        channel &&
-        (
-          channel.type === ChannelType.GuildText ||
-          channel.type === ChannelType.GuildAnnouncement
+    const result =
+      channels
+        .filter(channel =>
+          channel &&
+          (
+            channel.type === ChannelType.GuildText ||
+            channel.type === ChannelType.GuildAnnouncement
+          )
         )
-      )
-      .map(channel => ({
-        id: channel.id,
-        name: channel.name
-      }))
-      .sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
+        .map(channel => ({
+          id: channel.id,
+          name: channel.name
+        }))
+        .sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
 
     res.json({
       success: true,
@@ -106,10 +114,25 @@ app.get("/channels", async (req, res) => {
 
 app.post(
   "/upload",
-  upload.array("files", 20),
+  upload.fields([
+    {
+      name: "files",
+      maxCount: 20
+    },
+    {
+      name: "proofFiles",
+      maxCount: 20
+    }
+  ]),
   async (req, res) => {
+
     try {
-      const files = req.files;
+
+      const files =
+        req.files?.files || [];
+
+      const proofFiles =
+        req.files?.proofFiles || [];
 
       const channelId =
         req.body.channelId;
@@ -120,6 +143,10 @@ app.post(
       const description =
         req.body.description || "";
 
+      // =========================
+      // VALIDATION
+      // =========================
+
       if (!channelId) {
         return res.status(400).json({
           success: false,
@@ -127,24 +154,70 @@ app.post(
         });
       }
 
-      if (!files || files.length === 0) {
+      if (files.length === 0) {
         return res.status(400).json({
           success: false,
-          message: "File belum dipilih."
+          message: "File utama belum dipilih."
         });
       }
+
+      // =========================
+      // GET CHANNEL
+      // =========================
+
+      const channel =
+        await client.channels.fetch(
+          channelId
+        );
+
+      if (!channel) {
+        return res.status(404).json({
+          success: false,
+          message: "Channel tidak ditemukan."
+        });
+      }
+
+      if (!channel.isTextBased()) {
+        return res.status(400).json({
+          success: false,
+          message: "Channel bukan text channel."
+        });
+      }
+
+      // =========================
+      // UPLOAD PROOF
+      // =========================
+
+      let proofUrls = [];
+
+      if (proofFiles.length > 0) {
+
+        proofUrls =
+          await uploadProofs({
+            channel,
+            proofFiles
+          });
+
+      }
+
+      // =========================
+      // SEND MAIN FILE
+      // =========================
 
       const results = [];
 
       for (const file of files) {
+
         try {
+
           const message =
             await sendUploadedFile({
               client,
               channelId,
               file,
               credits,
-              description
+              description,
+              proofUrls
             });
 
           results.push({
@@ -154,6 +227,7 @@ app.post(
           });
 
         } catch (error) {
+
           console.error(
             `Gagal mengirim ${file.originalname}:`,
             error
@@ -164,15 +238,23 @@ app.post(
             success: false,
             error: error.message
           });
+
         }
+
       }
+
+      // =========================
+      // RESPONSE
+      // =========================
 
       res.json({
         success: true,
+        proofUrls,
         results
       });
 
     } catch (error) {
+
       console.error(
         "Upload Error:",
         error
@@ -182,15 +264,18 @@ app.post(
         success: false,
         message: error.message
       });
+
     }
+
   }
 );
 
 // =========================
-// WEB
+// HOME
 // =========================
 
 app.get("/", (req, res) => {
+
   res.sendFile(
     path.join(
       __dirname,
@@ -198,22 +283,31 @@ app.get("/", (req, res) => {
       "index.html"
     )
   );
+
 });
 
+// =========================
+// SERVER
+// =========================
+
 app.listen(PORT, () => {
+
   console.log(
     `🌐 Web uploader berjalan di port ${PORT}`
   );
+
 });
 
 // =========================
-// READY
+// DISCORD READY
 // =========================
 
 client.once("ready", () => {
+
   console.log(
     `🤖 Bot login sebagai ${client.user.tag}`
   );
+
 });
 
 // =========================
