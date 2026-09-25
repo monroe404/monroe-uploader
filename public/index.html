@@ -18,76 +18,141 @@
 
     body {
       margin: 0;
-      padding: 20px;
-      background: #111;
-      color: #fff;
+      padding: 25px 18px;
+      background: #202124;
+      color: white;
       font-family: Arial, sans-serif;
     }
 
     .container {
-      max-width: 600px;
+      width: 100%;
+      max-width: 680px;
       margin: auto;
     }
 
     h1 {
-      margin-bottom: 25px;
-    }
-
-    .box {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 12px;
-      padding: 20px;
+      text-align: center;
+      color: #ff7a00;
+      font-size: 34px;
+      margin: 10px 0 45px;
+      font-weight: 800;
     }
 
     label {
       display: block;
-      margin-top: 15px;
-      margin-bottom: 7px;
-      font-size: 14px;
+      font-size: 23px;
+      font-weight: bold;
+      margin: 22px 0 10px;
     }
 
     input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #444;
-      background: #111;
-      color: white;
+      border: none;
       outline: none;
+      border-radius: 12px;
+      background: #f4f4f4;
+      color: #222;
+      padding: 17px;
+      font-size: 18px;
+    }
+
+    select {
+      appearance: auto;
     }
 
     textarea {
+      min-height: 145px;
       resize: vertical;
-      min-height: 100px;
     }
 
     input[type="file"] {
-      padding: 10px;
+      padding: 14px;
+      cursor: pointer;
     }
 
-    button {
-      width: 100%;
-      margin-top: 20px;
-      padding: 13px;
-      border: 0;
-      border-radius: 8px;
-      background: #ff7a00;
+    .section-title {
+      font-size: 23px;
+      font-weight: bold;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    .proof-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .proof-row input {
+      flex: 1;
+    }
+
+    .remove-proof {
+      width: 75px;
+      border: none;
+      border-radius: 12px;
+      background: #d62828;
       color: white;
+      font-size: 24px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    button:disabled {
+    .add-proof {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #303030;
+      color: white;
+      padding: 18px;
+      font-size: 19px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .send-button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #ff7a00;
+      color: white;
+      padding: 18px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 30px;
+    }
+
+    .send-button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
-    #result {
-      margin-top: 15px;
+    #status {
+      margin-top: 18px;
+      padding: 15px;
+      border-radius: 10px;
+      background: #181818;
       white-space: pre-wrap;
-      font-size: 14px;
+      font-size: 15px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 500px) {
+      h1 {
+        font-size: 30px;
+      }
+
+      label,
+      .section-title {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
@@ -96,87 +161,294 @@
 
   <div class="container">
 
-    <h1>File Share</h1>
+    <h1>MONROE UPLOAD PANEL</h1>
 
-    <div class="box">
+    <form id="uploadForm">
 
-      <form id="uploadForm">
+      <!-- CHANNEL -->
 
-        <label>
-          Channel ID
-        </label>
+      <label>
+        CHANNEL TUJUAN
+      </label>
 
-        <input
-          type="text"
-          name="channelId"
-          placeholder="Masukkan Channel ID"
-          required
-        >
+      <select
+        id="channelId"
+        name="channelId"
+        required
+      >
+        <option value="">
+          Memuat channel...
+        </option>
+      </select>
 
-        <label>
-          Credits
-        </label>
+      <!-- CREDIT -->
 
-        <input
-          type="text"
-          name="credits"
-          placeholder="Contoh: Rell"
-        >
+      <label>
+        MAKER BY / CREDIT
+      </label>
 
-        <label>
-          Deskripsi
-        </label>
+      <input
+        type="text"
+        name="credits"
+        placeholder="Contoh: Rasya"
+      >
 
-        <textarea
-          name="description"
-          placeholder="Tulis deskripsi..."
-        ></textarea>
+      <!-- DESCRIPTION -->
 
-        <label>
-          File
-        </label>
+      <label>
+        DESKRIPSI
+      </label>
 
-        <input
-          type="file"
-          name="files"
-          multiple
-          required
-        >
+      <textarea
+        name="description"
+        placeholder="Tulis deskripsi file..."
+      ></textarea>
 
-        <button
-          type="submit"
-          id="submitButton"
-        >
-          Upload
-        </button>
+      <!-- MAIN FILE -->
 
-      </form>
+      <div class="section-title">
+        📁 PILIH FILE UTAMA
+      </div>
 
-      <div id="result"></div>
+      <input
+        type="file"
+        name="files"
+        id="mainFiles"
+        multiple
+        required
+      >
 
-    </div>
+      <!-- PROOF -->
+
+      <div class="section-title">
+        🖼️ FOTO PROOF / CDN DISCORD
+      </div>
+
+      <div id="proofContainer">
+
+        <div class="proof-row">
+          <input
+            type="text"
+            name="proofLinks"
+            placeholder="Paste link CDN Discord..."
+          >
+
+          <button
+            type="button"
+            class="remove-proof"
+            onclick="removeProof(this)"
+          >
+            ×
+          </button>
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="add-proof"
+        onclick="addProof()"
+      >
+        + Tambah Foto
+      </button>
+
+      <!-- SEND -->
+
+      <button
+        type="submit"
+        class="send-button"
+        id="sendButton"
+      >
+        KIRIM KE DISCORD
+      </button>
+
+    </form>
+
+    <div
+      id="status"
+      class="hidden"
+    ></div>
 
   </div>
 
   <script>
+
+    // =========================================
+    // LOAD CHANNEL
+    // =========================================
+
+    async function loadChannels() {
+
+      const select =
+        document.getElementById("channelId");
+
+      try {
+
+        const response =
+          await fetch("/channels");
+
+        const data =
+          await response.json();
+
+        if (!data.success) {
+          throw new Error(
+            data.message ||
+            "Gagal mengambil channel."
+          );
+        }
+
+        select.innerHTML =
+          '<option value="">Pilih Channel</option>';
+
+        data.channels.forEach(channel => {
+
+          const option =
+            document.createElement("option");
+
+          option.value =
+            channel.id;
+
+          option.textContent =
+            "#" + channel.name;
+
+          select.appendChild(option);
+
+        });
+
+      } catch (error) {
+
+        select.innerHTML =
+          '<option value="">Gagal memuat channel</option>';
+
+        console.error(error);
+
+      }
+    }
+
+    loadChannels();
+
+
+    // =========================================
+    // PROOF
+    // =========================================
+
+    function addProof() {
+
+      const container =
+        document.getElementById(
+          "proofContainer"
+        );
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "proof-row";
+
+      row.innerHTML = `
+        <input
+          type="text"
+          name="proofLinks"
+          placeholder="Paste link CDN Discord..."
+        >
+
+        <button
+          type="button"
+          class="remove-proof"
+          onclick="removeProof(this)"
+        >
+          ×
+        </button>
+      `;
+
+      container.appendChild(row);
+    }
+
+
+    function removeProof(button) {
+
+      const container =
+        document.getElementById(
+          "proofContainer"
+        );
+
+      const rows =
+        container.querySelectorAll(
+          ".proof-row"
+        );
+
+      if (rows.length <= 1) {
+        rows[0]
+          .querySelector("input")
+          .value = "";
+
+        return;
+      }
+
+      button.parentElement.remove();
+    }
+
+
+    // =========================================
+    // SUBMIT
+    // =========================================
+
     const form =
-      document.getElementById("uploadForm");
+      document.getElementById(
+        "uploadForm"
+      );
 
-    const button =
-      document.getElementById("submitButton");
+    const sendButton =
+      document.getElementById(
+        "sendButton"
+      );
 
-    const result =
-      document.getElementById("result");
+    const status =
+      document.getElementById(
+        "status"
+      );
+
 
     form.addEventListener(
       "submit",
-      async function (e) {
+      async function(event) {
 
-        e.preventDefault();
+        event.preventDefault();
 
-        button.disabled = true;
-        button.textContent = "Uploading...";
-        result.textContent = "";
+        const files =
+          document.getElementById(
+            "mainFiles"
+          ).files;
+
+        const channelId =
+          document.getElementById(
+            "channelId"
+          ).value;
+
+        if (!channelId) {
+          alert(
+            "Pilih channel tujuan dulu."
+          );
+          return;
+        }
+
+        if (!files.length) {
+          alert(
+            "Pilih file utama dulu."
+          );
+          return;
+        }
+
+        sendButton.disabled = true;
+        sendButton.textContent =
+          "MENGIRIM...";
+
+        status.classList.remove(
+          "hidden"
+        );
+
+        status.textContent =
+          "⏳ Sedang mengirim file...";
 
         try {
 
@@ -202,35 +474,49 @@
             );
           }
 
-          const text =
-            data.results
-              .map(item => {
-                if (item.success) {
-                  return `✅ ${item.file}`;
-                }
+          let resultText =
+            "✅ Berhasil dikirim!\n\n";
 
-                return `❌ ${item.file}: ${item.error}`;
-              })
-              .join("\n");
+          data.results.forEach(
+            item => {
 
-          result.textContent =
-            "Selesai!\n\n" + text;
+              if (item.success) {
+
+                resultText +=
+                  `✅ ${item.file}\n`;
+
+              } else {
+
+                resultText +=
+                  `❌ ${item.file}: ${item.error}\n`;
+
+              }
+
+            }
+          );
+
+          status.textContent =
+            resultText;
 
           form.reset();
 
         } catch (error) {
 
-          result.textContent =
+          status.textContent =
             "❌ " + error.message;
 
         } finally {
 
-          button.disabled = false;
-          button.textContent = "Upload";
+          sendButton.disabled = false;
+
+          sendButton.textContent =
+            "KIRIM KE DISCORD";
 
         }
+
       }
     );
+
   </script>
 
 </body>
