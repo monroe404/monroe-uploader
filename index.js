@@ -33,7 +33,10 @@ app.use(
 
 app.use(
   express.static(
-    path.join(__dirname, "public")
+    path.join(
+      __dirname,
+      "public"
+    )
   )
 );
 
@@ -41,26 +44,30 @@ app.use(
 // MULTER
 // ========================================
 
-const upload = multer({
-  storage: multer.memoryStorage(),
+const upload =
+  multer({
+    storage:
+      multer.memoryStorage(),
 
-  limits: {
-    fileSize: 100 * 1024 * 1024
-  }
-});
+    limits: {
+      fileSize:
+        100 * 1024 * 1024
+    }
+  });
 
 // ========================================
 // DISCORD
 // ========================================
 
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds
-  ]
-});
+const client =
+  new Client({
+    intents: [
+      GatewayIntentBits.Guilds
+    ]
+  });
 
 // ========================================
-// CHANNEL LIST
+// CHANNELS
 // ========================================
 
 app.get(
@@ -121,7 +128,8 @@ app.get(
 
       res.status(500).json({
         success: false,
-        message: error.message
+        message:
+          error.message
       });
 
     }
@@ -160,12 +168,10 @@ app.post(
       let proofLinks =
         req.body.proofLinks || [];
 
-      // ==================================
-      // NORMALIZE PROOF LINKS
-      // ==================================
-
       if (
-        !Array.isArray(proofLinks)
+        !Array.isArray(
+          proofLinks
+        )
       ) {
         proofLinks = [
           proofLinks
@@ -200,60 +206,26 @@ app.post(
       }
 
       // ==================================
-      // CHECK CHANNEL
-      // ==================================
-
-      const channel =
-        await client.channels.fetch(
-          channelId
-        );
-
-      if (!channel) {
-        return res.status(404).json({
-          success: false,
-          message:
-            "Channel tidak ditemukan."
-        });
-      }
-
-      if (!channel.isTextBased()) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Channel bukan text channel."
-        });
-      }
-
-      // ==================================
       // SEND
       // ==================================
 
-      const message =
-        await sendUploadedFile({
-          client,
-          channelId,
-          files,
-          credits,
-          description,
-          proofLinks
-        });
+      await sendUploadedFile({
+        client,
+        channelId,
+        files,
+        credits,
+        description,
+        proofLinks
+      });
 
       // ==================================
-      // RESPONSE
+      // SUCCESS
       // ==================================
 
       res.json({
         success: true,
-        messageId: message.id,
-
-        files:
-          files.map(
-            file =>
-              file.originalname
-          ),
-
-        proofUrls:
-          proofLinks
+        message:
+          "File berhasil dikirim."
       });
 
     } catch (error) {
@@ -265,7 +237,8 @@ app.post(
 
       res.status(500).json({
         success: false,
-        message: error.message
+        message:
+          error.message
       });
 
     }
@@ -308,7 +281,7 @@ app.listen(
 );
 
 // ========================================
-// DISCORD READY
+// READY
 // ========================================
 
 client.once(
