@@ -4,22 +4,18 @@ const path = require("path");
 
 const {
   Client,
-  GatewayIntentBits
+  GatewayIntentBits,
+  ChannelType
 } = require("discord.js");
 
 const {
-  PORT
+  PORT,
+  GUILD_ID
 } = require("./config");
 
 const {
-  detectCredit,
-  cleanCredit,
   sendUploadedFile
 } = require("./features/upload");
-
-// =========================
-// EXPRESS
-// =========================
 
 const app = express();
 
@@ -54,6 +50,57 @@ const client = new Client({
 });
 
 // =========================
+// GET CHANNELS
+// =========================
+
+app.get("/channels", async (req, res) => {
+  try {
+    const guild = await client.guilds.fetch(GUILD_ID);
+
+    if (!guild) {
+      return res.status(404).json({
+        success: false,
+        message: "Server tidak ditemukan."
+      });
+    }
+
+    const channels = await guild.channels.fetch();
+
+    const result = channels
+      .filter(channel =>
+        channel &&
+        (
+          channel.type === ChannelType.GuildText ||
+          channel.type === ChannelType.GuildAnnouncement
+        )
+      )
+      .map(channel => ({
+        id: channel.id,
+        name: channel.name
+      }))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+
+    res.json({
+      success: true,
+      channels: result
+    });
+
+  } catch (error) {
+    console.error(
+      "Channel Error:",
+      error
+    );
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// =========================
 // UPLOAD
 // =========================
 
@@ -64,14 +111,19 @@ app.post(
     try {
       const files = req.files;
 
-      const channelId = req.body.channelId;
-      let credits = req.body.credits || "";
-      let description = req.body.description || "";
+      const channelId =
+        req.body.channelId;
+
+      const credits =
+        req.body.credits || "";
+
+      const description =
+        req.body.description || "";
 
       if (!channelId) {
         return res.status(400).json({
           success: false,
-          message: "Channel ID wajib diisi."
+          message: "Channel belum dipilih."
         });
       }
 
@@ -81,30 +133,6 @@ app.post(
           message: "File belum dipilih."
         });
       }
-
-      // =========================
-      // AUTO CREDIT DETECTION
-      // =========================
-
-      const combinedText =
-        `${credits}\n${description}`;
-
-      const detectedCredit =
-        detectCredit(combinedText);
-
-      if (detectedCredit && !credits) {
-        credits = detectedCredit;
-      }
-
-      description =
-        cleanCredit(description);
-
-      credits =
-        cleanCredit(credits);
-
-      // =========================
-      // SEND FILES
-      // =========================
 
       const results = [];
 
@@ -124,6 +152,7 @@ app.post(
             success: true,
             messageId: message.id
           });
+
         } catch (error) {
           console.error(
             `Gagal mengirim ${file.originalname}:`,
@@ -138,7 +167,7 @@ app.post(
         }
       }
 
-      return res.json({
+      res.json({
         success: true,
         results
       });
@@ -149,7 +178,7 @@ app.post(
         error
       );
 
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         message: error.message
       });
@@ -158,7 +187,7 @@ app.post(
 );
 
 // =========================
-// WEB SERVER
+// WEB
 // =========================
 
 app.get("/", (req, res) => {
@@ -178,7 +207,7 @@ app.listen(PORT, () => {
 });
 
 // =========================
-// DISCORD READY
+// READY
 // =========================
 
 client.once("ready", () => {
