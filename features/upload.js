@@ -6,33 +6,10 @@ const {
   MessageFlags
 } = require("discord.js");
 
-function detectCredit(text) {
-  if (!text) return "";
-
-  const regex =
-    /(?:c|credit|credits)\s*[:=\-]\s*([^\n,]+)/i;
-
-  const match = text.match(regex);
-
-  if (!match) return "";
-
-  return match[1].trim();
-}
-
-function cleanCredit(text) {
-  if (!text) return "";
-
-  return text
-    .replace(
-      /(?:c|credit|credits)\s*[:=\-]\s*[^\n,]+/gi,
-      ""
-    )
-    .trim();
-}
-
 function buildUploadComponents({
   credits,
-  description
+  description,
+  proofUrls = []
 }) {
   const container = new ContainerBuilder();
 
@@ -47,16 +24,49 @@ function buildUploadComponents({
       .setSpacing(SeparatorSpacingSize.Small)
   );
 
+  let text =
+    `**Credits :** ${credits || ""}\n` +
+    `**Deskripsi :** ${description || ""}`;
+
+  if (proofUrls.length > 0) {
+    text +=
+      "\n\n**Proof :**\n" +
+      proofUrls.map(url => url).join("\n");
+  }
+
   container.addTextDisplayComponents(
-    new TextDisplayBuilder().setContent(
-      `**Credits :** ${credits || ""}\n` +
-      `**Deskripsi :** ${description || ""}`
-    )
+    new TextDisplayBuilder().setContent(text)
   );
 
-  return [
-    container
-  ];
+  return [container];
+}
+
+async function uploadProofs({
+  channel,
+  proofFiles
+}) {
+  if (!proofFiles || proofFiles.length === 0) {
+    return [];
+  }
+
+  const urls = [];
+
+  for (const file of proofFiles) {
+    const message = await channel.send({
+      files: [
+        {
+          attachment: file.path,
+          name: file.originalname
+        }
+      ]
+    });
+
+    for (const attachment of message.attachments.values()) {
+      urls.push(attachment.url);
+    }
+  }
+
+  return urls;
 }
 
 async function sendUploadedFile({
@@ -64,40 +74,48 @@ async function sendUploadedFile({
   channelId,
   file,
   credits,
-  description
+  description,
+  proofUrls = []
 }) {
-  const channel = await client.channels.fetch(channelId);
+  const channel =
+    await client.channels.fetch(channelId);
 
   if (!channel) {
-    throw new Error("Channel tidak ditemukan.");
+    throw new Error(
+      "Channel tidak ditemukan."
+    );
   }
 
   if (!channel.isTextBased()) {
-    throw new Error("Channel bukan text channel.");
+    throw new Error(
+      "Channel bukan text channel."
+    );
   }
 
-  const components = buildUploadComponents({
-    credits,
-    description
-  });
+  const components =
+    buildUploadComponents({
+      credits,
+      description,
+      proofUrls
+    });
 
-  const message = await channel.send({
-    components,
-    files: [
-      {
-        attachment: file.path,
-        name: file.originalname
-      }
-    ],
-    flags: MessageFlags.IsComponentsV2
-  });
+  const message =
+    await channel.send({
+      components,
+      files: [
+        {
+          attachment: file.path,
+          name: file.originalname
+        }
+      ],
+      flags: MessageFlags.IsComponentsV2
+    });
 
   return message;
 }
 
 module.exports = {
-  detectCredit,
-  cleanCredit,
   buildUploadComponents,
+  uploadProofs,
   sendUploadedFile
 };
