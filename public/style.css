@@ -777,3 +777,71 @@ input[type="file"]::file-selector-button {
     }
 
 }
+
+/* =================================
+   LOGIN FIX
+   ================================= */
+
+.login-card h2 {
+    text-align: center;
+    margin-top: 35px;
+    font-size: 28px;
+}
+
+.login-card p {
+    color: var(--muted);
+}
+
+.login-card input {
+    width: 100%;
+    border: 1px solid #292929;
+    background: rgba(255, 255, 255, 0.04);
+    color: white;
+    padding: 13px 14px;
+    border-radius: 9px;
+    outline: none;
+    font-size: 14px;
+}
+
+.login-card input:focus {
+    border-color: var(--orange);
+    box-shadow:
+        0 0 0 2px
+        rgba(255, 122, 0, 0.08);
+}
+
+.login-card button {
+    width: 100%;
+    border: 0;
+    border-radius: 9px;
+    padding: 13px 18px;
+    background: linear-gradient(
+        135deg,
+        var(--orange),
+        #ff5c00
+    );
+    color: white;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ddd;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.login-card .brand {
+    color: var(--orange);
+}
+
+.login-card .brand h1 {
+    color: var(--orange);
+}
+
+.login-card .brand p {
+    color: #777;
+}
