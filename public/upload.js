@@ -236,21 +236,13 @@ async function loadChannels(
 if (channelSearch) {
 
     channelSearch.addEventListener(
-        "focus",
-        function () {
+    "focus",
+    function () {
 
-            if (
-                !channelResults.innerHTML.trim()
-            ) {
+        loadChannels("");
 
-                loadChannels(
-                    this.value.trim()
-                );
-
-            }
-
-        }
-    );
+    }
+);
 
 
     /* =========================
