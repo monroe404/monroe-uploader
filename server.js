@@ -18,6 +18,12 @@ const config = require("./config");
 
 const app = express();
 
+app.use(
+    express.static(
+        path.join(__dirname, "public")
+    )
+);
+
 const PORT = config.PORT || process.env.PORT || 3000;
 
 // =========================
