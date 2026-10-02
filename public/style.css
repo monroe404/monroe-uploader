@@ -1169,3 +1169,168 @@ body {
     }
 
 }
+
+/* ================================= */
+/* DASHBOARD FINAL FIX */
+/* ================================= */
+
+#dashboardPage {
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+/* Semua teks dashboard */
+
+#dashboardPage h1,
+#dashboardPage h2,
+#dashboardPage h3,
+#dashboardPage p,
+#dashboardPage label,
+#dashboardPage span,
+#dashboardPage small {
+    color: inherit;
+}
+
+/* Section title */
+
+#dashboardPage h2 {
+    font-size: 24px;
+    margin: 6px 0 8px;
+    font-weight: 800;
+}
+
+#dashboardPage h3 {
+    font-size: 19px;
+    margin: 8px 0;
+    font-weight: 800;
+}
+
+#dashboardPage .muted {
+    color: #999;
+    font-size: 13px;
+}
+
+/* Label */
+
+#dashboardPage label {
+    display: block;
+    color: #ddd;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+/* Input */
+
+#dashboardPage input:not([type="file"]),
+#dashboardPage textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 13px;
+    margin-bottom: 14px;
+
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 9px;
+
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#dashboardPage textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+#dashboardPage input::placeholder,
+#dashboardPage textarea::placeholder {
+    color: #777;
+}
+
+#dashboardPage input:not([type="file"]):focus,
+#dashboardPage textarea:focus {
+    border-color: #ff7a00;
+}
+
+/* File input */
+
+#dashboardPage input[type="file"] {
+    width: 100%;
+    color: #aaa;
+    margin-bottom: 12px;
+}
+
+/* Buttons */
+
+#dashboardPage button {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+
+    background: linear-gradient(
+        135deg,
+        #ff7a00,
+        #ff5b00
+    );
+
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#dashboardPage button:hover {
+    filter: brightness(1.1);
+}
+
+/* Logout */
+
+#dashboardPage #logoutBtn {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Upload cards */
+
+#dashboardPage .upload-choice {
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,122,0,0.18);
+    border-radius: 14px;
+    padding: 20px;
+}
+
+/* Profile card */
+
+#dashboardPage > .card {
+    background: rgba(0,0,0,0.65);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+}
+
+/* Orange eyebrow */
+
+#dashboardPage .eyebrow {
+    color: #ff7a00;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+    #dashboardPage h2 {
+        font-size: 21px;
+    }
+
+    #dashboardPage h3 {
+        font-size: 17px;
+    }
+
+    #dashboardPage .upload-choice {
+        padding: 17px;
+    }
+
+}
