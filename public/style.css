@@ -753,3 +753,70 @@ body {
     }
 
 }
+
+/* =========================================
+   FIX BOTTOM UPLOAD FORM
+========================================= */
+
+.upload-page form {
+    width: 100%;
+}
+
+.upload-page .field {
+    margin-bottom: 24px;
+}
+
+.upload-page .field label {
+    margin-bottom: 9px;
+}
+
+.upload-page .field small {
+    display: block;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+.upload-page .primary-btn {
+    margin-top: 8px;
+    min-height: 54px;
+}
+
+.upload-page .message {
+    margin: 12px 0 0;
+}
+
+.upload-page > .secondary-btn {
+    margin-top: 24px;
+    min-height: 52px;
+}
+
+
+/* Jarak khusus bagian file */
+
+.upload-page input[type="file"] {
+    min-height: 54px;
+}
+
+
+/* HP */
+
+@media (max-width: 700px) {
+
+    .upload-page {
+        padding-bottom: 26px;
+    }
+
+    .upload-page .field {
+        margin-bottom: 22px;
+    }
+
+    .upload-page .primary-btn {
+        min-height: 56px;
+    }
+
+    .upload-page > .secondary-btn {
+        margin-top: 22px;
+        min-height: 54px;
+    }
+
+}
