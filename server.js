@@ -672,7 +672,7 @@ async function sendDiscordShare(
     container.addTextDisplayComponents(
         new TextDisplayBuilder()
             .setContent(
-                `**credits :** ${mod.credits || "-"}`
+                `**🎨 credits :** ${mod.credits || "-"}`
             )
     );
 
@@ -681,14 +681,6 @@ async function sendDiscordShare(
         new TextDisplayBuilder()
             .setContent(
                 "File telah dipersiapkan dan siap digunakan untuk melengkapi kebutuhan kamu. Setiap detail dibuat dengan tujuan memberikan hasil yang lebih nyaman, menarik, dan sesuai kebutuhan. Silakan gunakan dengan bijak dan nikmati hasil akhirnya."
-            )
-    );
-
-
-    container.addTextDisplayComponents(
-        new TextDisplayBuilder()
-            .setContent(
-                "(pesan selesai)"
             )
     );
 
