@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-<title>Monroe File Uploader</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<link rel="stylesheet" href="/style.css">
+    <title>Monroe File Uploader</title>
+
+    <link
+        rel="stylesheet"
+        href="/style.css"
+    >
 </head>
 
 <body>
@@ -17,238 +24,270 @@
 
 <section class="card upload-page">
 
-<div class="upload-page-header">
+    <!-- HEADER -->
 
-    <div class="brand">
+    <div class="upload-page-header">
 
-        <div>
+        <div class="brand">
 
-            <h1>MONROE</h1>
+            <div>
 
-            <p>FILE SHARE</p>
+                <h1>MONROE</h1>
+
+                <p>FILE SHARE</p>
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+
+    <!-- TITLE -->
+
+    <div class="upload-page-title">
+
+        <span class="eyebrow">
+            UPLOADER
+        </span>
+
+        <h2 id="uploadTitle">
+            PUBLIC FILE
+        </h2>
+
+        <p
+            id="uploadDescription"
+            class="muted"
+        >
+            Upload file yang dapat dibagikan secara publik.
+        </p>
+
+    </div>
 
 
-<div class="upload-page-title">
+    <!-- FORM -->
 
-    <span class="eyebrow">
-        UPLOADER
-    </span>
-
-    <h2 id="uploadTitle">
-        PUBLIC FILE
-    </h2>
-
-    <p
-        id="uploadDescription"
-        class="muted"
+    <form
+        id="uploadForm"
+        enctype="multipart/form-data"
     >
-        Upload file yang dapat dibagikan secara publik.
-    </p>
 
-</div>
+        <!-- TYPE -->
 
-
-<form
-    id="uploadForm"
-    enctype="multipart/form-data"
->
-
-<input
-    id="fileType"
-    type="hidden"
-    name="type"
-    value="public"
->
+        <input
+            id="fileType"
+            type="hidden"
+            name="type"
+            value="public"
+        >
 
 
-<!-- PUBLIC CHANNEL -->
+        <!-- CHANNEL -->
 
-<div
-    class="field"
-    id="channelField"
->
+        <div
+            class="field"
+            id="channelField"
+        >
 
-<label>
-    CHANNEL / MOD
-</label>
+            <label>
+                CHANNEL
+            </label>
 
-<input
-    type="text"
-    id="channelSearch"
-    placeholder="🔎 Cari channel, contoh: skin asian"
-    autocomplete="off"
->
+            <input
+                type="text"
+                id="channelSearch"
+                placeholder="🔎 Cari channel..."
+                autocomplete="off"
+            >
 
-<input
-    type="hidden"
-    id="channelId"
-    name="channelId"
->
+            <input
+                type="hidden"
+                id="channelId"
+                name="channelId"
+            >
 
-<div
-    id="channelResults"
-    class="channel-results"
-></div>
+            <div
+                id="channelResults"
+                class="channel-results"
+            ></div>
 
-</div>
-
-
-<!-- CREDITS -->
-
-<div class="field">
-
-<label>
-    CREDITS / MAKER
-</label>
-
-<input
-    type="text"
-    name="credits"
-    placeholder="Contoh: SkyMods"
-    required
->
-
-</div>
+        </div>
 
 
-<!-- SOCIAL SPECIAL -->
+        <!-- CREDITS -->
 
-<div
-    id="socialFields"
-    style="display:none;"
->
+        <div class="field">
 
-<div class="field">
+            <label>
+                CREDITS / MAKER
+            </label>
 
-<label>
-    TIKTOK NAME (OPTIONAL)
-</label>
+            <input
+                type="text"
+                name="credits"
+                placeholder="Contoh: SkyMods"
+                required
+            >
 
-<input
-    type="text"
-    name="tiktok"
-    placeholder="@username"
->
-
-</div>
+        </div>
 
 
-<div class="field">
+        <!-- DESCRIPTION -->
 
-<label>
-    YOUTUBE NAME (OPTIONAL)
-</label>
+        <div class="field">
 
-<input
-    type="text"
-    name="youtube"
-    placeholder="Nama channel YouTube"
->
+            <label>
+                DESCRIPTION
+            </label>
 
-</div>
+            <textarea
+                name="description"
+                placeholder="Tulis deskripsi file..."
+                rows="5"
+            ></textarea>
 
-</div>
-
-
-<!-- PREVIEW -->
-
-<div class="field">
-
-<label>
-    🖼️ PREVIEW IMAGES
-</label>
+        </div>
 
 
-<div id="previewList">
+        <!-- SPECIAL SOCIAL -->
 
-<div class="preview-input-row">
+        <div
+            id="socialFields"
+            style="display:none;"
+        >
 
-<input
-    type="url"
-    name="previewUrls"
-    placeholder="https://cdn.discordapp.com/..."
->
+            <div class="field">
 
-<button
-    type="button"
-    class="remove-preview"
-    onclick="removePreview(this)"
->
-    ×
-</button>
+                <label>
+                    TIKTOK NAME
+                    <span>(OPTIONAL)</span>
+                </label>
 
-</div>
+                <input
+                    type="text"
+                    name="tiktok"
+                    placeholder="@username"
+                >
 
-</div>
-
-
-<button
-    type="button"
-    class="add-preview-btn"
-    onclick="addPreview()"
->
-    ＋ TAMBAH FOTO
-</button>
+            </div>
 
 
-<small>
-    Bisa menambahkan lebih dari satu foto preview.
-</small>
+            <div class="field">
 
-</div>
+                <label>
+                    YOUTUBE NAME
+                    <span>(OPTIONAL)</span>
+                </label>
 
+                <input
+                    type="text"
+                    name="youtube"
+                    placeholder="Nama channel YouTube"
+                >
 
-<!-- FILE -->
+            </div>
 
-<div class="field">
-
-<label>
-    📁 MOD FILES
-</label>
-
-<input
-    type="file"
-    name="files"
-    multiple
-    required
->
-
-<small>
-    Semua file akan otomatis dijadikan ZIP.
-</small>
-
-</div>
+        </div>
 
 
-<button
-    type="submit"
-    class="primary-btn"
->
-    📦 PUBLISH FILE
-</button>
+        <!-- PREVIEW -->
+
+        <div class="field">
+
+            <label>
+                PREVIEW IMAGES
+            </label>
+
+            <div id="previewList">
+
+                <div class="preview-input-row">
+
+                    <input
+                        type="url"
+                        name="previewUrls"
+                        placeholder="https://cdn.discordapp.com/..."
+                    >
+
+                    <button
+                        type="button"
+                        class="remove-preview"
+                        onclick="removePreview(this)"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            </div>
 
 
-<div
-    id="uploadMessage"
-    class="message"
-></div>
+            <button
+                type="button"
+                class="add-preview-btn"
+                onclick="addPreview()"
+            >
+                ＋ TAMBAH FOTO
+            </button>
 
-</form>
+
+            <small>
+                Maksimal 10 foto preview.
+            </small>
+
+        </div>
 
 
-<button
-    type="button"
-    class="secondary-btn"
-    onclick="history.back()"
->
-    ← BACK
-</button>
+        <!-- FILE -->
+
+        <div class="field">
+
+            <label>
+                MOD FILES
+            </label>
+
+            <input
+                type="file"
+                name="files"
+                multiple
+                required
+            >
+
+            <small>
+                Semua file akan dikirim satu per satu.
+            </small>
+
+        </div>
+
+
+        <!-- PUBLISH -->
+
+        <button
+            type="submit"
+            class="primary-btn"
+        >
+            PUBLISH FILE
+        </button>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="uploadMessage"
+            class="message"
+        ></div>
+
+    </form>
+
+
+    <!-- BACK -->
+
+    <button
+        type="button"
+        class="secondary-btn"
+        onclick="history.back()"
+    >
+        ← BACK
+    </button>
 
 </section>
 
