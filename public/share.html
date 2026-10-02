@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Monroe File Share</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+        .share-page {
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-card {
+            width: 100%;
+            max-width: 620px;
+            background: rgba(8, 8, 8, 0.9);
+            border: 1px solid rgba(255, 122, 0, 0.25);
+            border-radius: 18px;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7);
+        }
+
+        .share-preview {
+            width: 100%;
+            max-height: 360px;
+            object-fit: cover;
+            display: block;
+            background: #111;
+        }
+
+        .share-content {
+            padding: 25px;
+        }
+
+        .share-title {
+            font-size: 25px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .share-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .share-info div {
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        .share-info span {
+            color: #999;
+        }
+
+        .share-info a {
+            color: var(--orange);
+            text-decoration: none;
+        }
+
+        .share-info a:hover {
+            text-decoration: underline;
+        }
+
+        .share-description {
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #bbb;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .share-note {
+            padding: 15px;
+            border-left: 3px solid var(--orange);
+            background: rgba(255, 122, 0, 0.06);
+            color: #bbb;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        .download-all {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 100%;
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background: linear-gradient(
+                135deg,
+                #ff7a00,
+                #ff5100
+            );
+
+            color: white;
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+
+            transition: 0.2s;
+        }
+
+        .download-all:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 10px 30px
+                rgba(255, 122, 0, 0.25);
+        }
+
+        .share-brand {
+            color: var(--orange);
+            font-size: 11px;
+            letter-spacing: 3px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .error {
+            text-align: center;
+            color: #aaa;
+        }
+
+        .error h2 {
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .share-page {
+                padding: 20px 12px;
+            }
+
+            .share-content {
+                padding: 20px;
+            }
+
+            .share-title {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background"></div>
+
+    <main class="share-page">
+
+        <div class="share-card" id="shareCard">
+
+            <div class="share-content">
+                Loading...
+            </div>
+
+        </div>
+
+    </main>
+
+
+<script>
+
+const shareCard =
+    document.getElementById("shareCard");
+
+
+function escapeHTML(value) {
+
+    if (!value) return "";
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function socialLink(
+    label,
+    value
+) {
+
+    if (!value) {
+        return "";
+    }
+
+    let href = value;
+
+    if (
+        !value.startsWith("http://") &&
+        !value.startsWith("https://")
+    ) {
+
+        if (value.startsWith("discord.gg/")) {
+            href =
+                "https://" + value;
+        }
+
+        else if (
+            value.startsWith("@")
+        ) {
+
+            href =
+                "https://www.tiktok.com/" +
+                value;
+
+        }
+
+        else {
+
+            href =
+                "https://" + value;
+
+        }
+
+    }
+
+
+    return `
+        <div>
+            <span>${label}:</span>
+            <a
+                href="${escapeHTML(href)}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                ${escapeHTML(value)}
+            </a>
+        </div>
+    `;
+
+}
+
+
+async function loadShare() {
+
+    const parts =
+        window.location.pathname
+            .split("/");
+
+    const id =
+        parts[parts.length - 1];
+
+
+    if (!id) {
+
+        showError(
+            "Share tidak ditemukan."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/share/" + id
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            showError(
+                "Share tidak ditemukan."
+            );
+
+            return;
+
+        }
+
+
+        const mod =
+            data.mod;
+
+
+        const profile =
+            mod.uploaderProfile ||
+            {};
+
+
+        let preview = "";
+
+        if (mod.preview) {
+
+            preview = `
+                <img
+                    class="share-preview"
+                    src="${mod.preview}"
+                    alt="Preview"
+                >
+            `;
+
+        }
+
+
+        shareCard.innerHTML = `
+
+            ${preview}
+
+            <div class="share-content">
+
+                <div class="share-brand">
+                    MONROE FILE SHARE
+                </div>
+
+                <div class="share-title">
+                    ${escapeHTML(
+                        mod.modName
+                    )}
+                </div>
+
+                <div class="share-info">
+
+                    <div>
+                        👤
+                        <strong>
+                            ${escapeHTML(
+                                profile.displayName ||
+                                mod.uploader
+                            )}
+                        </strong>
+                    </div>
+
+                    ${socialLink(
+                        "🎵 TikTok",
+                        profile.tiktok
+                    )}
+
+                    ${socialLink(
+                        "▶️ YouTube",
+                        profile.youtube
+                    )}
+
+                    ${socialLink(
+                        "💬 Discord Community",
+                        profile.discord
+                    )}
+
+                    <div>
+                        🛠️ Credits:
+                        ${escapeHTML(
+                            mod.credits ||
+                            "-"
+                        )}
+                    </div>
+
+                </div>
+
+
+                ${
+                    mod.description
+                        ? `
+                            <div class="share-description">
+                                ${escapeHTML(
+                                    mod.description
+                                )}
+                            </div>
+                        `
+                        : ""
+                }
+
+
+                <div class="share-note">
+
+                    📝 <strong>Catatan</strong>
+
+                    <br>
+
+                    ${escapeHTML(
+                        mod.note
+                    )}
+
+                </div>
+
+
+                <a
+                    class="download-all"
+                    href="${mod.zip}"
+                >
+                    ⬇️ DOWNLOAD ALL
+                </a>
+
+            </div>
+        `;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showError(
+            "Terjadi kesalahan saat memuat share."
+        );
+
+    }
+
+}
+
+
+function showError(
+    message
+) {
+
+    shareCard.innerHTML = `
+
+        <div class="share-content error">
+
+            <div class="share-brand">
+                MONROE FILE SHARE
+            </div>
+
+            <h2>
+                Oops!
+            </h2>
+
+            <p>
+                ${escapeHTML(message)}
+            </p>
+
+        </div>
+    `;
+
+}
+
+
+loadShare();
+
+</script>
+
+</body>
+</html>
