@@ -20,106 +20,60 @@ const config = require("./config");
 
 
 /* =========================================
-   DIRECTORIES
+   PATH
 ========================================= */
 
-const DATA_DIR =
-    path.join(__dirname, "data");
-
-const UPLOAD_DIR =
-    path.join(__dirname, "uploads");
-
-const PUBLIC_DIR =
-    path.join(__dirname, "public");
-
-const MODS_FILE =
-    path.join(DATA_DIR, "mods.json");
+const DATA_DIR = path.join(__dirname, "data");
+const UPLOAD_DIR = path.join(__dirname, "uploads");
+const PUBLIC_DIR = path.join(__dirname, "public");
+const MODS_FILE = path.join(DATA_DIR, "mods.json");
 
 
-/* =========================================
-   CREATE DIRECTORIES
-========================================= */
+fs.mkdirSync(DATA_DIR, {
+    recursive: true
+});
 
-fs.mkdirSync(
-    DATA_DIR,
-    {
-        recursive: true
-    }
-);
-
-fs.mkdirSync(
-    UPLOAD_DIR,
-    {
-        recursive: true
-    }
-);
+fs.mkdirSync(UPLOAD_DIR, {
+    recursive: true
+});
 
 
 if (!fs.existsSync(MODS_FILE)) {
-
-    fs.writeFileSync(
-        MODS_FILE,
-        "[]"
-    );
-
+    fs.writeFileSync(MODS_FILE, "[]");
 }
 
 
 /* =========================================
-   JSON FUNCTIONS
+   JSON
 ========================================= */
 
-function readJSON(
-    file,
-    fallback
-) {
+function readJSON(file, fallback) {
 
     try {
 
-        if (
-            !fs.existsSync(file)
-        ) {
-
+        if (!fs.existsSync(file)) {
             return fallback;
-
         }
 
-
         return JSON.parse(
-            fs.readFileSync(
-                file,
-                "utf8"
-            )
+            fs.readFileSync(file, "utf8")
         );
 
     } catch (error) {
 
-        console.error(
-            "JSON ERROR:",
-            error
-        );
+        console.error("JSON ERROR:", error);
 
         return fallback;
-
     }
-
 }
 
 
-function writeJSON(
-    file,
-    data
-) {
+function writeJSON(file, data) {
 
     fs.writeFileSync(
         file,
-        JSON.stringify(
-            data,
-            null,
-            2
-        )
+        JSON.stringify(data, null, 2)
     );
-
 }
 
 
@@ -130,23 +84,13 @@ function writeJSON(
 const USERS = {
 
     monroe404: {
-
-        password:
-            "farras1239091",
-
-        role:
-            "founder"
-
+        password: "farras1239091",
+        role: "founder"
     },
 
     skymods404: {
-
-        password:
-            "sky1239091",
-
-        role:
-            "uploader"
-
+        password: "sky1239091",
+        role: "uploader"
     }
 
 };
@@ -156,32 +100,11 @@ const USERS = {
    EXPRESS
 ========================================= */
 
-const app =
-    express();
+const app = express();
 
+app.set("trust proxy", 1);
 
-/*
-   Railway / HTTPS
-*/
-
-app.set(
-    "trust proxy",
-    1
-);
-
-
-/*
-   JSON
-*/
-
-app.use(
-    express.json()
-);
-
-
-/*
-   FORM
-*/
+app.use(express.json());
 
 app.use(
     express.urlencoded({
@@ -201,29 +124,23 @@ app.use(
             process.env.SESSION_SECRET ||
             "monroe-file-share-secret",
 
-        resave:
-            false,
+        resave: false,
 
-        saveUninitialized:
-            false,
+        saveUninitialized: false,
 
-        rolling:
-            true,
+        rolling: true,
 
         cookie: {
 
             maxAge:
                 7 * 24 * 60 * 60 * 1000,
 
-            httpOnly:
-                true,
+            httpOnly: true,
 
-            sameSite:
-                "lax",
+            sameSite: "lax",
 
             secure:
-                process.env.NODE_ENV ===
-                "production"
+                process.env.NODE_ENV === "production"
 
         }
 
@@ -236,77 +153,62 @@ app.use(
 ========================================= */
 
 app.use(
-    express.static(
-        PUBLIC_DIR
-    )
+    express.static(PUBLIC_DIR)
 );
 
 
 /* =========================================
-   MULTER STORAGE
+   MULTER
 ========================================= */
 
 const storage =
     multer.diskStorage({
 
-        destination:
-            function (
-                req,
-                file,
-                callback
-            ) {
+        destination: function (
+            req,
+            file,
+            callback
+        ) {
 
-                callback(
-                    null,
-                    UPLOAD_DIR
+            callback(
+                null,
+                UPLOAD_DIR
+            );
+
+        },
+
+        filename: function (
+            req,
+            file,
+            callback
+        ) {
+
+            const ext =
+                path.extname(
+                    file.originalname
                 );
 
-            },
-
-
-        filename:
-            function (
-                req,
-                file,
-                callback
-            ) {
-
-                const extension =
-                    path.extname(
-                        file.originalname
-                    );
-
-
-                const original =
-                    path.basename(
-                        file.originalname,
-                        extension
-                    );
-
-
-                const safeName =
-                    original.replace(
-                        /[^a-zA-Z0-9._-]/g,
-                        "_"
-                    );
-
-
-                const random =
-                    crypto
-                        .randomBytes(5)
-                        .toString("hex");
-
-
-                const filename =
-                    `${Date.now()}-${random}-${safeName}${extension}`;
-
-
-                callback(
-                    null,
-                    filename
+            const name =
+                path.basename(
+                    file.originalname,
+                    ext
+                )
+                .replace(
+                    /[^a-zA-Z0-9._-]/g,
+                    "_"
                 );
 
-            }
+            const random =
+                crypto
+                    .randomBytes(5)
+                    .toString("hex");
+
+            callback(
+                null,
+                `${Date.now()}-${random}-${name}${ext}`
+            );
+
+        }
 
     });
 
@@ -314,14 +216,11 @@ const storage =
 const upload =
     multer({
 
-        storage:
-
-            storage,
+        storage,
 
         limits: {
 
-            files:
-                50,
+            files: 50,
 
             fileSize:
                 500 * 1024 * 1024
@@ -332,7 +231,7 @@ const upload =
 
 
 /* =========================================
-   AUTH MIDDLEWARE
+   LOGIN CHECK
 ========================================= */
 
 function requireLogin(
@@ -341,9 +240,7 @@ function requireLogin(
     next
 ) {
 
-    if (
-        !req.session.user
-    ) {
+    if (!req.session.user) {
 
         return res
             .status(401)
@@ -356,9 +253,7 @@ function requireLogin(
 
     }
 
-
     next();
-
 }
 
 
@@ -375,17 +270,13 @@ app.post(
 
         const username =
             String(
-                req.body.username ||
-                ""
+                req.body.username || ""
             ).trim();
-
 
         const password =
             String(
-                req.body.password ||
-                ""
+                req.body.password || ""
             );
-
 
         const user =
             USERS[username];
@@ -393,8 +284,7 @@ app.post(
 
         if (
             !user ||
-            user.password !==
-                password
+            user.password !== password
         ) {
 
             return res
@@ -420,31 +310,22 @@ app.post(
         };
 
 
-        /*
-           Pastikan session
-           tersimpan sebelum
-           response dikirim.
-        */
-
         req.session.save(
-            function (
-                error
-            ) {
+            function (error) {
 
                 if (error) {
 
                     console.error(
-                        "SESSION SAVE ERROR:",
+                        "SESSION ERROR:",
                         error
                     );
-
 
                     return res
                         .status(500)
                         .json({
 
                             message:
-                                "Session gagal dibuat."
+                                "Gagal menyimpan session."
 
                         });
 
@@ -453,8 +334,7 @@ app.post(
 
                 res.json({
 
-                    success:
-                        true,
+                    success: true,
 
                     username:
                         username,
@@ -483,9 +363,7 @@ app.post(
     ) {
 
         req.session.destroy(
-            function (
-                error
-            ) {
+            function (error) {
 
                 if (error) {
 
@@ -508,8 +386,7 @@ app.post(
 
                 res.json({
 
-                    success:
-                        true
+                    success: true
 
                 });
 
@@ -531,14 +408,11 @@ app.get(
         res
     ) {
 
-        if (
-            !req.session.user
-        ) {
+        if (!req.session.user) {
 
             return res.json({
 
-                loggedIn:
-                    false
+                loggedIn: false
 
             });
 
@@ -547,8 +421,7 @@ app.get(
 
         res.json({
 
-            loggedIn:
-                true,
+            loggedIn: true,
 
             username:
                 req.session.user.username,
@@ -563,38 +436,27 @@ app.get(
 
 
 /* =========================================
-   DISCORD CLIENT
+   DISCORD
 ========================================= */
 
 const discordClient =
     new Client({
 
         intents: [
-
             GatewayIntentBits.Guilds
-
         ]
 
     });
 
 
-let discordReady =
-    false;
+let discordReady = false;
 
-
-/* =========================================
-   DISCORD READY
-========================================= */
 
 discordClient.once(
     "ready",
-    function (
-        client
-    ) {
+    function (client) {
 
-        discordReady =
-            true;
-
+        discordReady = true;
 
         console.log(
             `Discord connected as ${client.user.tag}`
@@ -604,15 +466,9 @@ discordClient.once(
 );
 
 
-/* =========================================
-   DISCORD ERROR
-========================================= */
-
 discordClient.on(
     "error",
-    function (
-        error
-    ) {
+    function (error) {
 
         console.error(
             "DISCORD ERROR:",
@@ -623,22 +479,14 @@ discordClient.on(
 );
 
 
-/* =========================================
-   DISCORD LOGIN
-========================================= */
-
-if (
-    process.env.DISCORD_TOKEN
-) {
+if (process.env.DISCORD_TOKEN) {
 
     discordClient
         .login(
             process.env.DISCORD_TOKEN
         )
         .catch(
-            function (
-                error
-            ) {
+            function (error) {
 
                 console.error(
                     "DISCORD LOGIN ERROR:",
@@ -658,14 +506,12 @@ if (
 
 
 /* =========================================
-   GET GUILD
+   GUILD
 ========================================= */
 
 async function getGuild() {
 
-    if (
-        !discordReady
-    ) {
+    if (!discordReady) {
 
         throw new Error(
             "Discord bot belum siap."
@@ -673,11 +519,9 @@ async function getGuild() {
 
     }
 
-
     return await discordClient.guilds.fetch(
         config.GUILD_ID
     );
-
 }
 
 
@@ -695,12 +539,6 @@ app.get(
 
         try {
 
-            /*
-               Hanya Founder
-               yang bisa memilih
-               Public Channel.
-            */
-
             if (
                 req.session.user.role !==
                 "founder"
@@ -711,7 +549,7 @@ app.get(
                     .json({
 
                         message:
-                            "Hanya Founder yang dapat memilih Public Channel."
+                            "Hanya Founder yang dapat memilih channel."
 
                     });
 
@@ -720,8 +558,7 @@ app.get(
 
             const search =
                 String(
-                    req.query.search ||
-                    ""
+                    req.query.search || ""
                 )
                 .trim()
                 .toLowerCase();
@@ -731,8 +568,7 @@ app.get(
 
                 return res.json({
 
-                    channels:
-                        []
+                    channels: []
 
                 });
 
@@ -750,35 +586,23 @@ app.get(
             const result =
                 channels
                     .filter(
-                        function (
-                            channel
-                        ) {
+                        function (channel) {
 
                             return (
-
                                 channel &&
-
                                 channel.isTextBased() &&
-
                                 channel.guildId ===
                                     config.GUILD_ID &&
-
                                 channel.name &&
-
                                 channel.name
                                     .toLowerCase()
-                                    .includes(
-                                        search
-                                    )
-
+                                    .includes(search)
                             );
 
                         }
                     )
                     .map(
-                        function (
-                            channel
-                        ) {
+                        function (channel) {
 
                             return {
 
@@ -792,10 +616,7 @@ app.get(
 
                         }
                     )
-                    .slice(
-                        0,
-                        25
-                    );
+                    .slice(0, 25);
 
 
             res.json({
@@ -829,7 +650,7 @@ app.get(
 
 
 /* =========================================
-   DISCORD COMPONENTS V2
+   DISCORD FILE SHARE
 ========================================= */
 
 async function sendDiscordShare(
@@ -859,12 +680,9 @@ async function sendDiscordShare(
     }
 
 
-    /*
-       COMPONENT V2 CONTAINER
-
-       Accent orange =
-       garis/border orange
-    */
+    /* =====================================
+       KOTAK COMPONENTS V2
+    ===================================== */
 
     const container =
         new ContainerBuilder()
@@ -872,10 +690,6 @@ async function sendDiscordShare(
                 0xff7a00
             );
 
-
-    /* =====================================
-       TITLE
-    ===================================== */
 
     container.addTextDisplayComponents(
 
@@ -887,9 +701,36 @@ async function sendDiscordShare(
     );
 
 
-    /* =====================================
-       SEPARATOR
-    ===================================== */
+    container.addSeparatorComponents(
+
+        new SeparatorBuilder()
+
+    );
+
+
+    container.addTextDisplayComponents(
+
+        new TextDisplayBuilder()
+            .setContent(
+                `**Credits :** ${mod.credits || "-"}`
+            )
+
+    );
+
+
+    if (mod.description) {
+
+        container.addTextDisplayComponents(
+
+            new TextDisplayBuilder()
+                .setContent(
+                    mod.description
+                )
+
+        );
+
+    }
+
 
     container.addSeparatorComponents(
 
@@ -899,96 +740,32 @@ async function sendDiscordShare(
 
 
     /* =====================================
-       DESCRIPTION
+       KIRIM KOTAK SAJA
     ===================================== */
 
-    if (
-        mod.description
-    ) {
+    await channel.send({
 
-        container.addTextDisplayComponents(
+        components: [
+            container
+        ],
 
-            new TextDisplayBuilder()
-                .setContent(
-                    `**Description**\n${mod.description}`
-                )
+        flags:
+            MessageFlags.IsComponentsV2
 
-        );
-
-
-        container.addSeparatorComponents(
-
-            new SeparatorBuilder()
-
-        );
-
-    }
+    });
 
 
     /* =====================================
-       CREDITS
+       PREVIEW DI LUAR KOTAK
     ===================================== */
 
-    container.addTextDisplayComponents(
-
-        new TextDisplayBuilder()
-            .setContent(
-                `**Credits**\n${mod.credits || "-"}`
-            )
-
-    );
-
-
-    /* =====================================
-       SPECIAL SOCIAL
-    ===================================== */
-
-    if (
-        mod.tiktok
-    ) {
-
-        container.addTextDisplayComponents(
-
-            new TextDisplayBuilder()
-                .setContent(
-                    `**TikTok**\n${mod.tiktok}`
-                )
-
-        );
-
-    }
-
-
-    if (
-        mod.youtube
-    ) {
-
-        container.addTextDisplayComponents(
-
-            new TextDisplayBuilder()
-                .setContent(
-                    `**YouTube**\n${mod.youtube}`
-                )
-
-        );
-
-    }
-
-
-    /* =====================================
-       PREVIEW IMAGES
-    ===================================== */
-
-    const previewUrls =
+    const previews =
         Array.isArray(
             mod.previewUrls
         )
-
             ? mod.previewUrls
                 .filter(
-                    function (
-                        url
-                    ) {
+                    function (url) {
 
                         return /^https?:\/\//i.test(
                             url
@@ -996,24 +773,11 @@ async function sendDiscordShare(
 
                     }
                 )
-                .slice(
-                    0,
-                    10
-                )
-
+                .slice(0, 10)
             : [];
 
 
-    if (
-        previewUrls.length > 0
-    ) {
-
-        container.addSeparatorComponents(
-
-            new SeparatorBuilder()
-
-        );
-
+    if (previews.length > 0) {
 
         const gallery =
             new MediaGalleryBuilder();
@@ -1021,15 +785,11 @@ async function sendDiscordShare(
 
         gallery.addItems(
 
-            previewUrls.map(
-                function (
-                    url
-                ) {
+            previews.map(
+                function (url) {
 
                     return new MediaGalleryItemBuilder()
-                        .setURL(
-                            url
-                        );
+                        .setURL(url);
 
                 }
             )
@@ -1037,48 +797,48 @@ async function sendDiscordShare(
         );
 
 
-        container.addMediaGalleryComponents(
-            gallery
-        );
+        await channel.send({
+
+            components: [
+                gallery
+            ],
+
+            flags:
+                MessageFlags.IsComponentsV2
+
+        });
 
     }
 
 
     /* =====================================
-       SEND TO DISCORD
+       FILE DI LUAR KOTAK
     ===================================== */
 
-    await channel.send({
+    for (
+        const file
+        of uploadedFiles
+    ) {
 
-        components: [
+        await channel.send({
 
-            container
+            files: [
 
-        ],
+                {
 
-        files:
-            uploadedFiles.map(
-                function (
-                    file
-                ) {
+                    attachment:
+                        file.path,
 
-                    return {
-
-                        attachment:
-                            file.path,
-
-                        name:
-                            file.originalname
-
-                    };
+                    name:
+                        file.originalname
 
                 }
-            ),
 
-        flags:
-            MessageFlags.IsComponentsV2
+            ]
 
-    });
+        });
+
+    }
 
 
     return {
@@ -1109,7 +869,7 @@ app.post(
         res
     ) {
 
-        let uploadFiles =
+        const uploadedFiles =
             req.files || [];
 
 
@@ -1120,45 +880,11 @@ app.post(
 
 
             /* =====================================
-               TYPE
-            ===================================== */
-
-            const type =
-                req.body.type ===
-                "special"
-
-                    ? "special"
-
-                    : "public";
-
-
-            /* =====================================
-               PERMISSION
-            ===================================== */
-
-            if (
-                type === "public" &&
-                user.role !== "founder"
-            ) {
-
-                return res
-                    .status(403)
-                    .json({
-
-                        message:
-                            "Uploader tidak memiliki akses Public File."
-
-                    });
-
-            }
-
-
-            /* =====================================
                FILE CHECK
             ===================================== */
 
             if (
-                !uploadFiles.length
+                uploadedFiles.length === 0
             ) {
 
                 return res
@@ -1174,19 +900,43 @@ app.post(
 
 
             /* =====================================
+               PUBLIC / SPECIAL
+            ===================================== */
+
+            const uploadType =
+                req.body.type === "special"
+                    ? "special"
+                    : "public";
+
+
+            if (
+                uploadType === "public" &&
+                user.role !== "founder"
+            ) {
+
+                return res
+                    .status(403)
+                    .json({
+
+                        message:
+                            "Kamu tidak memiliki akses Public File."
+
+                    });
+
+            }
+
+
+            /* =====================================
                CREDITS
             ===================================== */
 
             const credits =
                 String(
-                    req.body.credits ||
-                    ""
+                    req.body.credits || ""
                 ).trim();
 
 
-            if (
-                !credits
-            ) {
+            if (!credits) {
 
                 return res
                     .status(400)
@@ -1206,8 +956,7 @@ app.post(
 
             const description =
                 String(
-                    req.body.description ||
-                    ""
+                    req.body.description || ""
                 ).trim();
 
 
@@ -1215,13 +964,17 @@ app.post(
                CHANNEL
             ===================================== */
 
-            let channelId =
-                null;
+            let channelId;
 
 
             if (
-                type === "public"
+                uploadType === "special"
             ) {
+
+                channelId =
+                    config.UPLOADER_CHANNEL_ID;
+
+            } else {
 
                 channelId =
                     String(
@@ -1230,36 +983,24 @@ app.post(
                     ).trim();
 
 
-                if (
-                    !channelId
-                ) {
+                if (!channelId) {
 
                     return res
                         .status(400)
                         .json({
 
                             message:
-                                "Channel Public wajib dipilih."
+                                "Pilih channel terlebih dahulu."
 
                         });
 
                 }
 
-            } else {
-
-                /*
-                   Special otomatis
-                   masuk channel uploader.
-                */
-
-                channelId =
-                    config.UPLOADER_CHANNEL_ID;
-
             }
 
 
             /* =====================================
-               PREVIEW URLS
+               PREVIEW
             ===================================== */
 
             let previewUrls =
@@ -1274,9 +1015,7 @@ app.post(
 
                 previewUrls =
                     previewUrls
-                        ? [
-                            previewUrls
-                        ]
+                        ? [previewUrls]
                         : [];
 
             }
@@ -1285,9 +1024,7 @@ app.post(
             previewUrls =
                 previewUrls
                     .map(
-                        function (
-                            url
-                        ) {
+                        function (url) {
 
                             return String(
                                 url || ""
@@ -1296,9 +1033,7 @@ app.post(
                         }
                     )
                     .filter(
-                        function (
-                            url
-                        ) {
+                        function (url) {
 
                             return (
                                 url.length > 0
@@ -1307,9 +1042,7 @@ app.post(
                         }
                     )
                     .filter(
-                        function (
-                            url
-                        ) {
+                        function (url) {
 
                             return /^https?:\/\//i.test(
                                 url
@@ -1324,28 +1057,22 @@ app.post(
 
 
             /* =====================================
-               SOCIAL
+               SPECIAL SOCIAL
             ===================================== */
 
             const tiktok =
-                type === "special"
-
+                uploadType === "special"
                     ? String(
-                        req.body.tiktok ||
-                        ""
+                        req.body.tiktok || ""
                     ).trim()
-
                     : "";
 
 
             const youtube =
-                type === "special"
-
+                uploadType === "special"
                     ? String(
-                        req.body.youtube ||
-                        ""
+                        req.body.youtube || ""
                     ).trim()
-
                     : "";
 
 
@@ -1355,42 +1082,31 @@ app.post(
 
             const id =
                 crypto
-                    .randomBytes(
-                        8
-                    )
-                    .toString(
-                        "hex"
-                    );
+                    .randomBytes(8)
+                    .toString("hex");
 
 
             /* =====================================
-               FILE NAME
+               NAME
             ===================================== */
 
             const firstFile =
-                uploadFiles[0];
+                uploadedFiles[0];
 
 
-            const originalName =
+            const fileName =
                 path.parse(
                     firstFile.originalname
                 ).name;
 
 
-            const modName =
-                originalName ||
-                "Monroe File";
-
-
             /* =====================================
-               SAVE FILE INFORMATION
+               SAVE FILE DATA
             ===================================== */
 
             const savedFiles =
-                uploadFiles.map(
-                    function (
-                        file
-                    ) {
+                uploadedFiles.map(
+                    function (file) {
 
                         return {
 
@@ -1409,7 +1125,7 @@ app.post(
 
 
             /* =====================================
-               MOD DATA
+               MOD
             ===================================== */
 
             const mod = {
@@ -1420,11 +1136,8 @@ app.post(
 
                 name:
 
-                    modName,
-
-                type:
-
-                    type,
+                    fileName ||
+                    "Monroe File",
 
                 description:
 
@@ -1467,7 +1180,7 @@ app.post(
 
 
             /* =====================================
-               SAVE DATA
+               SAVE
             ===================================== */
 
             const mods =
@@ -1489,35 +1202,27 @@ app.post(
 
 
             /* =====================================
-               SEND DISCORD
+               DISCORD
             ===================================== */
 
-            let discordResult =
+            let discord =
                 null;
 
 
             try {
 
-                discordResult =
+                discord =
                     await sendDiscordShare(
                         mod,
-                        uploadFiles
+                        uploadedFiles
                     );
 
-
-            } catch (
-                discordError
-            ) {
+            } catch (error) {
 
                 console.error(
                     "DISCORD SEND ERROR:",
-                    discordError
+                    error
                 );
-
-                /*
-                   Data upload tetap disimpan.
-                   User tidak dilempar logout.
-                */
 
             }
 
@@ -1531,17 +1236,16 @@ app.post(
                 success:
                     true,
 
-                id:
-                    id,
-
                 message:
                     "File berhasil dipublish!",
 
+                id:
+                    id,
+
                 discord:
-                    discordResult
+                    discord
 
             });
-
 
         } catch (error) {
 
@@ -1552,13 +1256,14 @@ app.post(
 
 
             /*
-               Hapus file kalau proses
-               benar-benar gagal.
+               Hapus file hanya kalau
+               proses upload benar-benar
+               gagal.
             */
 
             for (
                 const file
-                of uploadFiles
+                of uploadedFiles
             ) {
 
                 try {
@@ -1626,9 +1331,7 @@ app.get(
 
             const mod =
                 mods.find(
-                    function (
-                        item
-                    ) {
+                    function (item) {
 
                         return (
                             item.id ===
@@ -1661,9 +1364,6 @@ app.get(
                 name:
                     mod.name,
 
-                type:
-                    mod.type,
-
                 description:
                     mod.description ||
                     "",
@@ -1678,9 +1378,6 @@ app.get(
 
                 youtube:
                     mod.youtube ||
-                    "",
-
-                discord:
                     "",
 
                 previewUrls:
@@ -1720,12 +1417,12 @@ app.get(
 
 
 /* =========================================
-   DOWNLOAD INDIVIDUAL FILE
+   DOWNLOAD
 ========================================= */
 
 app.get(
     "/download/:id/:index",
-    async function (
+    function (
         req,
         res
     ) {
@@ -1741,9 +1438,7 @@ app.get(
 
             const mod =
                 mods.find(
-                    function (
-                        item
-                    ) {
+                    function (item) {
 
                         return (
                             item.id ===
@@ -1772,12 +1467,9 @@ app.get(
 
 
             if (
-                !Number.isInteger(
-                    index
-                ) ||
+                !Number.isInteger(index) ||
                 index < 0 ||
-                index >=
-                    mod.files.length
+                index >= mod.files.length
             ) {
 
                 return res
@@ -1819,7 +1511,6 @@ app.get(
                 filePath,
                 file.originalName
             );
-
 
         } catch (error) {
 
@@ -1908,7 +1599,7 @@ app.get(
 
 
 /* =========================================
-   404 API
+   API 404
 ========================================= */
 
 app.use(
@@ -1932,7 +1623,7 @@ app.use(
 
 
 /* =========================================
-   ERROR HANDLER
+   SERVER ERROR
 ========================================= */
 
 app.use(
@@ -1953,9 +1644,7 @@ app.use(
             res.headersSent
         ) {
 
-            return next(
-                error
-            );
+            return next(error);
 
         }
 
@@ -1974,7 +1663,7 @@ app.use(
 
 
 /* =========================================
-   START SERVER
+   START
 ========================================= */
 
 const PORT =
