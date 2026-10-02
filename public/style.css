@@ -1122,3 +1122,50 @@ body {
     }
 
 }
+
+/* ================================= */
+/* UPLOAD CARDS */
+/* ================================= */
+
+.upload-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    width: 100%;
+}
+
+.upload-panel {
+    min-height: 170px;
+    padding: 22px !important;
+}
+
+.upload-panel .field,
+.upload-panel form > label,
+.upload-panel form > input,
+.upload-panel form > textarea,
+.upload-panel form > small,
+.upload-panel form > button:not(.upload-open-btn) {
+    display: none;
+}
+
+.upload-panel h2 {
+    margin-bottom: 6px;
+}
+
+.upload-panel .upload-description {
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.upload-open-btn {
+    display: inline-block !important;
+}
+
+@media (max-width: 700px) {
+
+    .upload-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
