@@ -4,7 +4,6 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const archiver = require("archiver");
 const {
     Client,
     GatewayIntentBits,
@@ -19,34 +18,16 @@ const config = require("./config");
 ========================================= */
 
 const DATA_DIR =
-    path.join(
-        __dirname,
-        "data"
-    );
+    path.join(__dirname, "data");
 
 const UPLOAD_DIR =
-    path.join(
-        __dirname,
-        "uploads"
-    );
-
-const ZIP_DIR =
-    path.join(
-        __dirname,
-        "zips"
-    );
+    path.join(__dirname, "uploads");
 
 const PUBLIC_DIR =
-    path.join(
-        __dirname,
-        "public"
-    );
+    path.join(__dirname, "public");
 
 const MODS_FILE =
-    path.join(
-        DATA_DIR,
-        "mods.json"
-    );
+    path.join(DATA_DIR, "mods.json");
 
 
 /* =========================================
@@ -55,34 +36,19 @@ const MODS_FILE =
 
 [
     DATA_DIR,
-    UPLOAD_DIR,
-    ZIP_DIR
-].forEach(
-    dir => {
+    UPLOAD_DIR
+].forEach(dir => {
 
-        if (
-            !fs.existsSync(dir)
-        ) {
-
-            fs.mkdirSync(
-                dir,
-                {
-                    recursive:
-                        true
-                }
-            );
-
-        }
-
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, {
+            recursive: true
+        });
     }
-);
+
+});
 
 
-if (
-    !fs.existsSync(
-        MODS_FILE
-    )
-) {
+if (!fs.existsSync(MODS_FILE)) {
 
     fs.writeFileSync(
         MODS_FILE,
@@ -96,19 +62,12 @@ if (
    JSON
 ========================================= */
 
-function readJSON(
-    file,
-    fallback
-) {
+function readJSON(file, fallback) {
 
     try {
 
-        if (
-            !fs.existsSync(file)
-        ) {
-
+        if (!fs.existsSync(file)) {
             return fallback;
-
         }
 
         return JSON.parse(
@@ -118,9 +77,7 @@ function readJSON(
             )
         );
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.error(
             "JSON ERROR:",
@@ -128,16 +85,12 @@ function readJSON(
         );
 
         return fallback;
-
     }
 
 }
 
 
-function writeJSON(
-    file,
-    data
-) {
+function writeJSON(file, data) {
 
     fs.writeFileSync(
         file,
@@ -158,23 +111,13 @@ function writeJSON(
 const USERS = {
 
     monroe404: {
-
-        password:
-            "farras1239091",
-
-        role:
-            "founder"
-
+        password: "farras1239091",
+        role: "founder"
     },
 
     skymods404: {
-
-        password:
-            "sky1239091",
-
-        role:
-            "uploader"
-
+        password: "sky1239091",
+        role: "uploader"
     }
 
 };
@@ -195,8 +138,7 @@ app.use(
 
 app.use(
     express.urlencoded({
-        extended:
-            true
+        extended: true
     })
 );
 
@@ -208,20 +150,15 @@ app.use(
             process.env.SESSION_SECRET ||
             "monroe-file-share-secret",
 
-        resave:
-            false,
+        resave: false,
 
-        saveUninitialized:
-            false,
+        saveUninitialized: false,
 
         cookie: {
-
             maxAge:
                 7 * 24 * 60 * 60 * 1000,
 
-            httpOnly:
-                true
-
+            httpOnly: true
         }
 
     })
@@ -287,8 +224,7 @@ const upload =
 
         limits: {
 
-            files:
-                50,
+            files: 50,
 
             fileSize:
                 500 * 1024 * 1024
@@ -308,17 +244,13 @@ function requireLogin(
     next
 ) {
 
-    if (
-        !req.session.user
-    ) {
+    if (!req.session.user) {
 
         return res
             .status(401)
             .json({
-
                 message:
                     "Silakan login terlebih dahulu."
-
             });
 
     }
@@ -334,43 +266,32 @@ function requireLogin(
 
 app.post(
     "/api/login",
-    (
-        req,
-        res
-    ) => {
+    (req, res) => {
 
         const username =
             String(
-                req.body.username ||
-                ""
+                req.body.username || ""
             ).trim();
 
         const password =
             String(
-                req.body.password ||
-                ""
+                req.body.password || ""
             );
 
-
         const user =
-            USERS[
-                username
-            ];
+            USERS[username];
 
 
         if (
             !user ||
-            user.password !==
-                password
+            user.password !== password
         ) {
 
             return res
                 .status(401)
                 .json({
-
                     message:
                         "Username atau password salah."
-
                 });
 
         }
@@ -388,8 +309,7 @@ app.post(
 
         res.json({
 
-            success:
-                true,
+            success: true,
 
             username,
 
@@ -408,19 +328,13 @@ app.post(
 
 app.post(
     "/api/logout",
-    (
-        req,
-        res
-    ) => {
+    (req, res) => {
 
         req.session.destroy(
             () => {
 
                 res.json({
-
-                    success:
-                        true
-
+                    success: true
                 });
 
             }
@@ -436,20 +350,12 @@ app.post(
 
 app.get(
     "/api/me",
-    (
-        req,
-        res
-    ) => {
+    (req, res) => {
 
-        if (
-            !req.session.user
-        ) {
+        if (!req.session.user) {
 
             return res.json({
-
-                loggedIn:
-                    false
-
+                loggedIn: false
             });
 
         }
@@ -457,16 +363,13 @@ app.get(
 
         res.json({
 
-            loggedIn:
-                true,
+            loggedIn: true,
 
             username:
-                req.session.user
-                    .username,
+                req.session.user.username,
 
             role:
-                req.session.user
-                    .role
+                req.session.user.role
 
         });
 
@@ -475,31 +378,27 @@ app.get(
 
 
 /* =========================================
-   DISCORD
+   DISCORD CLIENT
 ========================================= */
 
 const discordClient =
     new Client({
 
         intents: [
-
             GatewayIntentBits.Guilds
-
         ]
 
     });
 
 
-let discordReady =
-    false;
+let discordReady = false;
 
 
 discordClient.once(
     "ready",
     client => {
 
-        discordReady =
-            true;
+        discordReady = true;
 
         console.log(
             `Discord connected as ${client.user.tag}`
@@ -522,22 +421,18 @@ discordClient.on(
 );
 
 
-if (
-    process.env.DISCORD_TOKEN
-) {
+if (process.env.DISCORD_TOKEN) {
 
     discordClient.login(
         process.env.DISCORD_TOKEN
-    ).catch(
-        error => {
+    ).catch(error => {
 
-            console.error(
-                "DISCORD LOGIN ERROR:",
-                error
-            );
+        console.error(
+            "DISCORD LOGIN ERROR:",
+            error
+        );
 
-        }
-    );
+    });
 
 } else {
 
@@ -554,9 +449,7 @@ if (
 
 async function getGuild() {
 
-    if (
-        !discordReady
-    ) {
+    if (!discordReady) {
 
         throw new Error(
             "Discord bot belum siap."
@@ -565,13 +458,9 @@ async function getGuild() {
     }
 
 
-    const guild =
-        await discordClient.guilds.fetch(
-            config.GUILD_ID
-        );
-
-
-    return guild;
+    return await discordClient.guilds.fetch(
+        config.GUILD_ID
+    );
 
 }
 
@@ -583,10 +472,7 @@ async function getGuild() {
 app.get(
     "/api/channels",
     requireLogin,
-    async (
-        req,
-        res
-    ) => {
+    async (req, res) => {
 
         try {
 
@@ -609,22 +495,16 @@ app.get(
 
             const search =
                 String(
-                    req.query.search ||
-                    ""
+                    req.query.search || ""
                 )
                 .trim()
                 .toLowerCase();
 
 
-            if (
-                !search
-            ) {
+            if (!search) {
 
                 return res.json({
-
-                    channels:
-                        []
-
+                    channels: []
                 });
 
             }
@@ -640,33 +520,27 @@ app.get(
 
             const result =
                 channels
-                    .filter(
-                        channel =>
-                            channel &&
-                            channel.isTextBased() &&
-                            channel.guildId ===
-                                config.GUILD_ID &&
+                    .filter(channel =>
+
+                        channel &&
+                        channel.isTextBased() &&
+                        channel.guildId ===
+                            config.GUILD_ID &&
+                        channel.name
+                            .toLowerCase()
+                            .includes(search)
+
+                    )
+                    .map(channel => ({
+
+                        id:
+                            channel.id,
+
+                        name:
                             channel.name
-                                .toLowerCase()
-                                .includes(
-                                    search
-                                )
-                    )
-                    .map(
-                        channel => ({
 
-                            id:
-                                channel.id,
-
-                            name:
-                                channel.name
-
-                        })
-                    )
-                    .slice(
-                        0,
-                        25
-                    );
+                    }))
+                    .slice(0, 25);
 
 
             res.json({
@@ -676,9 +550,7 @@ app.get(
 
             });
 
-        } catch (
-            error
-        ) {
+        } catch (error) {
 
             console.error(
                 "CHANNEL SEARCH ERROR:",
@@ -699,84 +571,6 @@ app.get(
 
     }
 );
-
-
-/* =========================================
-   CREATE ZIP
-========================================= */
-
-function createZip(
-    files,
-    outputPath
-) {
-
-    return new Promise(
-        (
-            resolve,
-            reject
-        ) => {
-
-            const output =
-                fs.createWriteStream(
-                    outputPath
-                );
-
-            const archive =
-                archiver(
-                    "zip",
-                    {
-                        zlib: {
-                            level:
-                                9
-                        }
-                    }
-                );
-
-
-            output.on(
-                "close",
-                resolve
-            );
-
-
-            output.on(
-                "error",
-                reject
-            );
-
-
-            archive.on(
-                "error",
-                reject
-            );
-
-
-            archive.pipe(
-                output
-            );
-
-
-            files.forEach(
-                file => {
-
-                    archive.file(
-                        file.path,
-                        {
-                            name:
-                                file.originalname
-                        }
-                    );
-
-                }
-            );
-
-
-            archive.finalize();
-
-        }
-    );
-
-}
 
 
 /* =========================================
@@ -810,34 +604,15 @@ async function sendDiscordShare(
     }
 
 
-    const zipFileName =
-        `${mod.name || "monroe-file"}-${mod.id}.zip`;
-
-
-    const zipPath =
-        path.join(
-            ZIP_DIR,
-            zipFileName
-        );
-
-
-    await createZip(
-        uploadedFiles,
-        zipPath
-    );
-
-
     const descriptionLines = [];
 
 
     descriptionLines.push(
-        `**Maker:** ${mod.credits || "-"}`
+        `**Credits:** ${mod.credits || "-"}`
     );
 
 
-    if (
-        mod.tiktok
-    ) {
+    if (mod.tiktok) {
 
         descriptionLines.push(
             `**TikTok:** ${mod.tiktok}`
@@ -846,9 +621,7 @@ async function sendDiscordShare(
     }
 
 
-    if (
-        mod.youtube
-    ) {
+    if (mod.youtube) {
 
         descriptionLines.push(
             `**YouTube:** ${mod.youtube}`
@@ -857,43 +630,13 @@ async function sendDiscordShare(
     }
 
 
-    if (
-        mod.type ===
-        "special"
-    ) {
-
-        descriptionLines.push(
-            "**Type:** SPECIAL FILE"
-        );
-
-    } else {
-
-        descriptionLines.push(
-            "**Type:** PUBLIC FILE"
-        );
-
-    }
-
-
-    descriptionLines.push(
-        ""
-    );
-
-
-    descriptionLines.push(
-        "File ini dibagikan oleh uploader. Harap tetap menghargai dan mencantumkan credit pembuat apabila diperlukan."
-    );
-
-
     const embed =
         new EmbedBuilder()
             .setTitle(
-                `🟧 ${mod.name || "MONROE FILE"}`
+                "🟧 MONROE COMMUNITY"
             )
             .setDescription(
-                descriptionLines.join(
-                    "\n"
-                )
+                descriptionLines.join("\n")
             )
             .setFooter({
 
@@ -907,7 +650,7 @@ async function sendDiscordShare(
         Array.isArray(
             mod.previewUrls
         ) &&
-        mod.previewUrls.length
+        mod.previewUrls.length > 0
     ) {
 
         embed.setImage(
@@ -917,40 +660,43 @@ async function sendDiscordShare(
     }
 
 
-    const message =
-        await channel.send({
+    await channel.send({
 
-            embeds: [
-                embed
-            ],
+        embeds: [
+            embed
+        ]
+
+    });
+
+
+    for (
+        const file
+        of uploadedFiles
+    ) {
+
+        await channel.send({
 
             files: [
 
                 {
-
                     attachment:
-                        zipPath,
+                        file.path,
 
                     name:
-                        zipFileName
-
+                        file.originalname
                 }
 
             ]
 
         });
 
+    }
+
 
     return {
 
         discordChannelId:
             channel.id,
-
-        discordMessageId:
-            message.id,
-
-        discordZipName:
-            zipFileName,
 
         shareURL:
             `/share/${mod.id}`
@@ -967,19 +713,16 @@ app.post(
     "/api/upload",
     requireLogin,
     upload.array("files", 50),
-    async (
-        req,
-        res
-    ) => {
+    async (req, res) => {
 
         try {
 
             const user =
                 req.session.user;
 
+
             const type =
-                req.body.type ===
-                "special"
+                req.body.type === "special"
                     ? "special"
                     : "public";
 
@@ -1026,8 +769,7 @@ app.post(
 
             const credits =
                 String(
-                    req.body.credits ||
-                    ""
+                    req.body.credits || ""
                 ).trim();
 
 
@@ -1047,8 +789,7 @@ app.post(
 
             /* CHANNEL */
 
-            let channelId =
-                null;
+            let channelId = null;
 
 
             if (
@@ -1057,8 +798,7 @@ app.post(
 
                 channelId =
                     String(
-                        req.body.channelId ||
-                        ""
+                        req.body.channelId || ""
                     ).trim();
 
 
@@ -1105,19 +845,13 @@ app.post(
 
             previewUrls =
                 previewUrls
-                    .map(
-                        url =>
-                            String(
-                                url || ""
-                            ).trim()
+                    .map(url =>
+                        String(
+                            url || ""
+                        ).trim()
                     )
-                    .filter(
-                        Boolean
-                    )
-                    .slice(
-                        0,
-                        10
-                    );
+                    .filter(Boolean)
+                    .slice(0, 10);
 
 
             /* SOCIAL */
@@ -1125,8 +859,7 @@ app.post(
             const tiktok =
                 type === "special"
                     ? String(
-                        req.body.tiktok ||
-                        ""
+                        req.body.tiktok || ""
                     ).trim()
                     : "";
 
@@ -1134,8 +867,7 @@ app.post(
             const youtube =
                 type === "special"
                     ? String(
-                        req.body.youtube ||
-                        ""
+                        req.body.youtube || ""
                     ).trim()
                     : "";
 
@@ -1165,33 +897,23 @@ app.post(
                 "Monroe File";
 
 
-            /* ZIP */
+            /* SAVE FILE INFO */
 
-            const zipName =
-                `${id}.zip`;
+            const savedFiles =
+                req.files.map(file => ({
 
+                    originalName:
+                        file.originalname,
 
-            const zipPath =
-                path.join(
-                    ZIP_DIR,
-                    zipName
-                );
+                    fileName:
+                        path.basename(
+                            file.path
+                        )
 
-
-            await createZip(
-                req.files,
-                zipPath
-            );
+                }));
 
 
-            /* SAVE DATA */
-
-            const mods =
-                readJSON(
-                    MODS_FILE,
-                    []
-                );
-
+            /* MOD DATA */
 
             const mod = {
 
@@ -1212,7 +934,8 @@ app.post(
 
                 previewUrls,
 
-                zipName,
+                files:
+                    savedFiles,
 
                 createdBy:
                     user.username,
@@ -1222,6 +945,15 @@ app.post(
                         .toISOString()
 
             };
+
+
+            /* SAVE DATA */
+
+            const mods =
+                readJSON(
+                    MODS_FILE,
+                    []
+                );
 
 
             mods.push(
@@ -1249,9 +981,7 @@ app.post(
                         req.files
                     );
 
-            } catch (
-                discordError
-            ) {
+            } catch (discordError) {
 
                 console.error(
                     "DISCORD SEND ERROR:",
@@ -1261,40 +991,14 @@ app.post(
             }
 
 
-            /* CLEAN TEMP FILES */
+            /*
+               PENTING:
+               FILE TIDAK DIHAPUS.
 
-            for (
-                const file
-                of req.files
-            ) {
+               TIDAK ADA ZIP.
 
-                try {
-
-                    if (
-                        fs.existsSync(
-                            file.path
-                        )
-                    ) {
-
-                        fs.unlinkSync(
-                            file.path
-                        );
-
-                    }
-
-                } catch (
-                    error
-                ) {
-
-                    console.error(
-                        "FILE CLEAN ERROR:",
-                        error
-                    );
-
-                }
-
-            }
-
+               TIDAK ADA REDIRECT.
+            */
 
             res.json({
 
@@ -1303,17 +1007,15 @@ app.post(
 
                 id,
 
-                shareURL:
-                    `/share/${id}`,
+                message:
+                    "File berhasil dipublish!",
 
                 discord:
                     discordResult
 
             });
 
-        } catch (
-            error
-        ) {
+        } catch (error) {
 
             console.error(
                 "UPLOAD ERROR:",
@@ -1321,9 +1023,12 @@ app.post(
             );
 
 
-            if (
-                req.files
-            ) {
+            /*
+               CLEANUP HANYA JIKA
+               PROSES UPLOAD GAGAL
+            */
+
+            if (req.files) {
 
                 for (
                     const file
@@ -1349,6 +1054,7 @@ app.post(
                     ) {
 
                         console.error(
+                            "CLEANUP ERROR:",
                             cleanupError
                         );
 
@@ -1380,10 +1086,7 @@ app.post(
 
 app.get(
     "/api/share/:id",
-    async (
-        req,
-        res
-    ) => {
+    async (req, res) => {
 
         try {
 
@@ -1442,14 +1145,15 @@ app.get(
                 previewUrls:
                     mod.previewUrls || [],
 
+                files:
+                    mod.files || [],
+
                 createdAt:
                     mod.createdAt
 
             });
 
-        } catch (
-            error
-        ) {
+        } catch (error) {
 
             console.error(
                 "SHARE API ERROR:",
@@ -1473,15 +1177,12 @@ app.get(
 
 
 /* =========================================
-   DOWNLOAD
+   DOWNLOAD INDIVIDUAL FILE
 ========================================= */
 
 app.get(
-    "/download/:id",
-    async (
-        req,
-        res
-    ) => {
+    "/download/:id/:index",
+    async (req, res) => {
 
         try {
 
@@ -1511,40 +1212,60 @@ app.get(
             }
 
 
-            const zipPath =
+            const index =
+                Number(
+                    req.params.index
+                );
+
+
+            if (
+                !Number.isInteger(index) ||
+                index < 0 ||
+                index >=
+                    mod.files.length
+            ) {
+
+                return res
+                    .status(404)
+                    .send(
+                        "File tidak ditemukan."
+                    );
+
+            }
+
+
+            const file =
+                mod.files[index];
+
+
+            const filePath =
                 path.join(
-                    ZIP_DIR,
-                    mod.zipName
+                    UPLOAD_DIR,
+                    file.fileName
                 );
 
 
             if (
                 !fs.existsSync(
-                    zipPath
+                    filePath
                 )
             ) {
 
                 return res
                     .status(404)
                     .send(
-                        "ZIP file tidak ditemukan."
+                        "File sudah tidak tersedia."
                     );
 
             }
 
 
-            const downloadName =
-                `${mod.name || "monroe-file"}.zip`;
-
-
             res.download(
-                zipPath,
-                downloadName
+                filePath,
+                file.originalName
             );
 
-        } catch (
-            error
-        ) {
+        } catch (error) {
 
             console.error(
                 "DOWNLOAD ERROR:",
@@ -1570,10 +1291,7 @@ app.get(
 
 app.get(
     "/share/:id",
-    (
-        req,
-        res
-    ) => {
+    (req, res) => {
 
         const file =
             path.join(
@@ -1609,10 +1327,7 @@ app.get(
 
 app.get(
     "/health",
-    (
-        req,
-        res
-    ) => {
+    (req, res) => {
 
         res.json({
 
