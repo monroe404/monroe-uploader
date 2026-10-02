@@ -845,3 +845,101 @@ input[type="file"]::file-selector-button {
 .login-card .brand p {
     color: #777;
 }
+
+/* =================================
+   FINAL LOGIN DESIGN
+   ================================= */
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.background {
+    z-index: 0;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.brand-icon {
+    display: none;
+}
+
+.brand h1 {
+    margin: 0;
+    color: var(--orange);
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: 7px;
+}
+
+.brand p {
+    margin-top: 6px;
+    color: #888;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 5px;
+}
+
+.login-card {
+    max-width: 470px;
+    padding: 42px 38px;
+}
+
+.login-card h2 {
+    margin-top: 42px;
+    margin-bottom: 8px;
+    font-size: 30px;
+}
+
+.login-card > p {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #999;
+}
+
+.login-card .input-group {
+    margin-bottom: 17px;
+}
+
+.login-card label {
+    margin-bottom: 7px;
+}
+
+.login-card input {
+    height: 52px;
+}
+
+.login-card button {
+    height: 52px;
+    margin-top: 5px;
+}
+
+@media (max-width: 600px) {
+
+    .login-card {
+        max-width: 100%;
+        padding: 35px 24px;
+    }
+
+    .brand h1 {
+        font-size: 34px;
+        letter-spacing: 6px;
+    }
+
+    .login-card h2 {
+        font-size: 27px;
+        margin-top: 35px;
+    }
+}
