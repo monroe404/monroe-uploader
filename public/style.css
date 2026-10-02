@@ -1085,3 +1085,40 @@ body {
     }
 
 }
+
+/* ================================= */
+/* UPLOAD TWO COLUMNS */
+/* ================================= */
+
+.upload-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.upload-panel {
+    width: 100%;
+}
+
+.upload-panel .section-header {
+    margin-bottom: 20px;
+}
+
+.upload-panel textarea {
+    width: 100%;
+    resize: vertical;
+}
+
+.upload-panel input:not([type="file"]),
+.upload-panel textarea {
+    width: 100%;
+}
+
+@media (max-width: 800px) {
+
+    .upload-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
