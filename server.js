@@ -564,17 +564,6 @@ app.get(
                 .toLowerCase();
 
 
-            if (!search) {
-
-                return res.json({
-
-                    channels: []
-
-                });
-
-            }
-
-
             const guild =
                 await getGuild();
 
