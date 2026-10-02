@@ -23,12 +23,10 @@
         <div class="upload-page-header">
 
             <div class="brand">
-
                 <div>
                     <h1>MONROE</h1>
                     <p>FILE SHARE</p>
                 </div>
-
             </div>
 
         </div>
@@ -53,12 +51,14 @@
         </div>
 
 
-        <!-- UPLOAD FORM -->
+        <!-- FORM -->
 
         <form
             id="uploadForm"
             enctype="multipart/form-data"
         >
+
+            <!-- TYPE -->
 
             <input
                 id="fileType"
@@ -68,20 +68,27 @@
             >
 
 
-            <!-- NAME -->
+            <!-- CHANNEL -->
 
             <div class="field">
 
                 <label>
-                    MOD / SHARE NAME
+                    CHANNEL / MOD
                 </label>
 
                 <input
                     type="text"
-                    name="name"
-                    placeholder="Contoh: Monroe BMW M4"
+                    id="channelSearch"
+                    name="channel"
+                    placeholder="🔎 Cari channel, contoh: skin asian"
+                    autocomplete="off"
                     required
                 >
+
+                <div
+                    id="channelResults"
+                    class="channel-results"
+                ></div>
 
             </div>
 
@@ -91,7 +98,7 @@
             <div class="field">
 
                 <label>
-                    MAKER BY / CREDIT
+                    CREDITS / MAKER
                 </label>
 
                 <input
@@ -114,13 +121,35 @@
 
                 <textarea
                     name="description"
+                    rows="6"
                     placeholder="Deskripsi file / mod..."
                 ></textarea>
 
             </div>
 
 
-            <!-- FILE -->
+            <!-- DISCORD CDN -->
+
+            <div class="field">
+
+                <label>
+                    🖼️ DISCORD CDN IMAGE
+                </label>
+
+                <input
+                    type="url"
+                    name="previewUrl"
+                    placeholder="https://cdn.discordapp.com/..."
+                >
+
+                <small>
+                    Paste link gambar dari Discord CDN.
+                </small>
+
+            </div>
+
+
+            <!-- FILES -->
 
             <div class="field">
 
@@ -142,24 +171,7 @@
             </div>
 
 
-            <!-- PREVIEW -->
-
-            <div class="field">
-
-                <label>
-                    🖼️ PREVIEW IMAGE
-                </label>
-
-                <input
-                    type="file"
-                    name="preview"
-                    accept="image/*"
-                >
-
-            </div>
-
-
-            <!-- BUTTON -->
+            <!-- PUBLISH -->
 
             <button
                 type="submit"
@@ -195,7 +207,7 @@
 <script>
 
 /* =========================================
-   GET TYPE FROM URL
+   GET UPLOAD TYPE
 ========================================= */
 
 const params =
@@ -245,6 +257,25 @@ if (type === "special") {
         "Upload file yang dapat dibagikan secara publik.";
 
 }
+
+
+/* =========================================
+   FORM
+========================================= */
+
+document
+    .getElementById("uploadForm")
+    .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const message =
+            document.getElementById("uploadMessage");
+
+        message.textContent =
+            "Upload system belum dihubungkan.";
+
+    });
 
 </script>
 
