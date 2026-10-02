@@ -18,27 +18,19 @@
 
     <section class="card upload-page">
 
-        <!-- HEADER -->
-
         <div class="upload-page-header">
-
             <div class="brand">
                 <div>
                     <h1>MONROE</h1>
                     <p>FILE SHARE</p>
                 </div>
             </div>
-
         </div>
 
 
-        <!-- TITLE -->
-
         <div class="upload-page-title">
 
-            <span class="eyebrow">
-                UPLOADER
-            </span>
+            <span class="eyebrow">UPLOADER</span>
 
             <h2 id="uploadTitle">
                 PUBLIC FILE
@@ -51,14 +43,10 @@
         </div>
 
 
-        <!-- FORM -->
-
         <form
             id="uploadForm"
             enctype="multipart/form-data"
         >
-
-            <!-- TYPE -->
 
             <input
                 id="fileType"
@@ -68,9 +56,12 @@
             >
 
 
-            <!-- CHANNEL -->
+            <!-- PUBLIC CHANNEL -->
 
-            <div class="field">
+            <div
+                class="field"
+                id="channelField"
+            >
 
                 <label>
                     CHANNEL / MOD
@@ -79,10 +70,14 @@
                 <input
                     type="text"
                     id="channelSearch"
-                    name="channel"
                     placeholder="🔎 Cari channel, contoh: skin asian"
                     autocomplete="off"
-                    required
+                >
+
+                <input
+                    type="hidden"
+                    id="channelId"
+                    name="channelId"
                 >
 
                 <div
@@ -124,6 +119,45 @@
                     rows="6"
                     placeholder="Deskripsi file / mod..."
                 ></textarea>
+
+            </div>
+
+
+            <!-- SPECIAL SOCIAL -->
+
+            <div
+                id="socialFields"
+                style="display:none;"
+            >
+
+                <div class="field">
+
+                    <label>
+                        TIKTOK NAME (OPTIONAL)
+                    </label>
+
+                    <input
+                        type="text"
+                        name="tiktok"
+                        placeholder="@username"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        YOUTUBE NAME (OPTIONAL)
+                    </label>
+
+                    <input
+                        type="text"
+                        name="youtube"
+                        placeholder="Nama channel YouTube"
+                    >
+
+                </div>
 
             </div>
 
@@ -171,8 +205,6 @@
             </div>
 
 
-            <!-- PUBLISH -->
-
             <button
                 type="submit"
                 class="primary-btn"
@@ -189,8 +221,6 @@
         </form>
 
 
-        <!-- BACK -->
-
         <button
             type="button"
             class="secondary-btn"
@@ -204,80 +234,7 @@
 </main>
 
 
-<script>
-
-/* =========================================
-   GET UPLOAD TYPE
-========================================= */
-
-const params =
-    new URLSearchParams(window.location.search);
-
-const type =
-    params.get("type") === "special"
-        ? "special"
-        : "public";
-
-
-/* =========================================
-   ELEMENTS
-========================================= */
-
-const uploadTitle =
-    document.getElementById("uploadTitle");
-
-const uploadDescription =
-    document.getElementById("uploadDescription");
-
-const fileType =
-    document.getElementById("fileType");
-
-
-/* =========================================
-   SET TYPE
-========================================= */
-
-fileType.value = type;
-
-
-if (type === "special") {
-
-    uploadTitle.textContent =
-        "SPECIAL FILE";
-
-    uploadDescription.textContent =
-        "Upload file khusus untuk Founder dan Uploader.";
-
-} else {
-
-    uploadTitle.textContent =
-        "PUBLIC FILE";
-
-    uploadDescription.textContent =
-        "Upload file yang dapat dibagikan secara publik.";
-
-}
-
-
-/* =========================================
-   FORM
-========================================= */
-
-document
-    .getElementById("uploadForm")
-    .addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        const message =
-            document.getElementById("uploadMessage");
-
-        message.textContent =
-            "Upload system belum dihubungkan.";
-
-    });
-
-</script>
+<script src="/upload.js"></script>
 
 </body>
 </html>
