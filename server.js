@@ -4,10 +4,16 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+
 const {
     Client,
     GatewayIntentBits,
-    EmbedBuilder
+    ContainerBuilder,
+    TextDisplayBuilder,
+    SeparatorBuilder,
+    MediaGalleryBuilder,
+    MediaGalleryItemBuilder,
+    MessageFlags
 } = require("discord.js");
 
 const config = require("./config");
@@ -34,18 +40,19 @@ const MODS_FILE =
    CREATE DIRECTORIES
 ========================================= */
 
-[
+fs.mkdirSync(
     DATA_DIR,
-    UPLOAD_DIR
-].forEach(dir => {
-
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, {
-            recursive: true
-        });
+    {
+        recursive: true
     }
+);
 
-});
+fs.mkdirSync(
+    UPLOAD_DIR,
+    {
+        recursive: true
+    }
+);
 
 
 if (!fs.existsSync(MODS_FILE)) {
@@ -59,16 +66,24 @@ if (!fs.existsSync(MODS_FILE)) {
 
 
 /* =========================================
-   JSON
+   JSON FUNCTIONS
 ========================================= */
 
-function readJSON(file, fallback) {
+function readJSON(
+    file,
+    fallback
+) {
 
     try {
 
-        if (!fs.existsSync(file)) {
+        if (
+            !fs.existsSync(file)
+        ) {
+
             return fallback;
+
         }
+
 
         return JSON.parse(
             fs.readFileSync(
@@ -85,12 +100,16 @@ function readJSON(file, fallback) {
         );
 
         return fallback;
+
     }
 
 }
 
 
-function writeJSON(file, data) {
+function writeJSON(
+    file,
+    data
+) {
 
     fs.writeFileSync(
         file,
@@ -111,13 +130,23 @@ function writeJSON(file, data) {
 const USERS = {
 
     monroe404: {
-        password: "farras1239091",
-        role: "founder"
+
+        password:
+            "farras1239091",
+
+        role:
+            "founder"
+
     },
 
     skymods404: {
-        password: "sky1239091",
-        role: "uploader"
+
+        password:
+            "sky1239091",
+
+        role:
+            "uploader"
+
     }
 
 };
@@ -131,10 +160,28 @@ const app =
     express();
 
 
+/*
+   Railway / HTTPS
+*/
+
+app.set(
+    "trust proxy",
+    1
+);
+
+
+/*
+   JSON
+*/
+
 app.use(
     express.json()
 );
 
+
+/*
+   FORM
+*/
 
 app.use(
     express.urlencoded({
@@ -143,6 +190,10 @@ app.use(
 );
 
 
+/* =========================================
+   SESSION
+========================================= */
+
 app.use(
     session({
 
@@ -150,15 +201,30 @@ app.use(
             process.env.SESSION_SECRET ||
             "monroe-file-share-secret",
 
-        resave: false,
+        resave:
+            false,
 
-        saveUninitialized: false,
+        saveUninitialized:
+            false,
+
+        rolling:
+            true,
 
         cookie: {
+
             maxAge:
                 7 * 24 * 60 * 60 * 1000,
 
-            httpOnly: true
+            httpOnly:
+                true,
+
+            sameSite:
+                "lax",
+
+            secure:
+                process.env.NODE_ENV ===
+                "production"
+
         }
 
     })
@@ -177,7 +243,7 @@ app.use(
 
 
 /* =========================================
-   MULTER
+   MULTER STORAGE
 ========================================= */
 
 const storage =
@@ -197,6 +263,7 @@ const storage =
 
             },
 
+
         filename:
             function (
                 req,
@@ -204,12 +271,39 @@ const storage =
                 callback
             ) {
 
+                const extension =
+                    path.extname(
+                        file.originalname
+                    );
+
+
+                const original =
+                    path.basename(
+                        file.originalname,
+                        extension
+                    );
+
+
                 const safeName =
-                    `${Date.now()}-${crypto.randomBytes(5).toString("hex")}-${path.basename(file.originalname)}`;
+                    original.replace(
+                        /[^a-zA-Z0-9._-]/g,
+                        "_"
+                    );
+
+
+                const random =
+                    crypto
+                        .randomBytes(5)
+                        .toString("hex");
+
+
+                const filename =
+                    `${Date.now()}-${random}-${safeName}${extension}`;
+
 
                 callback(
                     null,
-                    safeName
+                    filename
                 );
 
             }
@@ -220,11 +314,14 @@ const storage =
 const upload =
     multer({
 
-        storage,
+        storage:
+
+            storage,
 
         limits: {
 
-            files: 50,
+            files:
+                50,
 
             fileSize:
                 500 * 1024 * 1024
@@ -235,7 +332,7 @@ const upload =
 
 
 /* =========================================
-   AUTH
+   AUTH MIDDLEWARE
 ========================================= */
 
 function requireLogin(
@@ -244,16 +341,21 @@ function requireLogin(
     next
 ) {
 
-    if (!req.session.user) {
+    if (
+        !req.session.user
+    ) {
 
         return res
             .status(401)
             .json({
+
                 message:
                     "Silakan login terlebih dahulu."
+
             });
 
     }
+
 
     next();
 
@@ -266,17 +368,24 @@ function requireLogin(
 
 app.post(
     "/api/login",
-    (req, res) => {
+    function (
+        req,
+        res
+    ) {
 
         const username =
             String(
-                req.body.username || ""
+                req.body.username ||
+                ""
             ).trim();
+
 
         const password =
             String(
-                req.body.password || ""
+                req.body.password ||
+                ""
             );
+
 
         const user =
             USERS[username];
@@ -284,14 +393,17 @@ app.post(
 
         if (
             !user ||
-            user.password !== password
+            user.password !==
+                password
         ) {
 
             return res
                 .status(401)
                 .json({
+
                     message:
                         "Username atau password salah."
+
                 });
 
         }
@@ -299,7 +411,8 @@ app.post(
 
         req.session.user = {
 
-            username,
+            username:
+                username,
 
             role:
                 user.role
@@ -307,16 +420,52 @@ app.post(
         };
 
 
-        res.json({
+        /*
+           Pastikan session
+           tersimpan sebelum
+           response dikirim.
+        */
 
-            success: true,
+        req.session.save(
+            function (
+                error
+            ) {
 
-            username,
+                if (error) {
 
-            role:
-                user.role
+                    console.error(
+                        "SESSION SAVE ERROR:",
+                        error
+                    );
 
-        });
+
+                    return res
+                        .status(500)
+                        .json({
+
+                            message:
+                                "Session gagal dibuat."
+
+                        });
+
+                }
+
+
+                res.json({
+
+                    success:
+                        true,
+
+                    username:
+                        username,
+
+                    role:
+                        user.role
+
+                });
+
+            }
+        );
 
     }
 );
@@ -328,13 +477,40 @@ app.post(
 
 app.post(
     "/api/logout",
-    (req, res) => {
+    function (
+        req,
+        res
+    ) {
 
         req.session.destroy(
-            () => {
+            function (
+                error
+            ) {
+
+                if (error) {
+
+                    return res
+                        .status(500)
+                        .json({
+
+                            message:
+                                "Logout gagal."
+
+                        });
+
+                }
+
+
+                res.clearCookie(
+                    "connect.sid"
+                );
+
 
                 res.json({
-                    success: true
+
+                    success:
+                        true
+
                 });
 
             }
@@ -350,12 +526,20 @@ app.post(
 
 app.get(
     "/api/me",
-    (req, res) => {
+    function (
+        req,
+        res
+    ) {
 
-        if (!req.session.user) {
+        if (
+            !req.session.user
+        ) {
 
             return res.json({
-                loggedIn: false
+
+                loggedIn:
+                    false
+
             });
 
         }
@@ -363,7 +547,8 @@ app.get(
 
         res.json({
 
-            loggedIn: true,
+            loggedIn:
+                true,
 
             username:
                 req.session.user.username,
@@ -385,20 +570,31 @@ const discordClient =
     new Client({
 
         intents: [
+
             GatewayIntentBits.Guilds
+
         ]
 
     });
 
 
-let discordReady = false;
+let discordReady =
+    false;
 
+
+/* =========================================
+   DISCORD READY
+========================================= */
 
 discordClient.once(
     "ready",
-    client => {
+    function (
+        client
+    ) {
 
-        discordReady = true;
+        discordReady =
+            true;
+
 
         console.log(
             `Discord connected as ${client.user.tag}`
@@ -408,9 +604,15 @@ discordClient.once(
 );
 
 
+/* =========================================
+   DISCORD ERROR
+========================================= */
+
 discordClient.on(
     "error",
-    error => {
+    function (
+        error
+    ) {
 
         console.error(
             "DISCORD ERROR:",
@@ -421,18 +623,30 @@ discordClient.on(
 );
 
 
-if (process.env.DISCORD_TOKEN) {
+/* =========================================
+   DISCORD LOGIN
+========================================= */
 
-    discordClient.login(
-        process.env.DISCORD_TOKEN
-    ).catch(error => {
+if (
+    process.env.DISCORD_TOKEN
+) {
 
-        console.error(
-            "DISCORD LOGIN ERROR:",
-            error
+    discordClient
+        .login(
+            process.env.DISCORD_TOKEN
+        )
+        .catch(
+            function (
+                error
+            ) {
+
+                console.error(
+                    "DISCORD LOGIN ERROR:",
+                    error
+                );
+
+            }
         );
-
-    });
 
 } else {
 
@@ -449,7 +663,9 @@ if (process.env.DISCORD_TOKEN) {
 
 async function getGuild() {
 
-    if (!discordReady) {
+    if (
+        !discordReady
+    ) {
 
         throw new Error(
             "Discord bot belum siap."
@@ -472,9 +688,18 @@ async function getGuild() {
 app.get(
     "/api/channels",
     requireLogin,
-    async (req, res) => {
+    async function (
+        req,
+        res
+    ) {
 
         try {
+
+            /*
+               Hanya Founder
+               yang bisa memilih
+               Public Channel.
+            */
 
             if (
                 req.session.user.role !==
@@ -495,7 +720,8 @@ app.get(
 
             const search =
                 String(
-                    req.query.search || ""
+                    req.query.search ||
+                    ""
                 )
                 .trim()
                 .toLowerCase();
@@ -504,7 +730,10 @@ app.get(
             if (!search) {
 
                 return res.json({
-                    channels: []
+
+                    channels:
+                        []
+
                 });
 
             }
@@ -520,27 +749,53 @@ app.get(
 
             const result =
                 channels
-                    .filter(channel =>
+                    .filter(
+                        function (
+                            channel
+                        ) {
 
-                        channel &&
-                        channel.isTextBased() &&
-                        channel.guildId ===
-                            config.GUILD_ID &&
-                        channel.name
-                            .toLowerCase()
-                            .includes(search)
+                            return (
 
+                                channel &&
+
+                                channel.isTextBased() &&
+
+                                channel.guildId ===
+                                    config.GUILD_ID &&
+
+                                channel.name &&
+
+                                channel.name
+                                    .toLowerCase()
+                                    .includes(
+                                        search
+                                    )
+
+                            );
+
+                        }
                     )
-                    .map(channel => ({
+                    .map(
+                        function (
+                            channel
+                        ) {
 
-                        id:
-                            channel.id,
+                            return {
 
-                        name:
-                            channel.name
+                                id:
+                                    channel.id,
 
-                    }))
-                    .slice(0, 25);
+                                name:
+                                    channel.name
+
+                            };
+
+                        }
+                    )
+                    .slice(
+                        0,
+                        25
+                    );
 
 
             res.json({
@@ -574,7 +829,7 @@ app.get(
 
 
 /* =========================================
-   SEND DISCORD
+   DISCORD COMPONENTS V2
 ========================================= */
 
 async function sendDiscordShare(
@@ -604,93 +859,226 @@ async function sendDiscordShare(
     }
 
 
-    const descriptionLines = [];
+    /*
+       COMPONENT V2 CONTAINER
+
+       Accent orange =
+       garis/border orange
+    */
+
+    const container =
+        new ContainerBuilder()
+            .setAccentColor(
+                0xff7a00
+            );
 
 
-    descriptionLines.push(
-        `**Credits:** ${mod.credits || "-"}`
+    /* =====================================
+       TITLE
+    ===================================== */
+
+    container.addTextDisplayComponents(
+
+        new TextDisplayBuilder()
+            .setContent(
+                "## FILE SHARE"
+            )
+
     );
 
 
-    if (mod.tiktok) {
+    /* =====================================
+       SEPARATOR
+    ===================================== */
 
-        descriptionLines.push(
-            `**TikTok:** ${mod.tiktok}`
+    container.addSeparatorComponents(
+
+        new SeparatorBuilder()
+
+    );
+
+
+    /* =====================================
+       DESCRIPTION
+    ===================================== */
+
+    if (
+        mod.description
+    ) {
+
+        container.addTextDisplayComponents(
+
+            new TextDisplayBuilder()
+                .setContent(
+                    `**Description**\n${mod.description}`
+                )
+
+        );
+
+
+        container.addSeparatorComponents(
+
+            new SeparatorBuilder()
+
         );
 
     }
 
 
-    if (mod.youtube) {
+    /* =====================================
+       CREDITS
+    ===================================== */
 
-        descriptionLines.push(
-            `**YouTube:** ${mod.youtube}`
+    container.addTextDisplayComponents(
+
+        new TextDisplayBuilder()
+            .setContent(
+                `**Credits**\n${mod.credits || "-"}`
+            )
+
+    );
+
+
+    /* =====================================
+       SPECIAL SOCIAL
+    ===================================== */
+
+    if (
+        mod.tiktok
+    ) {
+
+        container.addTextDisplayComponents(
+
+            new TextDisplayBuilder()
+                .setContent(
+                    `**TikTok**\n${mod.tiktok}`
+                )
+
         );
 
     }
-
-
-    const embed =
-        new EmbedBuilder()
-            .setTitle(
-                "🟧 MONROE COMMUNITY"
-            )
-            .setDescription(
-                descriptionLines.join("\n")
-            )
-            .setFooter({
-
-                text:
-                    "MONROE COMMUNITY © 2026"
-
-            });
 
 
     if (
-        Array.isArray(
-            mod.previewUrls
-        ) &&
-        mod.previewUrls.length > 0
+        mod.youtube
     ) {
 
-        embed.setImage(
-            mod.previewUrls[0]
+        container.addTextDisplayComponents(
+
+            new TextDisplayBuilder()
+                .setContent(
+                    `**YouTube**\n${mod.youtube}`
+                )
+
         );
 
     }
 
 
-    await channel.send({
+    /* =====================================
+       PREVIEW IMAGES
+    ===================================== */
 
-        embeds: [
-            embed
-        ]
+    const previewUrls =
+        Array.isArray(
+            mod.previewUrls
+        )
 
-    });
+            ? mod.previewUrls
+                .filter(
+                    function (
+                        url
+                    ) {
+
+                        return /^https?:\/\//i.test(
+                            url
+                        );
+
+                    }
+                )
+                .slice(
+                    0,
+                    10
+                )
+
+            : [];
 
 
-    for (
-        const file
-        of uploadedFiles
+    if (
+        previewUrls.length > 0
     ) {
 
-        await channel.send({
+        container.addSeparatorComponents(
 
-            files: [
+            new SeparatorBuilder()
 
-                {
-                    attachment:
-                        file.path,
+        );
 
-                    name:
-                        file.originalname
+
+        const gallery =
+            new MediaGalleryBuilder();
+
+
+        gallery.addItems(
+
+            previewUrls.map(
+                function (
+                    url
+                ) {
+
+                    return new MediaGalleryItemBuilder()
+                        .setURL(
+                            url
+                        );
+
                 }
+            )
 
-            ]
+        );
 
-        });
+
+        container.addMediaGalleryComponents(
+            gallery
+        );
 
     }
+
+
+    /* =====================================
+       SEND TO DISCORD
+    ===================================== */
+
+    await channel.send({
+
+        components: [
+
+            container
+
+        ],
+
+        files:
+            uploadedFiles.map(
+                function (
+                    file
+                ) {
+
+                    return {
+
+                        attachment:
+                            file.path,
+
+                        name:
+                            file.originalname
+
+                    };
+
+                }
+            ),
+
+        flags:
+            MessageFlags.IsComponentsV2
+
+    });
 
 
     return {
@@ -712,8 +1100,18 @@ async function sendDiscordShare(
 app.post(
     "/api/upload",
     requireLogin,
-    upload.array("files", 50),
-    async (req, res) => {
+    upload.array(
+        "files",
+        50
+    ),
+    async function (
+        req,
+        res
+    ) {
+
+        let uploadFiles =
+            req.files || [];
+
 
         try {
 
@@ -721,13 +1119,22 @@ app.post(
                 req.session.user;
 
 
+            /* =====================================
+               TYPE
+            ===================================== */
+
             const type =
-                req.body.type === "special"
+                req.body.type ===
+                "special"
+
                     ? "special"
+
                     : "public";
 
 
-            /* PERMISSION */
+            /* =====================================
+               PERMISSION
+            ===================================== */
 
             if (
                 type === "public" &&
@@ -746,11 +1153,12 @@ app.post(
             }
 
 
-            /* FILE CHECK */
+            /* =====================================
+               FILE CHECK
+            ===================================== */
 
             if (
-                !req.files ||
-                req.files.length === 0
+                !uploadFiles.length
             ) {
 
                 return res
@@ -765,15 +1173,20 @@ app.post(
             }
 
 
-            /* CREDITS */
+            /* =====================================
+               CREDITS
+            ===================================== */
 
             const credits =
                 String(
-                    req.body.credits || ""
+                    req.body.credits ||
+                    ""
                 ).trim();
 
 
-            if (!credits) {
+            if (
+                !credits
+            ) {
 
                 return res
                     .status(400)
@@ -787,9 +1200,23 @@ app.post(
             }
 
 
-            /* CHANNEL */
+            /* =====================================
+               DESCRIPTION
+            ===================================== */
 
-            let channelId = null;
+            const description =
+                String(
+                    req.body.description ||
+                    ""
+                ).trim();
+
+
+            /* =====================================
+               CHANNEL
+            ===================================== */
+
+            let channelId =
+                null;
 
 
             if (
@@ -798,11 +1225,14 @@ app.post(
 
                 channelId =
                     String(
-                        req.body.channelId || ""
+                        req.body.channelId ||
+                        ""
                     ).trim();
 
 
-                if (!channelId) {
+                if (
+                    !channelId
+                ) {
 
                     return res
                         .status(400)
@@ -817,13 +1247,20 @@ app.post(
 
             } else {
 
+                /*
+                   Special otomatis
+                   masuk channel uploader.
+                */
+
                 channelId =
                     config.UPLOADER_CHANNEL_ID;
 
             }
 
 
-            /* PREVIEW URLS */
+            /* =====================================
+               PREVIEW URLS
+            ===================================== */
 
             let previewUrls =
                 req.body.previewUrls;
@@ -837,7 +1274,9 @@ app.post(
 
                 previewUrls =
                     previewUrls
-                        ? [previewUrls]
+                        ? [
+                            previewUrls
+                        ]
                         : [];
 
             }
@@ -845,45 +1284,91 @@ app.post(
 
             previewUrls =
                 previewUrls
-                    .map(url =>
-                        String(
-                            url || ""
-                        ).trim()
+                    .map(
+                        function (
+                            url
+                        ) {
+
+                            return String(
+                                url || ""
+                            ).trim();
+
+                        }
                     )
-                    .filter(Boolean)
-                    .slice(0, 10);
+                    .filter(
+                        function (
+                            url
+                        ) {
+
+                            return (
+                                url.length > 0
+                            );
+
+                        }
+                    )
+                    .filter(
+                        function (
+                            url
+                        ) {
+
+                            return /^https?:\/\//i.test(
+                                url
+                            );
+
+                        }
+                    )
+                    .slice(
+                        0,
+                        10
+                    );
 
 
-            /* SOCIAL */
+            /* =====================================
+               SOCIAL
+            ===================================== */
 
             const tiktok =
                 type === "special"
+
                     ? String(
-                        req.body.tiktok || ""
+                        req.body.tiktok ||
+                        ""
                     ).trim()
+
                     : "";
 
 
             const youtube =
                 type === "special"
+
                     ? String(
-                        req.body.youtube || ""
+                        req.body.youtube ||
+                        ""
                     ).trim()
+
                     : "";
 
 
-            /* ID */
+            /* =====================================
+               ID
+            ===================================== */
 
             const id =
                 crypto
-                    .randomBytes(8)
-                    .toString("hex");
+                    .randomBytes(
+                        8
+                    )
+                    .toString(
+                        "hex"
+                    );
 
 
-            /* NAME */
+            /* =====================================
+               FILE NAME
+            ===================================== */
 
             const firstFile =
-                req.files[0];
+                uploadFiles[0];
 
 
             const originalName =
@@ -897,57 +1382,93 @@ app.post(
                 "Monroe File";
 
 
-            /* SAVE FILE INFO */
+            /* =====================================
+               SAVE FILE INFORMATION
+            ===================================== */
 
             const savedFiles =
-                req.files.map(file => ({
+                uploadFiles.map(
+                    function (
+                        file
+                    ) {
 
-                    originalName:
-                        file.originalname,
+                        return {
 
-                    fileName:
-                        path.basename(
-                            file.path
-                        )
+                            originalName:
+                                file.originalname,
 
-                }));
+                            fileName:
+                                path.basename(
+                                    file.path
+                                )
+
+                        };
+
+                    }
+                );
 
 
-            /* MOD DATA */
+            /* =====================================
+               MOD DATA
+            ===================================== */
 
             const mod = {
 
-                id,
+                id:
+
+                    id,
 
                 name:
+
                     modName,
 
-                type,
+                type:
 
-                credits,
+                    type,
 
-                tiktok,
+                description:
 
-                youtube,
+                    description,
 
-                channelId,
+                credits:
 
-                previewUrls,
+                    credits,
+
+                tiktok:
+
+                    tiktok,
+
+                youtube:
+
+                    youtube,
+
+                channelId:
+
+                    channelId,
+
+                previewUrls:
+
+                    previewUrls,
 
                 files:
+
                     savedFiles,
 
                 createdBy:
+
                     user.username,
 
                 createdAt:
+
                     new Date()
                         .toISOString()
 
             };
 
 
-            /* SAVE DATA */
+            /* =====================================
+               SAVE DATA
+            ===================================== */
 
             const mods =
                 readJSON(
@@ -967,7 +1488,9 @@ app.post(
             );
 
 
-            /* SEND DISCORD */
+            /* =====================================
+               SEND DISCORD
+            ===================================== */
 
             let discordResult =
                 null;
@@ -978,34 +1501,38 @@ app.post(
                 discordResult =
                     await sendDiscordShare(
                         mod,
-                        req.files
+                        uploadFiles
                     );
 
-            } catch (discordError) {
+
+            } catch (
+                discordError
+            ) {
 
                 console.error(
                     "DISCORD SEND ERROR:",
                     discordError
                 );
 
+                /*
+                   Data upload tetap disimpan.
+                   User tidak dilempar logout.
+                */
+
             }
 
 
-            /*
-               PENTING:
-               FILE TIDAK DIHAPUS.
+            /* =====================================
+               SUCCESS
+            ===================================== */
 
-               TIDAK ADA ZIP.
-
-               TIDAK ADA REDIRECT.
-            */
-
-            res.json({
+            return res.json({
 
                 success:
                     true,
 
-                id,
+                id:
+                    id,
 
                 message:
                     "File berhasil dipublish!",
@@ -1014,6 +1541,7 @@ app.post(
                     discordResult
 
             });
+
 
         } catch (error) {
 
@@ -1024,48 +1552,44 @@ app.post(
 
 
             /*
-               CLEANUP HANYA JIKA
-               PROSES UPLOAD GAGAL
+               Hapus file kalau proses
+               benar-benar gagal.
             */
 
-            if (req.files) {
+            for (
+                const file
+                of uploadFiles
+            ) {
 
-                for (
-                    const file
-                    of req.files
-                ) {
+                try {
 
-                    try {
-
-                        if (
-                            fs.existsSync(
-                                file.path
-                            )
-                        ) {
-
-                            fs.unlinkSync(
-                                file.path
-                            );
-
-                        }
-
-                    } catch (
-                        cleanupError
+                    if (
+                        fs.existsSync(
+                            file.path
+                        )
                     ) {
 
-                        console.error(
-                            "CLEANUP ERROR:",
-                            cleanupError
+                        fs.unlinkSync(
+                            file.path
                         );
 
                     }
+
+                } catch (
+                    cleanupError
+                ) {
+
+                    console.error(
+                        "CLEANUP ERROR:",
+                        cleanupError
+                    );
 
                 }
 
             }
 
 
-            res
+            return res
                 .status(500)
                 .json({
 
@@ -1086,7 +1610,10 @@ app.post(
 
 app.get(
     "/api/share/:id",
-    async (req, res) => {
+    async function (
+        req,
+        res
+    ) {
 
         try {
 
@@ -1099,9 +1626,16 @@ app.get(
 
             const mod =
                 mods.find(
-                    item =>
-                        item.id ===
-                        req.params.id
+                    function (
+                        item
+                    ) {
+
+                        return (
+                            item.id ===
+                            req.params.id
+                        );
+
+                    }
                 );
 
 
@@ -1130,23 +1664,32 @@ app.get(
                 type:
                     mod.type,
 
+                description:
+                    mod.description ||
+                    "",
+
                 credits:
-                    mod.credits,
+                    mod.credits ||
+                    "",
 
                 tiktok:
-                    mod.tiktok || "",
+                    mod.tiktok ||
+                    "",
 
                 youtube:
-                    mod.youtube || "",
+                    mod.youtube ||
+                    "",
 
                 discord:
                     "",
 
                 previewUrls:
-                    mod.previewUrls || [],
+                    mod.previewUrls ||
+                    [],
 
                 files:
-                    mod.files || [],
+                    mod.files ||
+                    [],
 
                 createdAt:
                     mod.createdAt
@@ -1182,7 +1725,10 @@ app.get(
 
 app.get(
     "/download/:id/:index",
-    async (req, res) => {
+    async function (
+        req,
+        res
+    ) {
 
         try {
 
@@ -1195,9 +1741,16 @@ app.get(
 
             const mod =
                 mods.find(
-                    item =>
-                        item.id ===
-                        req.params.id
+                    function (
+                        item
+                    ) {
+
+                        return (
+                            item.id ===
+                            req.params.id
+                        );
+
+                    }
                 );
 
 
@@ -1219,7 +1772,9 @@ app.get(
 
 
             if (
-                !Number.isInteger(index) ||
+                !Number.isInteger(
+                    index
+                ) ||
                 index < 0 ||
                 index >=
                     mod.files.length
@@ -1260,10 +1815,11 @@ app.get(
             }
 
 
-            res.download(
+            return res.download(
                 filePath,
                 file.originalName
             );
+
 
         } catch (error) {
 
@@ -1273,7 +1829,7 @@ app.get(
             );
 
 
-            res
+            return res
                 .status(500)
                 .send(
                     "Gagal download file."
@@ -1291,9 +1847,12 @@ app.get(
 
 app.get(
     "/share/:id",
-    (req, res) => {
+    function (
+        req,
+        res
+    ) {
 
-        const file =
+        const shareFile =
             path.join(
                 PUBLIC_DIR,
                 "share.html"
@@ -1301,17 +1860,19 @@ app.get(
 
 
         if (
-            fs.existsSync(file)
+            fs.existsSync(
+                shareFile
+            )
         ) {
 
             return res.sendFile(
-                file
+                shareFile
             );
 
         }
 
 
-        res
+        return res
             .status(404)
             .send(
                 "share.html tidak ditemukan."
@@ -1327,7 +1888,10 @@ app.get(
 
 app.get(
     "/health",
-    (req, res) => {
+    function (
+        req,
+        res
+    ) {
 
         res.json({
 
@@ -1338,6 +1902,72 @@ app.get(
                 discordReady
 
         });
+
+    }
+);
+
+
+/* =========================================
+   404 API
+========================================= */
+
+app.use(
+    "/api",
+    function (
+        req,
+        res
+    ) {
+
+        res
+            .status(404)
+            .json({
+
+                message:
+                    "API endpoint tidak ditemukan."
+
+            });
+
+    }
+);
+
+
+/* =========================================
+   ERROR HANDLER
+========================================= */
+
+app.use(
+    function (
+        error,
+        req,
+        res,
+        next
+    ) {
+
+        console.error(
+            "SERVER ERROR:",
+            error
+        );
+
+
+        if (
+            res.headersSent
+        ) {
+
+            return next(
+                error
+            );
+
+        }
+
+
+        res
+            .status(500)
+            .json({
+
+                message:
+                    "Terjadi kesalahan pada server."
+
+            });
 
     }
 );
@@ -1355,7 +1985,7 @@ const PORT =
 
 app.listen(
     PORT,
-    () => {
+    function () {
 
         console.log(
             `Monroe File Share running on port ${PORT}`
