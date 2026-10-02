@@ -1334,3 +1334,93 @@ body {
     }
 
 }
+
+/* ================================= */
+/* DASHBOARD TOP HEADER */
+/* ================================= */
+
+#dashboardPage .topbar {
+    width: 100%;
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 20px;
+    margin: 0 0 22px;
+
+    background: rgba(0, 0, 0, 0.82);
+    border: 1px solid rgba(255, 122, 0, 0.15);
+    border-radius: 12px;
+
+    box-sizing: border-box;
+}
+
+#dashboardPage .topbar .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#dashboardPage .topbar .brand h1 {
+    margin: 0;
+    color: #ff7a00;
+    font-size: 24px;
+    letter-spacing: 3px;
+}
+
+#dashboardPage .topbar .brand p {
+    margin: 2px 0 0;
+    color: #aaa;
+    font-size: 10px;
+    letter-spacing: 4px;
+}
+
+#dashboardPage .user-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#dashboardPage .user-area strong {
+    display: block;
+    color: #fff;
+    font-size: 14px;
+}
+
+#dashboardPage .user-area small {
+    display: block;
+    color: #ff7a00;
+    font-size: 10px;
+    margin-top: 3px;
+}
+
+#dashboardPage #logoutBtn {
+    padding: 9px 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+}
+
+/* HP */
+
+@media (max-width: 600px) {
+
+    #dashboardPage .topbar {
+        padding: 13px 14px;
+    }
+
+    #dashboardPage .topbar .brand h1 {
+        font-size: 20px;
+    }
+
+    #dashboardPage .topbar .brand p {
+        font-size: 8px;
+    }
+
+    #dashboardPage .user-area {
+        gap: 7px;
+    }
+
+}
