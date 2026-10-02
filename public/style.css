@@ -1424,3 +1424,18 @@ body {
     }
 
 }
+
+.upload-choice {
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.upload-choice:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 122, 0, 0.5);
+    background: rgba(255, 122, 0, 0.07);
+}
+
+.upload-choice:active {
+    transform: scale(0.98);
+}
