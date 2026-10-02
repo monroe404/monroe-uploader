@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Monroe File Uploader</title>
+<title>Monroe File Uploader</title>
 
-    <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
@@ -16,220 +15,242 @@
 
 <main class="container">
 
-    <section class="card upload-page">
+<section class="card upload-page">
 
-        <div class="upload-page-header">
-            <div class="brand">
-                <div>
-                    <h1>MONROE</h1>
-                    <p>FILE SHARE</p>
-                </div>
-            </div>
-        </div>
+<div class="upload-page-header">
 
+    <div class="brand">
 
-        <div class="upload-page-title">
+        <div>
 
-            <span class="eyebrow">UPLOADER</span>
+            <h1>MONROE</h1>
 
-            <h2 id="uploadTitle">
-                PUBLIC FILE
-            </h2>
-
-            <p id="uploadDescription" class="muted">
-                Upload file yang dapat dibagikan secara publik.
-            </p>
+            <p>FILE SHARE</p>
 
         </div>
 
+    </div>
 
-        <form
-            id="uploadForm"
-            enctype="multipart/form-data"
-        >
-
-            <input
-                id="fileType"
-                type="hidden"
-                name="type"
-                value="public"
-            >
+</div>
 
 
-            <!-- PUBLIC CHANNEL -->
+<div class="upload-page-title">
 
-            <div
-                class="field"
-                id="channelField"
-            >
+    <span class="eyebrow">
+        UPLOADER
+    </span>
 
-                <label>
-                    CHANNEL / MOD
-                </label>
+    <h2 id="uploadTitle">
+        PUBLIC FILE
+    </h2>
 
-                <input
-                    type="text"
-                    id="channelSearch"
-                    placeholder="🔎 Cari channel, contoh: skin asian"
-                    autocomplete="off"
-                >
+    <p
+        id="uploadDescription"
+        class="muted"
+    >
+        Upload file yang dapat dibagikan secara publik.
+    </p>
 
-                <input
-                    type="hidden"
-                    id="channelId"
-                    name="channelId"
-                >
-
-                <div
-                    id="channelResults"
-                    class="channel-results"
-                ></div>
-
-            </div>
+</div>
 
 
-            <!-- CREDIT -->
+<form
+    id="uploadForm"
+    enctype="multipart/form-data"
+>
 
-            <div class="field">
-
-                <label>
-                    CREDITS / MAKER
-                </label>
-
-                <input
-                    type="text"
-                    name="credits"
-                    placeholder="Contoh: SkyMods"
-                    required
-                >
-
-            </div>
+<input
+    id="fileType"
+    type="hidden"
+    name="type"
+    value="public"
+>
 
 
-            <!-- DESCRIPTION -->
+<!-- PUBLIC CHANNEL -->
 
-            <div class="field">
+<div
+    class="field"
+    id="channelField"
+>
 
-                <label>
-                    DESCRIPTION
-                </label>
+<label>
+    CHANNEL / MOD
+</label>
 
-                <textarea
-                    name="description"
-                    rows="6"
-                    placeholder="Deskripsi file / mod..."
-                ></textarea>
+<input
+    type="text"
+    id="channelSearch"
+    placeholder="🔎 Cari channel, contoh: skin asian"
+    autocomplete="off"
+>
 
-            </div>
+<input
+    type="hidden"
+    id="channelId"
+    name="channelId"
+>
 
+<div
+    id="channelResults"
+    class="channel-results"
+></div>
 
-            <!-- SPECIAL SOCIAL -->
-
-            <div
-                id="socialFields"
-                style="display:none;"
-            >
-
-                <div class="field">
-
-                    <label>
-                        TIKTOK NAME (OPTIONAL)
-                    </label>
-
-                    <input
-                        type="text"
-                        name="tiktok"
-                        placeholder="@username"
-                    >
-
-                </div>
+</div>
 
 
-                <div class="field">
+<!-- CREDITS -->
 
-                    <label>
-                        YOUTUBE NAME (OPTIONAL)
-                    </label>
+<div class="field">
 
-                    <input
-                        type="text"
-                        name="youtube"
-                        placeholder="Nama channel YouTube"
-                    >
+<label>
+    CREDITS / MAKER
+</label>
 
-                </div>
+<input
+    type="text"
+    name="credits"
+    placeholder="Contoh: SkyMods"
+    required
+>
 
-            </div>
-
-
-            <!-- DISCORD CDN -->
-
-            <div class="field">
-
-                <label>
-                    🖼️ DISCORD CDN IMAGE
-                </label>
-
-                <input
-                    type="url"
-                    name="previewUrl"
-                    placeholder="https://cdn.discordapp.com/..."
-                >
-
-                <small>
-                    Paste link gambar dari Discord CDN.
-                </small>
-
-            </div>
+</div>
 
 
-            <!-- FILES -->
+<!-- SOCIAL SPECIAL -->
 
-            <div class="field">
+<div
+    id="socialFields"
+    style="display:none;"
+>
 
-                <label>
-                    📁 MOD FILES
-                </label>
+<div class="field">
 
-                <input
-                    type="file"
-                    name="files"
-                    multiple
-                    required
-                >
+<label>
+    TIKTOK NAME (OPTIONAL)
+</label>
 
-                <small>
-                    Semua file akan otomatis dijadikan ZIP.
-                </small>
+<input
+    type="text"
+    name="tiktok"
+    placeholder="@username"
+>
 
-            </div>
-
-
-            <button
-                type="submit"
-                class="primary-btn"
-            >
-                📦 PUBLISH FILE
-            </button>
+</div>
 
 
-            <div
-                id="uploadMessage"
-                class="message"
-            ></div>
+<div class="field">
 
-        </form>
+<label>
+    YOUTUBE NAME (OPTIONAL)
+</label>
+
+<input
+    type="text"
+    name="youtube"
+    placeholder="Nama channel YouTube"
+>
+
+</div>
+
+</div>
 
 
-        <button
-            type="button"
-            class="secondary-btn"
-            onclick="history.back()"
-        >
-            ← BACK
-        </button>
+<!-- PREVIEW -->
 
-    </section>
+<div class="field">
+
+<label>
+    🖼️ PREVIEW IMAGES
+</label>
+
+
+<div id="previewList">
+
+<div class="preview-input-row">
+
+<input
+    type="url"
+    name="previewUrls"
+    placeholder="https://cdn.discordapp.com/..."
+>
+
+<button
+    type="button"
+    class="remove-preview"
+    onclick="removePreview(this)"
+>
+    ×
+</button>
+
+</div>
+
+</div>
+
+
+<button
+    type="button"
+    class="add-preview-btn"
+    onclick="addPreview()"
+>
+    ＋ TAMBAH FOTO
+</button>
+
+
+<small>
+    Bisa menambahkan lebih dari satu foto preview.
+</small>
+
+</div>
+
+
+<!-- FILE -->
+
+<div class="field">
+
+<label>
+    📁 MOD FILES
+</label>
+
+<input
+    type="file"
+    name="files"
+    multiple
+    required
+>
+
+<small>
+    Semua file akan otomatis dijadikan ZIP.
+</small>
+
+</div>
+
+
+<button
+    type="submit"
+    class="primary-btn"
+>
+    📦 PUBLISH FILE
+</button>
+
+
+<div
+    id="uploadMessage"
+    class="message"
+></div>
+
+</form>
+
+
+<button
+    type="button"
+    class="secondary-btn"
+    onclick="history.back()"
+>
+    ← BACK
+</button>
+
+</section>
 
 </main>
 
