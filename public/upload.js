@@ -32,6 +32,11 @@ const channelId =
 const channelResults =
     document.getElementById("channelResults");
 
+const channelDropdownButton =
+    document.getElementById(
+        "channelDropdownButton"
+    );
+
 const socialFields =
     document.getElementById("socialFields");
 
@@ -45,9 +50,9 @@ const previewList =
 fileType.value = type;
 
 
-/* =========================================
+/* =========================
    PAGE TYPE
-========================================= */
+========================= */
 
 if (type === "special") {
 
@@ -76,150 +81,206 @@ if (type === "special") {
 
     socialFields.style.display =
         "none";
+
 }
 
 
-/* =========================================
-   CHANNEL SEARCH
-========================================= */
+/* =========================
+   CHANNEL
+========================= */
 
 let searchTimer = null;
 
 
+/* LOAD CHANNEL */
+
+async function loadChannels(
+    search = ""
+) {
+
+    try {
+
+        channelResults.innerHTML =
+            `
+            <div class="channel-loading">
+                Loading channel...
+            </div>
+            `;
+
+
+        const response =
+            await fetch(
+                `/api/channels?search=${encodeURIComponent(search)}`,
+                {
+                    credentials:
+                        "include"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            channelResults.innerHTML =
+                `
+                <div class="channel-empty">
+                    ${escapeHtml(
+                        data.message ||
+                        "Gagal mengambil channel."
+                    )}
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        if (
+            !data.channels ||
+            data.channels.length === 0
+        ) {
+
+            channelResults.innerHTML =
+                `
+                <div class="channel-empty">
+                    Channel tidak ditemukan.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        channelResults.innerHTML =
+            data.channels
+                .map(
+                    function (channel) {
+
+                        return `
+                        <div
+                            class="channel-item"
+                            data-id="${escapeHtml(channel.id)}"
+                            data-name="${escapeHtml(channel.name)}"
+                        >
+                            <span class="channel-hash">
+                                #
+                            </span>
+
+                            <span>
+                                ${escapeHtml(
+                                    channel.name
+                                )}
+                            </span>
+                        </div>
+                        `;
+
+                    }
+                )
+                .join("");
+
+
+        document
+            .querySelectorAll(
+                ".channel-item"
+            )
+            .forEach(
+                function (item) {
+
+                    item.addEventListener(
+                        "click",
+                        function () {
+
+                            channelId.value =
+                                this.dataset.id;
+
+                            channelSearch.value =
+                                this.dataset.name;
+
+                            channelResults.innerHTML =
+                                "";
+
+                        }
+                    );
+
+                }
+            );
+
+    } catch (error) {
+
+        console.error(
+            "CHANNEL ERROR:",
+            error
+        );
+
+        channelResults.innerHTML =
+            `
+            <div class="channel-empty">
+                Gagal terhubung ke server.
+            </div>
+            `;
+
+    }
+
+}
+
+
+/* =========================
+   CLICK INPUT
+========================= */
+
 if (channelSearch) {
+
+    channelSearch.addEventListener(
+        "focus",
+        function () {
+
+            if (
+                !channelResults.innerHTML.trim()
+            ) {
+
+                loadChannels(
+                    this.value.trim()
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =========================
+       TYPE TO SEARCH
+    ========================= */
 
     channelSearch.addEventListener(
         "input",
         function () {
 
-            clearTimeout(searchTimer);
+            clearTimeout(
+                searchTimer
+            );
 
-            channelId.value = "";
+
+            channelId.value =
+                "";
+
 
             const query =
                 this.value.trim();
 
-            channelResults.innerHTML =
-                "";
-
-            if (!query) {
-                return;
-            }
-
 
             searchTimer =
                 setTimeout(
-                    async function () {
+                    function () {
 
-                        try {
-
-                            const response =
-                                await fetch(
-                                    `/api/channels?search=${encodeURIComponent(query)}`,
-                                    {
-                                        credentials:
-                                            "include"
-                                    }
-                                );
-
-
-                            const data =
-                                await response.json();
-
-
-                            if (!response.ok) {
-
-                                channelResults.innerHTML =
-                                    `
-                                    <div class="channel-empty">
-                                        ${escapeHtml(
-                                            data.message ||
-                                            "Gagal mengambil channel."
-                                        )}
-                                    </div>
-                                    `;
-
-                                return;
-                            }
-
-
-                            if (
-                                !data.channels ||
-                                data.channels.length === 0
-                            ) {
-
-                                channelResults.innerHTML =
-                                    `
-                                    <div class="channel-empty">
-                                        Channel tidak ditemukan.
-                                    </div>
-                                    `;
-
-                                return;
-                            }
-
-
-                            channelResults.innerHTML =
-                                data.channels
-                                    .map(
-                                        function (channel) {
-
-                                            return `
-                                            <div
-                                                class="channel-item"
-                                                data-id="${escapeHtml(channel.id)}"
-                                                data-name="${escapeHtml(channel.name)}"
-                                            >
-                                                # ${escapeHtml(channel.name)}
-                                            </div>
-                                            `;
-
-                                        }
-                                    )
-                                    .join("");
-
-
-                            document
-                                .querySelectorAll(
-                                    ".channel-item"
-                                )
-                                .forEach(
-                                    function (item) {
-
-                                        item.addEventListener(
-                                            "click",
-                                            function () {
-
-                                                channelId.value =
-                                                    this.dataset.id;
-
-                                                channelSearch.value =
-                                                    this.dataset.name;
-
-                                                channelResults.innerHTML =
-                                                    "";
-
-                                            }
-                                        );
-
-                                    }
-                                );
-
-
-                        } catch (error) {
-
-                            console.error(
-                                error
-                            );
-
-                            channelResults.innerHTML =
-                                `
-                                <div class="channel-empty">
-                                    Gagal terhubung ke server.
-                                </div>
-                                `;
-
-                        }
+                        loadChannels(
+                            query
+                        );
 
                     },
                     250
@@ -228,21 +289,36 @@ if (channelSearch) {
         }
     );
 
+}
 
-    document.addEventListener(
+
+/* =========================
+   DROPDOWN BUTTON
+========================= */
+
+if (channelDropdownButton) {
+
+    channelDropdownButton.addEventListener(
         "click",
-        function (event) {
+        function () {
 
             if (
-                !channelField.contains(
-                    event.target
-                )
+                channelResults.innerHTML.trim()
             ) {
 
                 channelResults.innerHTML =
                     "";
 
+                return;
+
             }
+
+
+            loadChannels(
+                channelSearch.value.trim()
+            );
+
+            channelSearch.focus();
 
         }
     );
@@ -250,9 +326,32 @@ if (channelSearch) {
 }
 
 
-/* =========================================
+/* =========================
+   CLOSE DROPDOWN
+========================= */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            !channelField.contains(
+                event.target
+            )
+        ) {
+
+            channelResults.innerHTML =
+                "";
+
+        }
+
+    }
+);
+
+
+/* =========================
    ADD PREVIEW
-========================================= */
+========================= */
 
 function addPreview() {
 
@@ -262,13 +361,16 @@ function addPreview() {
         );
 
 
-    if (inputs.length >= 10) {
+    if (
+        inputs.length >= 10
+    ) {
 
         alert(
             "Maksimal 10 foto preview."
         );
 
         return;
+
     }
 
 
@@ -307,11 +409,13 @@ function addPreview() {
 }
 
 
-/* =========================================
+/* =========================
    REMOVE PREVIEW
-========================================= */
+========================= */
 
-function removePreview(button) {
+function removePreview(
+    button
+) {
 
     const rows =
         previewList.querySelectorAll(
@@ -319,7 +423,9 @@ function removePreview(button) {
         );
 
 
-    if (rows.length <= 1) {
+    if (
+        rows.length <= 1
+    ) {
 
         const input =
             button.parentElement
@@ -327,11 +433,14 @@ function removePreview(button) {
 
 
         if (input) {
-            input.value = "";
+
+            input.value =
+                "";
+
         }
 
-
         return;
+
     }
 
 
@@ -340,13 +449,14 @@ function removePreview(button) {
 }
 
 
-/* =========================================
-   RESET FORM
-========================================= */
+/* =========================
+   RESET
+========================= */
 
 function resetUploadForm() {
 
-    // Simpan channel yang sedang dipilih
+    /* SIMPAN CHANNEL */
+
     const savedChannelId =
         channelId
             ? channelId.value
@@ -358,79 +468,42 @@ function resetUploadForm() {
             : "";
 
 
-    // Reset semua input
+    /* RESET FORM */
+
     form.reset();
 
 
-    // Type tetap
     fileType.value =
         type;
 
 
-    // Kembalikan channel
+    /* KEMBALIKAN CHANNEL */
+
     if (channelId) {
+
         channelId.value =
             savedChannelId;
+
     }
+
 
     if (channelSearch) {
+
         channelSearch.value =
             savedChannelName;
+
     }
+
 
     if (channelResults) {
+
         channelResults.innerHTML =
             "";
-    }
-
-
-    // Preview kembali menjadi satu kolom kosong
-    previewList.innerHTML =
-        `
-        <div class="preview-input-row">
-
-            <input
-                type="url"
-                name="previewUrls"
-                placeholder="https://cdn.discordapp.com/..."
-            >
-
-            <button
-                type="button"
-                class="remove-preview"
-                onclick="removePreview(this)"
-            >
-                ×
-            </button>
-
-        </div>
-        `;
-
-
-    // Tampilan tetap sesuai tipe uploader
-    if (type === "special") {
-
-        channelField.style.display =
-            "none";
-
-        socialFields.style.display =
-            "block";
-
-    } else {
-
-        channelField.style.display =
-            "block";
-
-        socialFields.style.display =
-            "none";
 
     }
 
-}
 
-    /*
-       PREVIEW RESET
-    */
+    /* RESET PREVIEW */
 
     previewList.innerHTML =
         `
@@ -454,9 +527,7 @@ function resetUploadForm() {
         `;
 
 
-    /*
-       TYPE UI TETAP
-    */
+    /* PAGE TYPE */
 
     if (type === "special") {
 
@@ -479,9 +550,9 @@ function resetUploadForm() {
 }
 
 
-/* =========================================
+/* =========================
    SUBMIT
-========================================= */
+========================= */
 
 form.addEventListener(
     "submit",
@@ -489,10 +560,6 @@ form.addEventListener(
 
         event.preventDefault();
 
-
-        /*
-           PUBLIC HARUS PILIH CHANNEL
-        */
 
         if (
             type === "public" &&
@@ -506,12 +573,9 @@ form.addEventListener(
                 "#ff5555";
 
             return;
+
         }
 
-
-        /*
-           STATUS
-        */
 
         message.textContent =
             "Uploading...";
@@ -519,10 +583,6 @@ form.addEventListener(
         message.style.color =
             "#aaa";
 
-
-        /*
-           FORM DATA
-        */
 
         const formData =
             new FormData(form);
@@ -534,7 +594,9 @@ form.addEventListener(
         );
 
 
-        if (type === "special") {
+        if (
+            type === "special"
+        ) {
 
             formData.delete(
                 "channelId"
@@ -549,7 +611,6 @@ form.addEventListener(
                 await fetch(
                     "/api/upload",
                     {
-
                         method:
                             "POST",
 
@@ -558,7 +619,6 @@ form.addEventListener(
 
                         body:
                             formData
-
                     }
                 );
 
@@ -577,25 +637,16 @@ form.addEventListener(
                     "#ff5555";
 
                 return;
+
             }
 
-
-            /*
-               BERHASIL
-            */
 
             message.textContent =
                 "✓ File berhasil dipublish!";
 
-
             message.style.color =
                 "#ff7a00";
 
-
-            /*
-               PENTING:
-               TETAP DI HALAMAN INI
-            */
 
             resetUploadForm();
 
@@ -611,7 +662,6 @@ form.addEventListener(
             message.textContent =
                 "Gagal terhubung ke server.";
 
-
             message.style.color =
                 "#ff5555";
 
@@ -621,11 +671,13 @@ form.addEventListener(
 );
 
 
-/* =========================================
+/* =========================
    ESCAPE HTML
-========================================= */
+========================= */
 
-function escapeHtml(text) {
+function escapeHtml(
+    text
+) {
 
     const div =
         document.createElement(
