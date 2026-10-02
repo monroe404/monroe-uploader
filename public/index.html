@@ -242,189 +242,182 @@
         <!-- UPLOAD -->
         <!-- ========================= -->
 
-        <section class="card">
+        <!-- ================================= -->
+<!-- UPLOAD SECTION -->
+<!-- ================================= -->
 
-            <div class="section-header">
+<div class="upload-grid">
 
-                <div>
+    <!-- PUBLIC FILE -->
+    <div
+        class="panel upload-panel"
+        id="publicUploadPanel"
+    >
 
-                    <span class="eyebrow">
-                        UPLOADER
-                    </span>
+        <div class="upload-header">
+            <span class="upload-icon">🌐</span>
 
-                    <h2>
-                        Publish File
-                    </h2>
-
-                    <p class="muted">
-                        Upload file mod dan publish menjadi satu share.
-                    </p>
-
-                </div>
-
+            <div>
+                <h2>PUBLIC FILE</h2>
+                <p>File yang dapat diakses secara publik.</p>
             </div>
+        </div>
 
+        <form
+            id="publicUploadForm"
+            enctype="multipart/form-data"
+        >
 
-            <form
-                id="uploadForm"
-                enctype="multipart/form-data"
+            <input
+                type="hidden"
+                name="type"
+                value="public"
             >
 
-                <!-- MOD NAME -->
+            <label>MOD / SHARE NAME</label>
 
-                <div class="field">
+            <input
+                type="text"
+                name="name"
+                placeholder="Contoh: Monroe Vehicle Pack"
+                required
+            >
 
-                    <label>
-                        Mod / Share Name
-                    </label>
+            <label>CREDITS / MAKER</label>
 
-                    <input
-                        id="modName"
-                        name="modName"
-                        type="text"
-                        placeholder="Contoh: Monroe BMW M4"
-                        required
-                    >
+            <input
+                type="text"
+                name="credits"
+                placeholder="Nama pembuat"
+                required
+            >
 
-                </div>
+            <label>DESCRIPTION</label>
 
+            <textarea
+                name="description"
+                placeholder="Deskripsi file..."
+                required
+            ></textarea>
 
-                <!-- CREDITS -->
+            <label>PREVIEW IMAGE</label>
 
-                <div class="field">
+            <input
+                type="file"
+                name="preview"
+                accept="image/*"
+                required
+            >
 
-                    <label>
-                        Credits / Maker
-                    </label>
+            <label>MOD FILES</label>
 
-                    <input
-                        id="credits"
-                        name="credits"
-                        type="text"
-                        placeholder="Contoh: SkyMods"
-                    >
+            <input
+                type="file"
+                name="files"
+                multiple
+                required
+            >
 
-                </div>
+            <button type="submit">
+                📤 PUBLISH PUBLIC FILE
+            </button>
 
+            <div
+                id="publicUploadMessage"
+                class="message"
+            ></div>
 
-                <!-- DESCRIPTION -->
+        </form>
 
-                <div class="field">
-
-                    <label>
-                        Description
-                    </label>
-
-                    <textarea
-                        id="description"
-                        name="description"
-                        rows="5"
-                        placeholder="Deskripsi file/mod..."
-                    ></textarea>
-
-                </div>
-
-
-                <!-- PREVIEW -->
-
-                <div class="field">
-
-                    <label>
-                        Preview Image
-                    </label>
-
-                    <input
-                        id="preview"
-                        name="preview"
-                        type="file"
-                        accept="image/*"
-                    >
-
-                    <small class="muted">
-                        Opsional. Gunakan gambar sebagai preview.
-                    </small>
-
-                </div>
+    </div>
 
 
-                <!-- FILES -->
+    <!-- SPECIAL FILE -->
+    <div
+        class="panel upload-panel"
+        id="specialUploadPanel"
+    >
 
-                <div class="field">
+        <div class="upload-header">
+            <span class="upload-icon">🔒</span>
 
-                    <label>
-                        Mod Files
-                    </label>
+            <div>
+                <h2>SPECIAL FILE</h2>
+                <p>File khusus uploader.</p>
+            </div>
+        </div>
 
-                    <input
-                        id="files"
-                        name="files"
-                        type="file"
-                        multiple
-                        required
-                    >
+        <form
+            id="specialUploadForm"
+            enctype="multipart/form-data"
+        >
 
-                    <small class="muted">
-                        Semua file akan otomatis dijadikan satu ZIP.
-                    </small>
+            <input
+                type="hidden"
+                name="type"
+                value="special"
+            >
 
-                </div>
+            <label>MOD / SHARE NAME</label>
 
+            <input
+                type="text"
+                name="name"
+                placeholder="Contoh: Private Mod Pack"
+                required
+            >
 
-                <!-- FILE LIST -->
+            <label>CREDITS / MAKER</label>
 
-                <div
-                    id="fileList"
-                    class="file-list"
-                ></div>
+            <input
+                type="text"
+                name="credits"
+                placeholder="Nama pembuat"
+                required
+            >
 
+            <label>DESCRIPTION</label>
 
-                <!-- PROGRESS -->
+            <textarea
+                name="description"
+                placeholder="Deskripsi file..."
+                required
+            ></textarea>
 
-                <div
-                    id="uploadProgress"
-                    class="progress-wrapper"
-                    style="display:none;"
-                >
+            <label>PREVIEW IMAGE</label>
 
-                    <div class="progress-bar">
+            <input
+                type="file"
+                name="preview"
+                accept="image/*"
+                required
+            >
 
-                        <div
-                            id="progressFill"
-                            class="progress-fill"
-                        ></div>
+            <label>MOD FILES</label>
 
-                    </div>
+            <input
+                type="file"
+                name="files"
+                multiple
+                required
+            >
 
-                    <div
-                        id="progressText"
-                        class="progress-text"
-                    >
-                        Uploading...
-                    </div>
+            <button type="submit">
+                🔒 PUBLISH SPECIAL FILE
+            </button>
 
-                </div>
+            <div
+                id="specialUploadMessage"
+                class="message"
+            ></div>
 
+        </form>
 
-                <!-- PUBLISH -->
+    </div>
 
-                <button
-                    id="publishBtn"
-                    type="submit"
-                    class="primary-btn publish-btn"
-                >
-                    📦 PUBLISH
-                </button>
+</div>
 
-                <div
-                    id="uploadMessage"
-                    class="message"
-                ></div>
-
-            </form>
-
-        </section>
-
-
+            
         <!-- ========================= -->
         <!-- RESULT -->
         <!-- ========================= -->
