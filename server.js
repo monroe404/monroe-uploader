@@ -19,82 +19,86 @@ const config = require("./config");
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-const PUBLIC_URL = (process.env.PUBLIC_URL || "").replace(/\/$/, "");
+const PORT = process.env.PORT || config.PORT || 3000;
 
 const DATA_DIR = path.join(__dirname, "data");
 const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
-const PREVIEW_DIR = path.join(DATA_DIR, "previews");
 const ZIP_DIR = path.join(DATA_DIR, "zips");
 
-[
-    DATA_DIR,
-    UPLOAD_DIR,
-    PREVIEW_DIR,
-    ZIP_DIR
-].forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, {
-            recursive: true
-        });
+const MODS_FILE = path.join(DATA_DIR, "mods.json");
+
+fs.mkdirSync(DATA_DIR, { recursive: true });
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+fs.mkdirSync(ZIP_DIR, { recursive: true });
+
+
+/* =========================================
+   JSON HELPERS
+========================================= */
+
+function readJSON(file, fallback = []) {
+
+    try {
+
+        if (!fs.existsSync(file)) {
+            return fallback;
+        }
+
+        return JSON.parse(
+            fs.readFileSync(file, "utf8")
+        );
+
+    } catch (error) {
+
+        return fallback;
+
     }
-});
+}
 
-const MODS_FILE =
-    path.join(DATA_DIR, "mods.json");
 
-const PROFILES_FILE =
-    path.join(DATA_DIR, "profiles.json");
+function writeJSON(file, data) {
+
+    fs.writeFileSync(
+        file,
+        JSON.stringify(data, null, 2)
+    );
+
+}
+
 
 if (!fs.existsSync(MODS_FILE)) {
-    fs.writeFileSync(
-        MODS_FILE,
-        "[]"
-    );
-}
-
-if (!fs.existsSync(PROFILES_FILE)) {
-    fs.writeFileSync(
-        PROFILES_FILE,
-        "{}"
-    );
+    writeJSON(MODS_FILE, []);
 }
 
 
-// =================================
-// USERS
-// =================================
+/* =========================================
+   USERS
+========================================= */
 
-const USERS = [
-    {
-        username: "monroe404",
+const USERS = {
+
+    monroe404: {
         password: "farras1239091",
         role: "founder"
     },
-    {
-        username: "skymods404",
+
+    skymods404: {
         password: "sky1239091",
         role: "uploader"
     }
-];
+
+};
 
 
-// =================================
-// EXPRESS
-// =================================
+/* =========================================
+   MIDDLEWARE
+========================================= */
 
-app.use(
-    express.json({
-        limit: "10mb"
-    })
-);
+app.use(express.json());
 
-app.use(
-    express.urlencoded({
-        extended: true,
-        limit: "10mb"
-    })
-);
+app.use(express.urlencoded({
+    extended: true
+}));
 
 app.use(
     session({
@@ -107,8 +111,7 @@ app.use(
         saveUninitialized: false,
 
         cookie: {
-            maxAge:
-                7 * 24 * 60 * 60 * 1000
+            maxAge: 1000 * 60 * 60 * 24 * 7
         }
     })
 );
@@ -120,676 +123,861 @@ app.use(
 );
 
 
-// =================================
-// MULTER
-// =================================
+/* =========================================
+   MULTER
+========================================= */
 
-const storage =
-    multer.diskStorage({
+const storage = multer.diskStorage({
 
-        destination:
-            function(
-                req,
-                file,
-                cb
-            ) {
+    destination: function (req, file, cb) {
+
+        cb(null, UPLOAD_DIR);
+
+    },
+
+    filename: function (req, file, cb) {
+
+        const ext =
+            path.extname(file.originalname);
+
+        const name =
+            crypto.randomBytes(12).toString("hex");
+
+        cb(
+            null,
+            `${name}${ext}`
+        );
+
+    }
+
+});
+
+
+const upload = multer({
+    storage,
+
+    limits: {
+        fileSize: 1024 * 1024 * 500
+    }
+});
+
+
+/* =========================================
+   AUTH
+========================================= */
+
+function requireLogin(req, res, next) {
+
+    if (!req.session.user) {
+
+        return res.status(401).json({
+            message: "Belum login."
+        });
+
+    }
+
+    next();
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+app.post("/api/login", (req, res) => {
+
+    const {
+        username,
+        password
+    } = req.body;
+
+    const user =
+        USERS[username];
+
+    if (
+        !user ||
+        user.password !== password
+    ) {
+
+        return res.status(401).json({
+            message:
+                "Username atau password salah."
+        });
+
+    }
+
+
+    req.session.user = {
+
+        username,
+
+        role: user.role
+
+    };
+
+
+    res.json({
+
+        success: true,
+
+        user: {
+            username,
+            role: user.role
+        }
+
+    });
+
+});
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+app.post("/api/logout", (req, res) => {
+
+    req.session.destroy(() => {
+
+        res.json({
+            success: true
+        });
+
+    });
+
+});
+
+
+/* =========================================
+   CURRENT USER
+========================================= */
+
+app.get("/api/me", (req, res) => {
+
+    if (!req.session.user) {
+
+        return res.json({
+            loggedIn: false
+        });
+
+    }
+
+
+    res.json({
+
+        loggedIn: true,
+
+        user: req.session.user
+
+    });
+
+});
+
+
+/* =========================================
+   DISCORD CLIENT
+========================================= */
+
+const client = new Client({
+
+    intents: [
+        GatewayIntentBits.Guilds
+    ]
+
+});
+
+
+let discordReady = false;
+
+
+client.once("ready", () => {
+
+    discordReady = true;
+
+    console.log(
+        `Discord bot online sebagai ${client.user.tag}`
+    );
+
+});
+
+
+client.on("error", error => {
+
+    console.error(
+        "Discord error:",
+        error
+    );
+
+});
+
+
+if (process.env.DISCORD_TOKEN) {
+
+    client.login(
+        process.env.DISCORD_TOKEN
+    ).catch(error => {
+
+        console.error(
+            "Discord login gagal:",
+            error.message
+        );
+
+    });
+
+} else {
+
+    console.log(
+        "DISCORD_TOKEN belum diset."
+    );
+
+}
+
+
+/* =========================================
+   GET GUILD
+========================================= */
+
+async function getGuild() {
+
+    if (!discordReady) {
+
+        throw new Error(
+            "Discord bot belum siap."
+        );
+
+    }
+
+    const guild =
+        await client.guilds.fetch(
+            config.GUILD_ID
+        );
+
+    return guild;
+
+}
+
+
+/* =========================================
+   CHANNEL LIST
+========================================= */
+
+app.get(
+    "/api/channels",
+    requireLogin,
+    async (req, res) => {
+
+        try {
+
+            const guild =
+                await getGuild();
+
+
+            const channels =
+                await guild.channels.fetch();
+
+
+            const search =
+                String(
+                    req.query.search || ""
+                )
+                    .trim()
+                    .toLowerCase();
+
+
+            const result = [];
+
+
+            channels.forEach(channel => {
+
+                if (!channel) return;
+
+
+                /*
+                 * Hanya text channel.
+                 */
 
                 if (
-                    file.fieldname ===
-                    "preview"
+                    channel.type !== 0
+                ) {
+                    return;
+                }
+
+
+                if (
+                    !channel.name
+                ) {
+                    return;
+                }
+
+
+                /*
+                 * Search.
+                 */
+
+                if (
+                    search &&
+                    !channel.name
+                        .toLowerCase()
+                        .includes(search)
                 ) {
 
-                    cb(
-                        null,
-                        PREVIEW_DIR
-                    );
+                    return;
 
-                } else {
-
-                    cb(
-                        null,
-                        UPLOAD_DIR
-                    );
                 }
-            },
-
-        filename:
-            function(
-                req,
-                file,
-                cb
-            ) {
-
-                const ext =
-                    path.extname(
-                        file.originalname
-                    );
-
-                cb(
-                    null,
-                    crypto
-                        .randomBytes(16)
-                        .toString("hex") +
-                    ext
-                );
-            }
-    });
-
-const upload =
-    multer({
-        storage,
-
-        limits: {
-            fileSize:
-                500 * 1024 * 1024,
-
-            files: 101
-        }
-    });
 
 
-// =================================
-// HELPERS
-// =================================
+                result.push({
 
-function readJSON(file) {
+                    id: channel.id,
 
-    try {
+                    name: channel.name
 
-        return JSON.parse(
-            fs.readFileSync(
-                file,
-                "utf8"
-            )
-        );
-
-    } catch {
-
-        return Array.isArray(
-            JSON.parse("[]")
-        )
-            ? []
-            : {};
-    }
-}
-
-
-function saveJSON(
-    file,
-    data
-) {
-
-    fs.writeFileSync(
-        file,
-        JSON.stringify(
-            data,
-            null,
-            2
-        )
-    );
-}
-
-
-function makeID() {
-
-    return (
-        Date.now().toString(36) +
-        crypto
-            .randomBytes(5)
-            .toString("hex")
-    );
-}
-
-
-// =================================
-// AUTH
-// =================================
-
-function requireLogin(
-    req,
-    res,
-    next
-) {
-
-    if (!req.session.user) {
-
-        return res.status(401).json({
-            success: false,
-            message: "Belum login."
-        });
-    }
-
-    next();
-}
-
-
-function requireFounder(
-    req,
-    res,
-    next
-) {
-
-    if (
-        !req.session.user ||
-        req.session.user.role !==
-            "founder"
-    ) {
-
-        return res.status(403).json({
-            success: false,
-            message:
-                "Akses Founder diperlukan."
-        });
-    }
-
-    next();
-}
-
-
-function requireUploaderAccess(
-    req,
-    res,
-    next
-) {
-
-    if (!req.session.user) {
-
-        return res.status(401).json({
-            success: false,
-            message: "Belum login."
-        });
-    }
-
-    if (
-        req.session.user.role !==
-            "founder" &&
-        req.session.user.role !==
-            "uploader"
-    ) {
-
-        return res.status(403).json({
-            success: false,
-            message: "Akses ditolak."
-        });
-    }
-
-    next();
-}
-
-
-// =================================
-// LOGIN
-// =================================
-
-app.post(
-    "/api/login",
-    function(req, res) {
-
-        const {
-            username,
-            password
-        } = req.body;
-
-        const user =
-            USERS.find(
-                u =>
-                    u.username ===
-                        username &&
-                    u.password ===
-                        password
-            );
-
-        if (!user) {
-
-            return res.status(401).json({
-                success: false,
-                message:
-                    "Username atau password salah."
-            });
-        }
-
-        req.session.user = {
-            username:
-                user.username,
-
-            role:
-                user.role
-        };
-
-        res.json({
-            success: true,
-            user: req.session.user
-        });
-    }
-);
-
-
-// =================================
-// LOGOUT
-// =================================
-
-app.post(
-    "/api/logout",
-    function(req, res) {
-
-        req.session.destroy(
-            function() {
-
-                res.json({
-                    success: true
                 });
+
+            });
+
+
+            result.sort(
+                (a, b) =>
+                    a.name.localeCompare(
+                        b.name
+                    )
+            );
+
+
+            res.json({
+                channels: result
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Channel error:",
+                error
+            );
+
+            res.status(500).json({
+
+                message:
+                    "Gagal mengambil channel Discord."
+
+            });
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   CREATE ZIP
+========================================= */
+
+function createZip(files, zipPath) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const output =
+                fs.createWriteStream(
+                    zipPath
+                );
+
+            const archive =
+                archiver("zip", {
+                    zlib: {
+                        level: 9
+                    }
+                });
+
+
+            output.on(
+                "close",
+                resolve
+            );
+
+
+            archive.on(
+                "error",
+                reject
+            );
+
+
+            archive.pipe(output);
+
+
+            for (const file of files) {
+
+                archive.file(
+                    file.path,
+                    {
+                        name:
+                            file.originalname
+                    }
+                );
+
             }
-        );
-    }
-);
 
 
-// =================================
-// CURRENT USER
-// =================================
+            archive.finalize();
 
-app.get(
-    "/api/me",
-    function(req, res) {
+        }
+    );
 
-        res.json({
-            success: true,
-            user:
-                req.session.user ||
-                null
-        });
-    }
-);
+}
 
 
-// =================================
-// DASHBOARD ACCESS
-// =================================
+/* =========================================
+   DISCORD PUBLISH
+========================================= */
 
-app.get(
-    "/api/dashboard",
-    requireLogin,
-    function(req, res) {
+async function sendDiscordShare(mod) {
 
-        res.json({
-            success: true,
-
-            role:
-                req.session.user.role,
-
-            canPublic:
-                req.session.user.role ===
-                "founder",
-
-            canSpecial:
-                true
-        });
-    }
-);
+    const guild =
+        await getGuild();
 
 
-// =================================
-// PROFILE
-// =================================
-
-app.get(
-    "/api/profile",
-    requireLogin,
-    function(req, res) {
-
-        const profiles =
-            readJSON(
-                PROFILES_FILE
-            );
-
-        const profile =
-            profiles[
-                req.session.user.username
-            ] || {};
-
-        res.json({
-            success: true,
-            profile
-        });
-    }
-);
+    let channel;
 
 
-app.post(
-    "/api/profile",
-    requireLogin,
-    function(req, res) {
-
-        const profiles =
-            readJSON(
-                PROFILES_FILE
-            );
-
-        profiles[
-            req.session.user.username
-        ] = {
-
-            displayName:
-                req.body.displayName ||
-                "",
-
-            tiktok:
-                req.body.tiktok ||
-                "",
-
-            youtube:
-                req.body.youtube ||
-                "",
-
-            discord:
-                req.body.discord ||
-                ""
-        };
-
-        saveJSON(
-            PROFILES_FILE,
-            profiles
-        );
-
-        res.json({
-            success: true,
-            message:
-                "Profile berhasil disimpan."
-        });
-    }
-);
-
-
-// =================================
-// DISCORD BOT
-// =================================
-
-const discordClient =
-    new Client({
-        intents: [
-            GatewayIntentBits.Guilds
-        ]
-    });
-
-
-discordClient.once(
-    "ready",
-    function() {
-
-        console.log(
-            `Discord bot online sebagai ${discordClient.user.tag}`
-        );
-    }
-);
-
-
-async function sendDiscordShare(
-    mod
-) {
+    /*
+     * SPECIAL
+     * selalu ke UPLOADER_CHANNEL_ID
+     */
 
     if (
-        !process.env.DISCORD_TOKEN ||
-        !PUBLIC_URL
+        mod.type === "special"
     ) {
 
-        return false;
-    }
-
-    if (
-        !discordClient.isReady()
-    ) {
-
-        return false;
-    }
-
-    try {
-
-        const guild =
-            await discordClient.guilds.fetch(
-                config.GUILD_ID
-            );
-
-        const channel =
+        channel =
             await guild.channels.fetch(
                 config.UPLOADER_CHANNEL_ID
             );
 
-        if (
-            !channel ||
-            !channel.isTextBased()
-        ) {
+    }
 
-            return false;
-        }
 
-        const embed =
-            new EmbedBuilder()
-                .setColor(0xff7a00)
-                .setTitle(
-                    mod.type === "public"
-                        ? "🟧 MONROE PUBLIC FILE"
-                        : "🔒 MONROE SPECIAL FILE"
-                )
-                .setDescription(
-                    mod.description ||
-                    "Tidak ada deskripsi."
-                )
-                .addFields(
+    /*
+     * PUBLIC
+     * ke channel pilihan
+     */
 
-                    {
-                        name:
-                            "📦 File",
-                        value:
-                            mod.name,
-                        inline:
-                            false
-                    },
+    else {
 
-                    {
-                        name:
-                            "👤 Uploader",
-                        value:
-                            mod.uploader,
-                        inline:
-                            true
-                    },
-
-                    {
-                        name:
-                            "🎨 Credits",
-                        value:
-                            mod.credits ||
-                            "-",
-                        inline:
-                            true
-                    },
-
-                    {
-                        name:
-                            "📝 Type",
-                        value:
-                            mod.type ===
-                            "public"
-                                ? "PUBLIC"
-                                : "SPECIAL",
-                        inline:
-                            true
-                    }
-                )
-                .setFooter({
-                    text:
-                        "MONROE COMMUNITY © 2026"
-                });
-
-        if (
-            mod.preview
-        ) {
-
-            embed.setImage(
-                `${PUBLIC_URL}/api/preview/${mod.id}`
+        channel =
+            await guild.channels.fetch(
+                mod.channelId
             );
-        }
 
-        const button =
-            new ButtonBuilder()
-                .setLabel(
-                    "DOWNLOAD ALL"
-                )
-                .setEmoji("📦")
-                .setStyle(
-                    ButtonStyle.Link
-                )
-                .setURL(
-                    `${PUBLIC_URL}/download/${mod.id}`
-                );
+    }
 
-        const row =
-            new ActionRowBuilder()
-                .addComponents(
-                    button
-                );
 
-        await channel.send({
-            embeds: [
-                embed
-            ],
-            components: [
-                row
-            ]
-        });
+    if (
+        !channel ||
+        !channel.isTextBased()
+    ) {
 
-        return true;
-
-    } catch (error) {
-
-        console.error(
-            "Discord error:",
-            error
+        throw new Error(
+            "Channel Discord tidak valid."
         );
 
-        return false;
     }
+
+
+    const baseURL =
+        (
+            process.env.PUBLIC_URL ||
+            ""
+        ).replace(/\/$/, "");
+
+
+    const shareURL =
+        `${baseURL}/share/${mod.id}`;
+
+
+    const embed =
+        new EmbedBuilder()
+
+            .setTitle(
+                mod.type === "special"
+                    ? "🔒 MONROE SPECIAL FILE"
+                    : "🟧 MONROE PUBLIC FILE"
+            )
+
+            .setDescription(
+                mod.description ||
+                "Tidak ada deskripsi."
+            )
+
+            .addFields(
+
+                {
+                    name: "📁 FILE",
+                    value:
+                        mod.name ||
+                        "Unknown",
+                    inline: true
+                },
+
+                {
+                    name: "👤 CREDIT",
+                    value:
+                        mod.credits ||
+                        "Unknown",
+                    inline: true
+                }
+
+            )
+
+            .setColor(
+                0xff7a00
+            )
+
+            .setTimestamp();
+
+
+    if (mod.tiktok) {
+
+        embed.addFields({
+            name: "TikTok",
+            value: mod.tiktok,
+            inline: true
+        });
+
+    }
+
+
+    if (mod.youtube) {
+
+        embed.addFields({
+            name: "YouTube",
+            value: mod.youtube,
+            inline: true
+        });
+
+    }
+
+
+    if (mod.previewUrl) {
+
+        embed.setImage(
+            mod.previewUrl
+        );
+
+    }
+
+
+    const row =
+        new ActionRowBuilder()
+            .addComponents(
+
+                new ButtonBuilder()
+
+                    .setLabel(
+                        "DOWNLOAD ALL"
+                    )
+
+                    .setStyle(
+                        ButtonStyle.Link
+                    )
+
+                    .setURL(
+                        shareURL
+                    )
+
+                    .setEmoji("📦")
+
+            );
+
+
+    await channel.send({
+
+        embeds: [
+            embed
+        ],
+
+        components: [
+            row
+        ]
+
+    });
+
+
+    return shareURL;
+
 }
 
 
-// =================================
-// UPLOAD
-// =================================
+/* =========================================
+   UPLOAD
+========================================= */
 
 app.post(
     "/api/upload",
-
-    requireUploaderAccess,
-
+    requireLogin,
     upload.fields([
         {
-            name:
-                "preview",
-
-            maxCount:
-                1
+            name: "files",
+            maxCount: 50
         },
-
         {
-            name:
-                "files",
-
-            maxCount:
-                100
+            name: "preview",
+            maxCount: 1
         }
     ]),
+    async (req, res) => {
 
-    async function(
-        req,
-        res
-    ) {
+        const uploadedFiles =
+            req.files?.files || [];
+
 
         try {
 
             const user =
                 req.session.user;
 
-            let type =
-                req.body.type;
+
+            const type =
+                req.body.type === "special"
+                    ? "special"
+                    : "public";
+
 
             /*
-             * Founder:
-             * boleh PUBLIC + SPECIAL
-             *
-             * Uploader:
-             * hanya SPECIAL
+             * Uploader hanya Special.
              */
 
             if (
-                user.role ===
-                "uploader"
-            ) {
-
-                type =
-                    "special";
-            }
-
-            if (
-                type !== "public" &&
+                user.role === "uploader" &&
                 type !== "special"
             ) {
 
-                type =
-                    user.role ===
-                    "founder"
-                        ? "public"
-                        : "special";
+                return res.status(403).json({
+
+                    message:
+                        "Uploader hanya dapat membuat Special File."
+
+                });
+
             }
 
+
+            /*
+             * Founder boleh Public/Special.
+             */
+
             if (
-                type === "public" &&
-                user.role !==
-                    "founder"
+                user.role !== "founder" &&
+                user.role !== "uploader"
             ) {
 
                 return res.status(403).json({
-                    success: false,
+
                     message:
-                        "Public File hanya dapat diakses Founder."
+                        "Tidak memiliki akses."
+
                 });
+
             }
 
-            const files =
-                req.files &&
-                req.files.files
-                    ? req.files.files
-                    : [];
 
-            if (!files.length) {
+            if (
+                uploadedFiles.length === 0
+            ) {
 
                 return res.status(400).json({
-                    success: false,
+
                     message:
-                        "Minimal satu file harus dipilih."
+                        "Pilih minimal satu file."
+
                 });
+
             }
 
-            const id =
-                makeID();
-
-            const modName =
-                req.body.modName ||
-                "Untitled File";
 
             const credits =
-                req.body.credits ||
-                "-";
+                String(
+                    req.body.credits || ""
+                ).trim();
+
 
             const description =
-                req.body.description ||
-                "";
+                String(
+                    req.body.description || ""
+                ).trim();
 
-            const preview =
-                req.files &&
-                req.files.preview &&
-                req.files.preview[0]
-                    ? req.files.preview[0]
-                    : null;
+
+            const tiktok =
+                String(
+                    req.body.tiktok || ""
+                ).trim();
+
+
+            const youtube =
+                String(
+                    req.body.youtube || ""
+                ).trim();
+
+
+            const previewUrl =
+                String(
+                    req.body.previewUrl || ""
+                ).trim();
+
+
+            /*
+             * PUBLIC CHANNEL
+             */
+
+            let channelId = null;
+
+            let channelName = null;
+
+
+            if (
+                type === "public"
+            ) {
+
+                channelId =
+                    String(
+                        req.body.channelId || ""
+                    ).trim();
+
+
+                if (!channelId) {
+
+                    return res.status(400).json({
+
+                        message:
+                            "Pilih channel Public terlebih dahulu."
+
+                    });
+
+                }
+
+
+                const guild =
+                    await getGuild();
+
+
+                const channel =
+                    await guild.channels.fetch(
+                        channelId
+                    );
+
+
+                if (
+                    !channel ||
+                    !channel.isTextBased()
+                ) {
+
+                    return res.status(400).json({
+
+                        message:
+                            "Channel Public tidak valid."
+
+                    });
+
+                }
+
+
+                channelName =
+                    channel.name;
+
+            }
+
+
+            /*
+             * SPECIAL
+             */
+
+            if (
+                type === "special"
+            ) {
+
+                channelId =
+                    config.UPLOADER_CHANNEL_ID;
+
+
+                const guild =
+                    await getGuild();
+
+
+                const channel =
+                    await guild.channels.fetch(
+                        channelId
+                    );
+
+
+                if (
+                    !channel ||
+                    !channel.isTextBased()
+                ) {
+
+                    return res.status(500).json({
+
+                        message:
+                            "Special channel tidak ditemukan."
+
+                    });
+
+                }
+
+
+                channelName =
+                    channel.name;
+
+            }
+
+
+            /*
+             * ID
+             */
+
+            const id =
+                crypto
+                    .randomBytes(8)
+                    .toString("hex");
+
+
+            /*
+             * Nama file dari channel
+             * untuk Public.
+             *
+             * Untuk Special gunakan
+             * nama pertama file jika
+             * channel tidak dipilih.
+             */
+
+            let name;
+
+
+            if (
+                type === "public"
+            ) {
+
+                name =
+                    channelName;
+
+            } else {
+
+                name =
+                    path.basename(
+                        uploadedFiles[0]
+                            .originalname,
+                        path.extname(
+                            uploadedFiles[0]
+                                .originalname
+                        )
+                    );
+
+            }
+
+
+            /*
+             * ZIP
+             */
 
             const zipPath =
                 path.join(
@@ -797,67 +985,44 @@ app.post(
                     `${id}.zip`
                 );
 
-            await new Promise(
-                function(
-                    resolve,
-                    reject
-                ) {
 
-                    const output =
-                        fs.createWriteStream(
-                            zipPath
-                        );
-
-                    const archive =
-                        archiver(
-                            "zip",
-                            {
-                                zlib: {
-                                    level: 9
-                                }
-                            }
-                        );
-
-                    output.on(
-                        "close",
-                        resolve
-                    );
-
-                    archive.on(
-                        "error",
-                        reject
-                    );
-
-                    archive.pipe(
-                        output
-                    );
-
-                    files.forEach(
-                        function(file) {
-
-                            archive.file(
-                                file.path,
-                                {
-                                    name:
-                                        file.originalname
-                                }
-                            );
-                        }
-                    );
-
-                    archive.finalize();
-                }
+            await createZip(
+                uploadedFiles,
+                zipPath
             );
 
-            const profiles =
+
+            /*
+             * Remove uploaded
+             * temporary files.
+             */
+
+            for (
+                const file
+                of uploadedFiles
+            ) {
+
+                try {
+
+                    fs.unlinkSync(
+                        file.path
+                    );
+
+                } catch (error) {}
+
+            }
+
+
+            /*
+             * MOD DATA
+             */
+
+            const mods =
                 readJSON(
-                    PROFILES_FILE
+                    MODS_FILE,
+                    []
                 );
 
-            const profile =
-                profiles[
-                    user.username
-                ] || {};
 
             const mod = {
 
@@ -865,139 +1030,206 @@ app.post(
 
                 type,
 
-                name:
-                    modName,
+                name,
+
+                channelId,
+
+                channelName,
 
                 credits,
 
                 description,
 
+                tiktok,
+
+                youtube,
+
+                previewUrl,
+
                 uploader:
                     user.username,
 
-                displayName:
-                    profile.displayName ||
-                    user.username,
+                role:
+                    user.role,
 
-                tiktok:
-                    profile.tiktok ||
-                    "",
-
-                youtube:
-                    profile.youtube ||
-                    "",
-
-                discord:
-                    profile.discord ||
-                    "",
-
-                preview:
-                    !!preview,
+                zip:
+                    `${id}.zip`,
 
                 createdAt:
                     new Date().toISOString()
+
             };
 
-            if (preview) {
 
-                fs.renameSync(
-                    preview.path,
+            mods.push(mod);
 
-                    path.join(
-                        PREVIEW_DIR,
-                        `${id}${path.extname(
-                            preview.originalname
-                        )}`
-                    )
-                );
-
-                mod.previewExt =
-                    path.extname(
-                        preview.originalname
-                    );
-            }
-
-            const mods =
-                readJSON(
-                    MODS_FILE
-                );
-
-            mods.push(
-                mod
-            );
-
-            saveJSON(
+            writeJSON(
                 MODS_FILE,
                 mods
             );
 
-            const metaPath =
-                path.join(
-                    UPLOAD_DIR,
-                    `${id}.json`
-                );
 
-            saveJSON(
-                metaPath,
-                mod
-            );
+            /*
+             * SEND DISCORD
+             */
 
-            const discordPosted =
+            const shareURL =
                 await sendDiscordShare(
                     mod
                 );
 
+
             res.json({
 
-                success:
-                    true,
+                success: true,
 
                 message:
                     "File berhasil dipublish.",
 
                 id,
 
-                type,
+                shareURL
 
-                shareURL:
-                    `/share/${id}`,
-
-                downloadURL:
-                    `/download/${id}`,
-
-                discordPosted
             });
+
 
         } catch (error) {
 
             console.error(
+                "UPLOAD ERROR:",
                 error
             );
 
-            res.status(500).json({
 
-                success:
-                    false,
+            /*
+             * Cleanup jika gagal.
+             */
+
+            for (
+                const file
+                of uploadedFiles
+            ) {
+
+                try {
+
+                    if (
+                        fs.existsSync(
+                            file.path
+                        )
+                    ) {
+
+                        fs.unlinkSync(
+                            file.path
+                        );
+
+                    }
+
+                } catch (cleanupError) {}
+
+            }
+
+
+            return res.status(500).json({
 
                 message:
-                    "Gagal memproses file."
+                    error.message ||
+                    "Upload gagal."
+
             });
+
         }
+
     }
 );
 
 
-// =================================
-// PREVIEW
-// =================================
+/* =========================================
+   SHARE DATA
+========================================= */
 
 app.get(
-    "/api/preview/:id",
-    function(req, res) {
+    "/api/share/:id",
+    async (req, res) => {
 
         const mods =
             readJSON(
-                MODS_FILE
+                MODS_FILE,
+                []
+            );
+
+
+        const mod =
+            mods.find(
+                item =>
+                    item.id ===
+                    req.params.id
+            );
+
+
+        if (!mod) {
+
+            return res.status(404).json({
+
+                message:
+                    "File tidak ditemukan."
+
+            });
+
+        }
+
+
+        res.json({
+
+            id: mod.id,
+
+            type: mod.type,
+
+            name: mod.name,
+
+            credits: mod.credits,
+
+            description:
+                mod.description,
+
+            uploader:
+                mod.uploader,
+
+            tiktok:
+                mod.tiktok || "",
+
+            youtube:
+                mod.youtube || "",
+
+                        discord:
+                "",
+
+            previewUrl:
+                mod.previewUrl || "",
+
+            channelName:
+                mod.channelName || "",
+
+            createdAt:
+                mod.createdAt
+
+        });
+
+    }
+);
+
+
+/* =========================================
+   DOWNLOAD
+========================================= */
+
+app.get(
+    "/download/:id",
+    async (req, res) => {
+
+        const mods =
+            readJSON(
+                MODS_FILE,
+                []
             );
 
         const mod =
@@ -1007,162 +1239,46 @@ app.get(
                     req.params.id
             );
 
-        if (
-            !mod ||
-            !mod.preview
-        ) {
-
-            return res.status(404).end();
-        }
-
-        const files =
-            fs.readdirSync(
-                PREVIEW_DIR
-            );
-
-        const file =
-            files.find(
-                name =>
-                    name.startsWith(
-                        req.params.id
-                    )
-            );
-
-        if (!file) {
-
-            return res.status(404).end();
-        }
-
-        res.sendFile(
-            path.join(
-                PREVIEW_DIR,
-                file
-            )
-        );
-    }
-);
-
-
-// =================================
-// SHARE API
-// =================================
-
-app.get(
-    "/api/share/:id",
-    function(req, res) {
-
-        const mods =
-            readJSON(
-                MODS_FILE,
-                []
-            );
-
-        const mod =
-            mods.find(
-                function(item) {
-                    return item.id === req.params.id;
-                }
-            );
-
         if (!mod) {
-            return res.status(404).json({
-                success: false,
-                message: "File tidak ditemukan."
-            });
-        }
 
-        res.json({
-            success: true,
-
-            mod: {
-                id: mod.id,
-
-                name: mod.name,
-
-                credits: mod.credits,
-
-                description:
-                    mod.description,
-
-                uploader:
-                    mod.uploader,
-
-                profile:
-                    mod.profile || {
-                        displayName: "",
-                        tiktok: "",
-                        youtube: "",
-                        discord: ""
-                    },
-
-                previewURL:
-                    "/api/preview/" + mod.id,
-
-                downloadURL:
-                    "/download/" + mod.id,
-
-                systemNote:
-                    "File ini dibagikan oleh uploader. Harap tetap menghargai dan mencantumkan credit pembuat apabila diperlukan."
-            }
-        });
-    }
-);
-
-
-// =================================
-// DOWNLOAD
-// =================================
-
-app.get(
-    "/download/:id",
-    function(req, res) {
-
-        const mods =
-            readJSON(
-                MODS_FILE,
-                []
-            );
-
-        const mod =
-            mods.find(
-                function(item) {
-                    return item.id === req.params.id;
-                }
-            );
-
-        if (!mod) {
             return res.status(404).send(
                 "File tidak ditemukan."
             );
+
         }
 
         const zipPath =
             path.join(
                 ZIP_DIR,
-                `${mod.id}.zip`
+                mod.zip
             );
 
-        if (!fs.existsSync(zipPath)) {
+        if (
+            !fs.existsSync(zipPath)
+        ) {
+
             return res.status(404).send(
                 "ZIP tidak ditemukan."
             );
+
         }
 
         res.download(
             zipPath,
-            `${mod.name}.zip`
+            `${mod.name || "monroe-file"}.zip`
         );
+
     }
 );
 
 
-// =================================
-// SHARE PAGE
-// =================================
+/* =========================================
+   SHARE PAGE
+========================================= */
 
 app.get(
     "/share/:id",
-    function(req, res) {
+    (req, res) => {
 
         res.sendFile(
             path.join(
@@ -1171,49 +1287,46 @@ app.get(
                 "share.html"
             )
         );
+
     }
 );
 
 
-// =================================
-// HEALTH CHECK
-// =================================
+/* =========================================
+   HEALTH
+========================================= */
 
 app.get(
     "/health",
-    function(req, res) {
+    (req, res) => {
 
         res.json({
-            status: "online"
+
+            status: "ok",
+
+            discord:
+                discordReady,
+
+            time:
+                new Date().toISOString()
+
         });
+
     }
 );
 
 
-// =================================
-// START SERVER
-// =================================
+/* =========================================
+   START SERVER
+========================================= */
 
 app.listen(
     PORT,
-    function() {
+    () => {
 
         console.log(
             `Monroe File Share berjalan di port ${PORT}`
         );
+
     }
 );
-
-
-// =================================
-// DISCORD BOT LOGIN
-// =================================
-
-if (
-    process.env.DISCORD_TOKEN
-) {
-
-    discordClient.login(
-        process.env.DISCORD_TOKEN
-    );
-}
