@@ -565,47 +565,28 @@ app.get(
 
 
             const guild =
-                await getGuild();
+    await getGuild();
 
+const channels =
+    await guild.channels.fetch();
 
-            const channels =
-                await guild.channels.fetch();
-
-
-            const result =
-                channels
-                    .filter(
-                        function (channel) {
-
-                            return (
-                                channel &&
-                                channel.isTextBased() &&
-                                channel.guildId ===
-                                    config.GUILD_ID &&
-                                channel.name &&
-                                channel.name
-                                    .toLowerCase()
-                                    .includes(search)
-                            );
-
-                        }
-                    )
-                    .map(
-                        function (channel) {
-
-                            return {
-
-                                id:
-                                    channel.id,
-
-                                name:
-                                    channel.name
-
-                            };
-
-                        }
-                    )
-                    .slice(0, 25);
+const result =
+    channels
+        .filter(function (channel) {
+            return (
+                channel &&
+                channel.isTextBased() &&
+                channel.guildId === config.GUILD_ID &&
+                channel.name
+            );
+        })
+        .map(function (channel) {
+            return {
+                id: channel.id,
+                name: channel.name
+            };
+        })
+        .slice(0, 25);
 
 
             res.json({
