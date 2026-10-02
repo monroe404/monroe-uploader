@@ -346,48 +346,87 @@ function removePreview(button) {
 
 function resetUploadForm() {
 
-    /*
-       RESET SEMUA INPUT
-    */
+    // Simpan channel yang sedang dipilih
+    const savedChannelId =
+        channelId
+            ? channelId.value
+            : "";
 
+    const savedChannelName =
+        channelSearch
+            ? channelSearch.value
+            : "";
+
+
+    // Reset semua input
     form.reset();
 
 
-    /*
-       TYPE TETAP
-    */
-
+    // Type tetap
     fileType.value =
         type;
 
 
-    /*
-       CHANNEL RESET
-    */
-
+    // Kembalikan channel
     if (channelId) {
-
         channelId.value =
-            "";
-
+            savedChannelId;
     }
-
 
     if (channelSearch) {
-
         channelSearch.value =
-            "";
-
+            savedChannelName;
     }
-
 
     if (channelResults) {
-
         channelResults.innerHTML =
             "";
+    }
+
+
+    // Preview kembali menjadi satu kolom kosong
+    previewList.innerHTML =
+        `
+        <div class="preview-input-row">
+
+            <input
+                type="url"
+                name="previewUrls"
+                placeholder="https://cdn.discordapp.com/..."
+            >
+
+            <button
+                type="button"
+                class="remove-preview"
+                onclick="removePreview(this)"
+            >
+                ×
+            </button>
+
+        </div>
+        `;
+
+
+    // Tampilan tetap sesuai tipe uploader
+    if (type === "special") {
+
+        channelField.style.display =
+            "none";
+
+        socialFields.style.display =
+            "block";
+
+    } else {
+
+        channelField.style.display =
+            "block";
+
+        socialFields.style.display =
+            "none";
 
     }
 
+}
 
     /*
        PREVIEW RESET
