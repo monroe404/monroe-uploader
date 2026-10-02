@@ -84,32 +84,39 @@
 
         <!-- CHANNEL -->
 
-        <div
-            class="field"
-            id="channelField"
+        <div class="field" id="channelField">
+
+    <label>CHANNEL</label>
+
+    <div class="channel-picker">
+
+        <input
+            type="text"
+            id="channelSearch"
+            placeholder="🔎 Cari atau pilih channel..."
+            autocomplete="off"
         >
 
-            <label>
-                CHANNEL
-            </label>
+        <button
+            type="button"
+            id="channelDropdownButton"
+            class="channel-dropdown-button"
+        >
+            ▼
+        </button>
 
-            <input
-                type="text"
-                id="channelSearch"
-                placeholder="🔎 Cari channel..."
-                autocomplete="off"
-            >
+    </div>
 
-            <input
-                type="hidden"
-                id="channelId"
-                name="channelId"
-            >
+    <input
+        type="hidden"
+        id="channelId"
+        name="channelId"
+    >
 
-            <div
-                id="channelResults"
-                class="channel-results"
-            ></div>
+    <div
+        id="channelResults"
+        class="channel-results"
+    ></div>
 
         </div>
 
