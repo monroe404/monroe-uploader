@@ -1,23 +1,69 @@
-const params = new URLSearchParams(window.location.search);
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
 const type =
     params.get("type") === "special"
         ? "special"
         : "public";
 
-const form = document.getElementById("uploadForm");
-const fileType = document.getElementById("fileType");
-const uploadTitle = document.getElementById("uploadTitle");
-const uploadDescription = document.getElementById("uploadDescription");
 
-const channelField = document.getElementById("channelField");
-const channelSearch = document.getElementById("channelSearch");
-const channelId = document.getElementById("channelId");
-const channelResults = document.getElementById("channelResults");
+const form =
+    document.getElementById(
+        "uploadForm"
+    );
 
-const socialFields = document.getElementById("socialFields");
-const message = document.getElementById("uploadMessage");
-const previewList = document.getElementById("previewList");
+const fileType =
+    document.getElementById(
+        "fileType"
+    );
+
+const uploadTitle =
+    document.getElementById(
+        "uploadTitle"
+    );
+
+const uploadDescription =
+    document.getElementById(
+        "uploadDescription"
+    );
+
+const channelField =
+    document.getElementById(
+        "channelField"
+    );
+
+const channelSearch =
+    document.getElementById(
+        "channelSearch"
+    );
+
+const channelId =
+    document.getElementById(
+        "channelId"
+    );
+
+const channelResults =
+    document.getElementById(
+        "channelResults"
+    );
+
+const socialFields =
+    document.getElementById(
+        "socialFields"
+    );
+
+const message =
+    document.getElementById(
+        "uploadMessage"
+    );
+
+const previewList =
+    document.getElementById(
+        "previewList"
+    );
+
 
 fileType.value = type;
 
@@ -28,23 +74,31 @@ fileType.value = type;
 
 if (type === "special") {
 
-    uploadTitle.textContent = "SPECIAL FILE";
+    uploadTitle.textContent =
+        "SPECIAL FILE";
 
     uploadDescription.textContent =
         "Upload file khusus untuk Founder dan Uploader.";
 
-    channelField.style.display = "none";
-    socialFields.style.display = "block";
+    channelField.style.display =
+        "none";
+
+    socialFields.style.display =
+        "block";
 
 } else {
 
-    uploadTitle.textContent = "PUBLIC FILE";
+    uploadTitle.textContent =
+        "PUBLIC FILE";
 
     uploadDescription.textContent =
         "Upload file yang dapat dibagikan secara publik.";
 
-    channelField.style.display = "block";
-    socialFields.style.display = "none";
+    channelField.style.display =
+        "block";
+
+    socialFields.style.display =
+        "none";
 }
 
 
@@ -54,23 +108,28 @@ if (type === "special") {
 
 let searchTimer = null;
 
-if (channelSearch) {
 
-    channelSearch.addEventListener(
-        "input",
-        function () {
+channelSearch.addEventListener(
+    "input",
+    function () {
 
-            clearTimeout(searchTimer);
+        clearTimeout(
+            searchTimer
+        );
 
-            channelId.value = "";
+        channelId.value = "";
 
-            const query = this.value.trim();
+        const query =
+            this.value.trim();
 
-            channelResults.innerHTML = "";
+        channelResults.innerHTML =
+            "";
 
-            if (!query) return;
+        if (!query) return;
 
-            searchTimer = setTimeout(
+
+        searchTimer =
+            setTimeout(
                 async function () {
 
                     try {
@@ -79,25 +138,30 @@ if (channelSearch) {
                             await fetch(
                                 `/api/channels?search=${encodeURIComponent(query)}`,
                                 {
-                                    credentials: "include"
+                                    credentials:
+                                        "include"
                                 }
                             );
 
                         const data =
                             await response.json();
 
+
                         if (!response.ok) {
 
                             channelResults.innerHTML =
-                                `<div class="channel-empty">
+                                `
+                                <div class="channel-empty">
                                     ${escapeHtml(
                                         data.message ||
                                         "Gagal mengambil channel."
                                     )}
-                                </div>`;
+                                </div>
+                                `;
 
                             return;
                         }
+
 
                         if (
                             !data.channels ||
@@ -105,18 +169,24 @@ if (channelSearch) {
                         ) {
 
                             channelResults.innerHTML =
-                                `<div class="channel-empty">
+                                `
+                                <div class="channel-empty">
                                     Channel tidak ditemukan.
-                                </div>`;
+                                </div>
+                                `;
 
                             return;
                         }
 
+
                         channelResults.innerHTML =
                             data.channels
-                                .map(function (channel) {
+                                .map(
+                                    function (
+                                        channel
+                                    ) {
 
-                                    return `
+                                        return `
                                         <div
                                             class="channel-item"
                                             data-id="${escapeHtml(channel.id)}"
@@ -124,64 +194,80 @@ if (channelSearch) {
                                         >
                                             # ${escapeHtml(channel.name)}
                                         </div>
-                                    `;
-
-                                })
-                                .join("");
-
-                        document
-                            .querySelectorAll(".channel-item")
-                            .forEach(function (item) {
-
-                                item.addEventListener(
-                                    "click",
-                                    function () {
-
-                                        channelId.value =
-                                            this.dataset.id;
-
-                                        channelSearch.value =
-                                            this.dataset.name;
-
-                                        channelResults.innerHTML =
-                                            "";
+                                        `;
 
                                     }
-                                );
+                                )
+                                .join("");
 
-                            });
 
-                    } catch (error) {
+                        document
+                            .querySelectorAll(
+                                ".channel-item"
+                            )
+                            .forEach(
+                                function (
+                                    item
+                                ) {
+
+                                    item.addEventListener(
+                                        "click",
+                                        function () {
+
+                                            channelId.value =
+                                                this.dataset.id;
+
+                                            channelSearch.value =
+                                                this.dataset.name;
+
+                                            channelResults.innerHTML =
+                                                "";
+
+                                        }
+                                    );
+
+                                }
+                            );
+
+
+                    } catch (
+                        error
+                    ) {
 
                         channelResults.innerHTML =
-                            `<div class="channel-empty">
+                            `
+                            <div class="channel-empty">
                                 Gagal terhubung ke server.
-                            </div>`;
+                            </div>
+                            `;
 
                     }
 
                 },
                 250
             );
+
+    }
+);
+
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            !channelField.contains(
+                event.target
+            )
+        ) {
+
+            channelResults.innerHTML =
+                "";
+
         }
-    );
 
-
-    document.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                !channelField.contains(event.target)
-            ) {
-
-                channelResults.innerHTML = "";
-
-            }
-
-        }
-    );
-}
+    }
+);
 
 
 /* =========================
@@ -195,7 +281,10 @@ function addPreview() {
             'input[name="previewUrls"]'
         );
 
-    if (inputs.length >= 10) {
+
+    if (
+        inputs.length >= 10
+    ) {
 
         alert(
             "Maksimal 10 foto preview."
@@ -204,11 +293,15 @@ function addPreview() {
         return;
     }
 
+
     const row =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     row.className =
         "preview-input-row";
+
 
     row.innerHTML = `
         <input
@@ -226,7 +319,10 @@ function addPreview() {
         </button>
     `;
 
-    previewList.appendChild(row);
+
+    previewList.appendChild(
+        row
+    );
 }
 
 
@@ -234,17 +330,26 @@ function addPreview() {
    REMOVE PREVIEW
 ========================= */
 
-function removePreview(button) {
+function removePreview(
+    button
+) {
 
     const rows =
         previewList.querySelectorAll(
             ".preview-input-row"
         );
 
-    if (rows.length <= 1) {
+
+    if (
+        rows.length <= 1
+    ) {
 
         const input =
-            button.parentElement.querySelector("input");
+            button
+                .parentElement
+                .querySelector(
+                    "input"
+                );
 
         if (input) {
             input.value = "";
@@ -253,7 +358,10 @@ function removePreview(button) {
         return;
     }
 
-    button.parentElement.remove();
+
+    button
+        .parentElement
+        .remove();
 }
 
 
@@ -265,19 +373,22 @@ function resetUploadForm() {
 
     form.reset();
 
-    fileType.value = type;
 
-    if (channelId) {
-        channelId.value = "";
-    }
+    fileType.value =
+        type;
 
-    if (channelSearch) {
-        channelSearch.value = "";
-    }
 
-    if (channelResults) {
-        channelResults.innerHTML = "";
-    }
+    channelId.value =
+        "";
+
+
+    channelSearch.value =
+        "";
+
+
+    channelResults.innerHTML =
+        "";
+
 
     previewList.innerHTML = `
         <div class="preview-input-row">
@@ -299,18 +410,27 @@ function resetUploadForm() {
         </div>
     `;
 
-    if (type === "special") {
 
-        channelField.style.display = "none";
-        socialFields.style.display = "block";
+    if (
+        type === "special"
+    ) {
+
+        channelField.style.display =
+            "none";
+
+        socialFields.style.display =
+            "block";
 
     } else {
 
-        channelField.style.display = "block";
-        socialFields.style.display = "none";
+        channelField.style.display =
+            "block";
 
+        socialFields.style.display =
+            "none";
     }
 }
+
 
 /* =========================
    SUBMIT
@@ -322,7 +442,6 @@ form.addEventListener(
 
         event.preventDefault();
 
-        /* PUBLIC WAJIB PILIH CHANNEL */
 
         if (
             type === "public" &&
@@ -347,7 +466,9 @@ form.addEventListener(
 
 
         const formData =
-            new FormData(form);
+            new FormData(
+                form
+            );
 
 
         formData.set(
@@ -356,14 +477,13 @@ form.addEventListener(
         );
 
 
-        /* SPECIAL TIDAK MENGGUNAKAN CHANNEL */
-
-        if (type === "special") {
+        if (
+            type === "special"
+        ) {
 
             formData.delete(
                 "channelId"
             );
-
         }
 
 
@@ -373,9 +493,14 @@ form.addEventListener(
                 await fetch(
                     "/api/upload",
                     {
-                        method: "POST",
-                        credentials: "include",
-                        body: formData
+                        method:
+                            "POST",
+
+                        credentials:
+                            "include",
+
+                        body:
+                            formData
                     }
                 );
 
@@ -384,9 +509,9 @@ form.addEventListener(
                 await response.json();
 
 
-            /* UPLOAD GAGAL */
-
-            if (!response.ok) {
+            if (
+                !response.ok
+            ) {
 
                 message.textContent =
                     data.message ||
@@ -399,10 +524,6 @@ form.addEventListener(
             }
 
 
-            /* =========================
-               UPLOAD BERHASIL
-            ========================= */
-
             message.textContent =
                 "File berhasil dipublish!";
 
@@ -410,45 +531,34 @@ form.addEventListener(
                 "#ff7a00";
 
 
-            /*
-             * RESET SEMUA INPUT
-             *
-             * CREDIT
-             * FILE
-             * PREVIEW
-             * TIKTOK
-             * YOUTUBE
-             * CHANNEL
-             */
-
             resetUploadForm();
 
-
-            /*
-             * KEMBALI KE SHARE PAGE
-             */
 
             setTimeout(
                 function () {
 
                     window.location.href =
-                        data.shareURL || "/";
+                        data.shareURL ||
+                        "/";
 
                 },
                 800
             );
 
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
-            console.error(error);
+            console.error(
+                error
+            );
 
             message.textContent =
                 "Gagal terhubung ke server.";
 
             message.style.color =
                 "#ff5555";
-
         }
 
     }
@@ -459,10 +569,14 @@ form.addEventListener(
    ESCAPE HTML
 ========================= */
 
-function escapeHtml(text) {
+function escapeHtml(
+    text
+) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     div.textContent =
         String(text);
