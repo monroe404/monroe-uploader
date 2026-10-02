@@ -92,7 +92,7 @@
     <!-- DASHBOARD -->
     <!-- ========================= -->
 
-    <
+    <section
         id="dashboardPage"
         style="display:none;"
     >
@@ -153,22 +153,29 @@
         <!-- UPLOAD -->
         <!-- ========================= -->
 
-  <!-- UPLOAD CHOICE -->
 <div class="upload-grid">
 
     <div
         class="upload-choice"
         onclick="window.location.href='/upload.html?type=public'"
     >
-        <div class="choice-icon">🌐</div>
 
-        <span class="eyebrow">PUBLIC</span>
+        <div class="choice-icon">
+            🌐
+        </div>
 
-        <h3>PUBLIC FILE</h3>
+        <span class="eyebrow">
+            PUBLIC
+        </span>
+
+        <h3>
+            PUBLIC FILE
+        </h3>
 
         <p class="muted">
             Public Uploader
         </p>
+
     </div>
 
 
@@ -176,19 +183,180 @@
         class="upload-choice"
         onclick="window.location.href='/upload.html?type=special'"
     >
-        <div class="choice-icon">🔒</div>
 
-        <span class="eyebrow">SPECIAL</span>
+        <div class="choice-icon">
+            🔒
+        </div>
 
-        <h3>SPECIAL FILE</h3>
+        <span class="eyebrow">
+            SPECIAL
+        </span>
+
+        <h3>
+            SPECIAL FILE
+        </h3>
 
         <p class="muted">
             Special Uploader
         </p>
+
     </div>
 
 </div>
-  
+                    rows="5"
+                    placeholder="Deskripsi file/mod..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Preview Image
+                </label>
+
+                <input
+                    name="preview"
+                    type="file"
+                    accept="image/*"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Mod Files
+                </label>
+
+                <input
+                    name="files"
+                    type="file"
+                    multiple
+                    required
+                >
+
+                <small class="muted">
+                    Semua file otomatis menjadi ZIP.
+                </small>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                📦 PUBLISH PUBLIC
+            </button>
+
+
+            <div
+                id="publicUploadMessage"
+                class="message"
+            ></div>
+
+        </form>
+
+    </section>
+
+
+
+                </h2>
+
+                <p class="muted">
+                    File khusus untuk Founder dan Uploader.
+                </p>
+            </div>
+
+        </div>
+
+        <form
+            id="specialUploadForm"
+            enctype="multipart/form-data"
+        >
+
+            <input
+                type="hidden"
+                name="type"
+                value="special"
+            >
+
+
+            <div class="field">
+
+                <label>
+                    Mod / Share Name
+                </label>
+
+                <input
+                    name="name"
+                    type="text"
+                    placeholder="Contoh: Private Mod Pack"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Credits / Maker
+                </label>
+
+                <input
+                    name="credits"
+                    type="text"
+                    placeholder="Contoh: Monroe"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    rows="5"
+                    placeholder="Deskripsi file/mod..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Preview Image
+                </label>
+
+                <input
+                    name="preview"
+                    type="file"
+                    accept="image/*"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Mod Files
+                </label>
+
+                <input
+                    name="files"
+
+
+            
         <!-- ========================= -->
         <!-- RESULT -->
         <!-- ========================= -->
