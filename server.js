@@ -659,7 +659,7 @@ async function sendDiscordShare(
     container.addTextDisplayComponents(
         new TextDisplayBuilder()
             .setContent(
-                "## FILE SHARE"
+                "## File Share"
             )
     );
 
