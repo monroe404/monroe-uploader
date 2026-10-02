@@ -1029,3 +1029,59 @@ body {
 #loginPage > p {
     text-align: center;
 }
+
+/* =================================
+   LOGIN CARD - FINAL
+   ================================= */
+
+.container {
+    position: relative;
+    z-index: 1;
+
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#loginPage {
+    width: min(470px, calc(100% - 40px));
+    min-height: auto;
+
+    margin: 0;
+    padding: 38px;
+
+    display: block;
+}
+
+#loginPage .brand {
+    width: 100%;
+    text-align: center;
+}
+
+#loginPage .brand h1 {
+    text-align: center;
+}
+
+#loginPage .brand p {
+    text-align: center;
+}
+
+#loginPage h2 {
+    text-align: center;
+    margin-top: 35px;
+}
+
+#loginPage > p {
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+
+    #loginPage {
+        width: calc(100% - 30px);
+        padding: 30px 22px;
+    }
+
+}
