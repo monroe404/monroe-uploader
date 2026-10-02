@@ -1012,3 +1012,33 @@ body {
 .channel-results::-webkit-scrollbar-thumb:hover {
     background: #ff7a00;
 }
+
+.source-mods-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 13px 14px;
+
+    border: 1px solid rgba(255, 122, 0, 0.2);
+    border-radius: 8px;
+
+    background: rgba(255, 122, 0, 0.04);
+
+    color: #ddd;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.source-mods-toggle:hover {
+    border-color: #ff7a00;
+    color: #ff7a00;
+}
+
+.source-mods-content {
+    margin-top: 8px;
+}
