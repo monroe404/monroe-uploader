@@ -1012,3 +1012,107 @@ function formatBytes(bytes) {
         units[index]
     );
   }
+
+  // =================================
+// SHOW RESULT
+// =================================
+
+function showResult(
+    data,
+    modName
+) {
+
+    resultCard.style.display =
+        "block";
+
+    resultModName.textContent =
+        modName;
+
+    const shareURL =
+        new URL(
+            data.shareURL,
+            window.location.origin
+        ).href;
+
+    const downloadURL =
+        new URL(
+            data.downloadURL,
+            window.location.origin
+        ).href;
+
+    shareLink.value =
+        shareURL;
+
+    openShareBtn.href =
+        shareURL;
+
+    downloadBtn.href =
+        downloadURL;
+
+    if (data.discordPosted) {
+
+        discordStatus.textContent =
+            "🟢 Discord embed berhasil dikirim.";
+
+        discordStatus.className =
+            "discord-status success";
+
+    } else {
+
+        discordStatus.textContent =
+            "🟡 File berhasil dipublish, tetapi Discord embed belum terkirim.";
+
+        discordStatus.className =
+            "discord-status warning";
+    }
+
+    resultCard.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+// =================================
+// COPY SHARE LINK
+// =================================
+
+copyShareBtn.addEventListener(
+    "click",
+    async function() {
+
+        try {
+
+            await navigator.clipboard.writeText(
+                shareLink.value
+            );
+
+        } catch (error) {
+
+            shareLink.select();
+
+            document.execCommand(
+                "copy"
+            );
+        }
+
+        copyShareBtn.textContent =
+            "COPIED";
+
+        setTimeout(
+            function() {
+
+                copyShareBtn.textContent =
+                    "COPY";
+
+            },
+            1500
+        );
+    }
+);
+
+
+// =================================
+// INITIALIZE
+// =================================
+
+loadUser();
