@@ -657,32 +657,27 @@ async function sendDiscordShare(
     mod,
     uploadedFiles
 ) {
-
     const guild =
         await getGuild();
-
 
     const channel =
         await guild.channels.fetch(
             mod.channelId
         );
 
-
     if (
         !channel ||
         !channel.isTextBased()
     ) {
-
         throw new Error(
             "Channel Discord tidak tersedia."
         );
-
     }
 
 
-    /* =====================================
-       KOTAK COMPONENTS V2
-    ===================================== */
+    // =========================
+    // FILE SHARE CONTAINER
+    // =========================
 
     const container =
         new ContainerBuilder()
@@ -692,72 +687,59 @@ async function sendDiscordShare(
 
 
     container.addTextDisplayComponents(
-
         new TextDisplayBuilder()
             .setContent(
                 "## FILE SHARE"
             )
-
     );
 
 
     container.addSeparatorComponents(
-
         new SeparatorBuilder()
-
     );
 
 
     container.addTextDisplayComponents(
-
         new TextDisplayBuilder()
             .setContent(
-                `**Credits :** ${mod.credits || "-"}`
+                `**credits :** ${mod.credits || "-"}`
             )
-
     );
 
 
-    if (mod.description) {
-
-        container.addTextDisplayComponents(
-
-            new TextDisplayBuilder()
-                .setContent(
-                    mod.description
-                )
-
-        );
-
-    }
-
-
-    container.addSeparatorComponents(
-
-        new SeparatorBuilder()
-
+    container.addTextDisplayComponents(
+        new TextDisplayBuilder()
+            .setContent(
+                "File telah dipersiapkan dan siap digunakan untuk melengkapi kebutuhan kamu. Setiap detail dibuat dengan tujuan memberikan hasil yang lebih nyaman, menarik, dan sesuai kebutuhan. Silakan gunakan dengan bijak dan nikmati hasil akhirnya."
+            )
     );
 
 
-    /* =====================================
-       KIRIM KOTAK SAJA
-    ===================================== */
+    container.addTextDisplayComponents(
+        new TextDisplayBuilder()
+            .setContent(
+                "(pesan selesai)"
+            )
+    );
+
+
+    // =========================
+    // SEND CONTAINER
+    // =========================
 
     await channel.send({
-
         components: [
             container
         ],
-
         flags:
             MessageFlags.IsComponentsV2
-
     });
 
 
-    /* =====================================
-       PREVIEW DI LUAR KOTAK
-    ===================================== */
+    // =========================
+    // PREVIEW
+    // DI LUAR CONTAINER
+    // =========================
 
     const previews =
         Array.isArray(
@@ -766,25 +748,24 @@ async function sendDiscordShare(
             ? mod.previewUrls
                 .filter(
                     function (url) {
-
                         return /^https?:\/\//i.test(
                             url
                         );
-
                     }
                 )
                 .slice(0, 10)
             : [];
 
 
-    if (previews.length > 0) {
+    if (
+        previews.length > 0
+    ) {
 
         const gallery =
             new MediaGalleryBuilder();
 
 
         gallery.addItems(
-
             previews.map(
                 function (url) {
 
@@ -793,27 +774,25 @@ async function sendDiscordShare(
 
                 }
             )
-
         );
 
 
         await channel.send({
-
             components: [
                 gallery
             ],
-
             flags:
                 MessageFlags.IsComponentsV2
-
         });
 
     }
 
 
-    /* =====================================
-       FILE DI LUAR KOTAK
-    ===================================== */
+    // =========================
+    // FILE
+    // SATU PER SATU
+    // DI LUAR CONTAINER
+    // =========================
 
     for (
         const file
@@ -823,17 +802,13 @@ async function sendDiscordShare(
         await channel.send({
 
             files: [
-
                 {
-
                     attachment:
                         file.path,
 
                     name:
                         file.originalname
-
                 }
-
             ]
 
         });
@@ -842,16 +817,15 @@ async function sendDiscordShare(
 
 
     return {
-
         discordChannelId:
             channel.id,
 
         shareURL:
             `/share/${mod.id}`
-
     };
-
 }
+
+      
 
 /* =========================================
    UPLOAD
