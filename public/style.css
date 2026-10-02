@@ -1,35 +1,30 @@
+/* =========================================
+   MONROE FILE SHARE
+   FINAL STYLE
+========================================= */
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-:root {
-    --orange: #ff7a00;
-    --orange-light: #ff9d42;
-    --dark: #080808;
-    --dark-2: #111111;
-    --dark-3: #181818;
-    --border: rgba(255, 122, 0, 0.25);
-    --text: #ffffff;
-    --muted: #a5a5a5;
 }
 
 html,
 body {
+    margin: 0;
+    padding: 0;
     min-height: 100%;
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
     background: #080808;
-    color: var(--text);
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
 }
 
 
-/* =========================
+/* =========================================
    BACKGROUND
-========================= */
+========================================= */
 
 .background {
     position: fixed;
@@ -50,1457 +45,630 @@ body {
 }
 
 
-/* =========================
-   LOGIN
-========================= */
+/* =========================================
+   GENERAL
+========================================= */
 
-.login-page {
+.container {
+    width: 100%;
     min-height: 100vh;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    padding: 20px;
+    padding: 25px;
 }
 
+.card {
+    background: rgba(0, 0, 0, 0.78);
 
-.login-card {
-    width: 100%;
-    max-width: 420px;
+    border: 1px solid rgba(255, 122, 0, 0.16);
 
-    padding: 40px;
-
-    background:
-        rgba(10, 10, 10, 0.88);
-
-    border: 1px solid var(--border);
-
-    border-radius: 18px;
+    border-radius: 16px;
 
     box-shadow:
-        0 20px 80px rgba(0, 0, 0, 0.7),
-        0 0 40px rgba(255, 122, 0, 0.08);
+        0 20px 60px rgba(0, 0, 0, 0.55);
 
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 
-.logo {
-    color: var(--orange);
+/* =========================================
+   BRAND
+========================================= */
 
-    font-size: 34px;
-    font-weight: 900;
+.brand h1 {
+    margin: 0;
+
+    color: #ff7a00;
+
+    font-size: 25px;
+    font-weight: 800;
+
+    letter-spacing: 4px;
+}
+
+.brand p {
+    margin: 5px 0 0;
+
+    color: #aaa;
+
+    font-size: 9px;
 
     letter-spacing: 5px;
-
-    text-align: center;
 }
 
 
-.subtitle {
-    color: #777;
+/* =========================================
+   TEXT
+========================================= */
 
-    font-size: 11px;
-
-    letter-spacing: 5px;
-
-    text-align: center;
-
-    margin-top: 4px;
-}
-
-
-.login-card h1 {
-    text-align: center;
-
-    margin-top: 35px;
-
-    font-size: 28px;
-}
-
-
-.login-description {
-    color: var(--muted);
-
-    text-align: center;
-
-    font-size: 14px;
-
-    margin-top: 8px;
-    margin-bottom: 30px;
-}
-
-
-/* =========================
-   INPUT
-========================= */
-
-.input-group {
-    margin-bottom: 20px;
-}
-
-
-.input-group label {
+.eyebrow {
     display: block;
 
-    margin-bottom: 8px;
+    color: #ff7a00;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+.muted {
+    color: #999;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+#loginPage {
+    display: flex;
+}
+
+.login-card {
+    width: min(430px, 100%);
+
+    padding: 30px;
+}
+
+.login-content {
+    margin-top: 45px;
+}
+
+.login-content h2 {
+    margin: 8px 0 12px;
+
+    color: #fff;
+
+    font-size: 38px;
+    line-height: 1.05;
+
+    font-weight: 800;
+}
+
+.login-content > .muted {
+    margin-bottom: 30px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.field {
+    width: 100%;
+
+    margin-bottom: 17px;
+}
+
+.field label {
+    display: block;
+
+    margin-bottom: 7px;
 
     color: #ddd;
 
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
 }
 
-
-.input-group input,
-.input-group textarea {
+.field input,
+.field textarea {
     width: 100%;
-
-    border: 1px solid #292929;
-
-    background: rgba(255, 255, 255, 0.04);
-
-    color: white;
 
     padding: 13px 14px;
 
+    background: rgba(255, 255, 255, 0.055);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
     border-radius: 9px;
+
+    color: #fff;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
 
     outline: none;
 
-    font-size: 14px;
-
-    transition: 0.2s;
+    transition: 0.2s ease;
 }
 
-
-.input-group input:focus,
-.input-group textarea:focus {
-    border-color: var(--orange);
-
-    box-shadow:
-        0 0 0 2px
-        rgba(255, 122, 0, 0.08);
+.field input {
+    height: 46px;
 }
 
-
-.input-group textarea {
+.field textarea {
     min-height: 110px;
 
     resize: vertical;
 }
 
-
-.input-group input::placeholder,
-.input-group textarea::placeholder {
-    color: #666;
-}
-
-
-.input-group small {
-    display: block;
-
+.field input::placeholder,
+.field textarea::placeholder {
     color: #777;
+}
 
-    margin-top: 7px;
+.field input:focus,
+.field textarea:focus {
+    border-color: #ff7a00;
 
-    font-size: 12px;
+    background: rgba(255, 122, 0, 0.045);
+
+    box-shadow:
+        0 0 0 2px rgba(255, 122, 0, 0.08);
 }
 
 
-/* =========================
+/* =========================================
    BUTTON
-========================= */
+========================================= */
 
-button {
-    font-family: inherit;
-}
-
-
-.login-button,
-.primary-button {
-    width: 100%;
-
-    border: 0;
+.primary-btn,
+.secondary-btn {
+    border: none;
 
     border-radius: 9px;
 
-    padding: 13px 18px;
+    padding: 12px 18px;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.primary-btn {
+    width: 100%;
 
     background:
         linear-gradient(
             135deg,
-            var(--orange),
-            #ff5c00
+            #ff7a00,
+            #ff5b00
         );
 
-    color: white;
-
-    font-weight: 800;
-
-    letter-spacing: 1px;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s,
-        box-shadow 0.2s,
-        opacity 0.2s;
-}
-
-
-.login-button:hover,
-.primary-button:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 8px 25px
-        rgba(255, 122, 0, 0.25);
-}
-
-
-.login-button:active,
-.primary-button:active {
-    transform: translateY(0);
-}
-
-
-.logout-button {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-
-    background: rgba(255, 255, 255, 0.05);
-
-    color: #ddd;
-
-    border-radius: 8px;
-
-    padding: 9px 14px;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-
-.logout-button:hover {
-    border-color: var(--orange);
-
-    color: var(--orange);
-}
-
-
-/* =========================
-   MESSAGE
-========================= */
-
-.message {
-    color: var(--orange-light);
-
-    font-size: 13px;
-
-    margin-top: 12px;
-
-    min-height: 18px;
-}
-
-
-/* =========================
-   DASHBOARD
-========================= */
-
-.dashboard {
-    min-height: 100vh;
-}
-
-
-.topbar {
-    position: sticky;
-
-    top: 0;
-
-    z-index: 20;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    padding: 18px 5%;
-
-    background:
-        rgba(8, 8, 8, 0.86);
-
-    border-bottom:
-        1px solid rgba(255, 122, 0, 0.15);
-
-    backdrop-filter: blur(15px);
-}
-
-
-.brand {
-    color: var(--orange);
-
-    font-size: 23px;
-
-    font-weight: 900;
-
-    letter-spacing: 3px;
-}
-
-
-.brand-sub {
-    color: #777;
-
-    font-size: 9px;
-
-    letter-spacing: 3px;
-
-    margin-top: 2px;
-}
-
-
-.account {
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-}
-
-
-.account strong {
-    display: block;
-
-    text-align: right;
-
-    font-size: 14px;
-}
-
-
-.account span {
-    display: block;
-
-    color: var(--orange);
-
-    font-size: 10px;
-
-    text-align: right;
-
-    margin-top: 3px;
-
-    letter-spacing: 1px;
-}
-
-
-/* =========================
-   DASHBOARD CONTENT
-========================= */
-
-.dashboard-content {
-    width: min(1050px, 92%);
-
-    margin: 35px auto 60px;
-}
-
-
-/* =========================
-   WELCOME
-========================= */
-
-.welcome-card {
-    display: flex;
-
-    align-items: center;
-
-    gap: 18px;
-
-    padding: 24px;
-
-    margin-bottom: 25px;
-
-    border: 1px solid var(--border);
-
-    background:
-        rgba(12, 12, 12, 0.82);
-
-    border-radius: 15px;
-
-    backdrop-filter: blur(10px);
-}
-
-
-.welcome-icon {
-    width: 50px;
-    height: 50px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 12px;
-
-    background:
-        rgba(255, 122, 0, 0.12);
-
-    font-size: 22px;
-}
-
-
-.welcome-card h2 {
-    font-size: 19px;
-}
-
-
-.welcome-card p {
-    color: var(--muted);
-
-    margin-top: 5px;
-
-    font-size: 13px;
-}
-
-
-/* =========================
-   PANEL
-========================= */
-
-.panel {
-    padding: 27px;
-
-    margin-bottom: 25px;
-
-    background:
-        rgba(10, 10, 10, 0.84);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.07);
-
-    border-radius: 15px;
-
-    backdrop-filter: blur(12px);
-}
-
-
-.panel-header {
-    display: flex;
-
-    justify-content: space-between;
-
-    margin-bottom: 25px;
-}
-
-
-.panel-header h2 {
-    font-size: 19px;
-}
-
-
-.panel-header p {
-    color: var(--muted);
-
-    font-size: 13px;
-
-    margin-top: 6px;
-}
-
-
-/* =========================
-   FORM GRID
-========================= */
-
-.form-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 0 18px;
-}
-
-
-/* =========================
-   ACCESS
-========================= */
-
-.access-box {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-    gap: 15px;
-}
-
-
-.access-box > div {
-    padding: 18px;
-
-    border-radius: 10px;
-
-    background:
-        rgba(255, 255, 255, 0.035);
-
-    border:
-        1px solid rgba(255, 255, 255, 0.06);
-}
-
-
-.access-box span {
-    display: block;
-
-    color: #777;
-
-    font-size: 11px;
-
-    margin-bottom: 8px;
-}
-
-
-.access-box strong {
-    display: block;
-
-    color: var(--orange);
-
-    font-size: 13px;
-
-    word-break: break-all;
-}
-
-
-/* =========================
-   FOOTER
-========================= */
-
-footer {
-    padding: 25px;
-
-    text-align: center;
-
-    color: #666;
-
-    font-size: 11px;
-
-    letter-spacing: 1px;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 700px) {
-
-    .login-card {
-        padding: 28px 22px;
-    }
-
-
-    .topbar {
-        padding: 15px 4%;
-    }
-
-
-    .brand {
-        font-size: 18px;
-    }
-
-
-    .account {
-        gap: 8px;
-    }
-
-
-    .account strong {
-        font-size: 12px;
-    }
-
-
-    .logout-button {
-        padding: 8px 10px;
-
-        font-size: 11px;
-    }
-
-
-    .dashboard-content {
-        width: 94%;
-
-        margin-top: 20px;
-    }
-
-
-    .panel {
-        padding: 20px;
-    }
-
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-
-    .access-box {
-        grid-template-columns: 1fr;
-    }
-
-
-    .welcome-card {
-        align-items: flex-start;
-    }
-
-
-    .welcome-card h2 {
-        font-size: 16px;
-    }
-
-}
-
-
-/* =========================
-   FILE INPUT
-========================= */
-
-input[type="file"] {
-    padding: 10px;
-}
-
-
-input[type="file"]::file-selector-button {
-    margin-right: 10px;
-
-    padding: 8px 12px;
-
-    border: 0;
-
-    border-radius: 7px;
-
-    background: var(--orange);
-
-    color: white;
-
-    font-weight: 700;
-
-    cursor: pointer;
-}
-
-/* =================================
-   UPLOAD RESULT
-   ================================= */
-
-.result-card {
-    margin-top: 25px;
-    padding: 22px;
-    border: 1px solid rgba(255, 102, 0, 0.35);
-    border-radius: 16px;
-    background: rgba(15, 15, 15, 0.85);
-}
-
-.result-card h3 {
-    margin-top: 0;
-    color: #ff7200;
-}
-
-.result-link {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.result-link input {
-    flex: 1;
-}
-
-.discord-status {
-    margin-top: 12px;
-    font-size: 14px;
-}
-
-.discord-status.success {
-    color: #65e572;
-}
-
-.discord-status.warning {
-    color: #ffb347;
-}
-
-
-/* =================================
-   FILE LIST
-   ================================= */
-
-.file-list {
-    margin-top: 12px;
-}
-
-.file-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    margin-bottom: 7px;
-    border-radius: 9px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.file-item span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.file-item small {
-    color: #aaa;
-    white-space: nowrap;
-}
-
-
-/* =================================
-   MOBILE
-   ================================= */
-
-@media (max-width: 600px) {
-
-    .result-link {
-        flex-direction: column;
-    }
-
-    .file-item {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-}
-
-/* =================================
-   LOGIN FIX
-   ================================= */
-
-.login-card h2 {
-    text-align: center;
-    margin-top: 35px;
-    font-size: 28px;
-}
-
-.login-card p {
-    color: var(--muted);
-}
-
-.login-card input {
-    width: 100%;
-    border: 1px solid #292929;
-    background: rgba(255, 255, 255, 0.04);
-    color: white;
-    padding: 13px 14px;
-    border-radius: 9px;
-    outline: none;
-    font-size: 14px;
-}
-
-.login-card input:focus {
-    border-color: var(--orange);
-    box-shadow:
-        0 0 0 2px
-        rgba(255, 122, 0, 0.08);
-}
-
-.login-card button {
-    width: 100%;
-    border: 0;
-    border-radius: 9px;
-    padding: 13px 18px;
-    background: linear-gradient(
-        135deg,
-        var(--orange),
-        #ff5c00
-    );
-    color: white;
-    font-weight: 800;
-    letter-spacing: 1px;
-    cursor: pointer;
-}
-
-.login-card label {
-    display: block;
-    margin-bottom: 8px;
-    color: #ddd;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.login-card .brand {
-    color: var(--orange);
-}
-
-.login-card .brand h1 {
-    color: var(--orange);
-}
-
-.login-card .brand p {
-    color: #777;
-}
-
-/* =================================
-   FINAL LOGIN DESIGN
-   ================================= */
-
-body {
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-.background {
-    z-index: 0;
-}
-
-.container {
-    position: relative;
-    z-index: 1;
-}
-
-.brand {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.brand-icon {
-    display: none;
-}
-
-.brand h1 {
-    margin: 0;
-    color: var(--orange);
-    font-size: 38px;
-    font-weight: 900;
-    letter-spacing: 7px;
-}
-
-.brand p {
-    margin-top: 6px;
-    color: #888;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 5px;
-}
-
-.login-card {
-    max-width: 470px;
-    padding: 42px 38px;
-}
-
-.login-card h2 {
-    margin-top: 42px;
-    margin-bottom: 8px;
-    font-size: 30px;
-}
-
-.login-card > p {
-    text-align: center;
-    margin-bottom: 28px;
-    color: #999;
-}
-
-.login-card .input-group {
-    margin-bottom: 17px;
-}
-
-.login-card label {
-    margin-bottom: 7px;
-}
-
-.login-card input {
-    height: 52px;
-}
-
-.login-card button {
-    height: 52px;
-    margin-top: 5px;
-}
-
-@media (max-width: 600px) {
-
-    .login-card {
-        max-width: 100%;
-        padding: 35px 24px;
-    }
-
-    .brand h1 {
-        font-size: 34px;
-        letter-spacing: 6px;
-    }
-
-    .login-card h2 {
-        font-size: 27px;
-        margin-top: 35px;
-    }
-}
-
-/* =================================
-   LOGIN CENTER + BACKGROUND FIX
-   ================================= */
-
-body {
-    min-height: 100vh;
-    margin: 0;
-}
-
-.background {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-        linear-gradient(
-            rgba(0, 0, 0, 0.68),
-            rgba(0, 0, 0, 0.82)
-        ),
-        url("/background.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 0;
-}
-
-.container {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-}
-
-#loginPage {
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 25px;
-}
-
-#loginPage.login-card {
-    margin: 0 auto;
-}
-
-/* =================================
-   LOGIN CARD CENTER FIX
-   ================================= */
-
-#loginPage {
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-#loginPage.login-card {
-    width: 100%;
-    max-width: 470px;
-    margin: 0;
-}
-
-#loginPage .brand {
-    width: 100%;
-    text-align: center;
-}
-
-#loginPage .brand h1 {
-    margin: 0;
-    text-align: center;
-}
-
-#loginPage .brand p {
-    text-align: center;
-}
-
-#loginPage h2 {
-    text-align: center;
-}
-
-#loginPage > p {
-    text-align: center;
-}
-
-/* =================================
-   LOGIN CARD - FINAL
-   ================================= */
-
-.container {
-    position: relative;
-    z-index: 1;
-
-    min-height: 100vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#loginPage {
-    width: min(470px, calc(100% - 40px));
-    min-height: auto;
-
-    margin: 0;
-    padding: 38px;
-
-    display: block;
-}
-
-#loginPage .brand {
-    width: 100%;
-    text-align: center;
-}
-
-#loginPage .brand h1 {
-    text-align: center;
-}
-
-#loginPage .brand p {
-    text-align: center;
-}
-
-#loginPage h2 {
-    text-align: center;
-    margin-top: 35px;
-}
-
-#loginPage > p {
-    text-align: center;
-}
-
-@media (max-width: 600px) {
-
-    #loginPage {
-        width: calc(100% - 30px);
-        padding: 30px 22px;
-    }
-
-}
-
-/* ================================= */
-/* UPLOAD TWO COLUMNS */
-/* ================================= */
-
-.upload-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
-    width: 100%;
-}
-
-.upload-panel {
-    width: 100%;
-}
-
-.upload-panel .section-header {
-    margin-bottom: 20px;
-}
-
-.upload-panel textarea {
-    width: 100%;
-    resize: vertical;
-}
-
-.upload-panel input:not([type="file"]),
-.upload-panel textarea {
-    width: 100%;
-}
-
-@media (max-width: 800px) {
-
-    .upload-grid {
-        grid-template-columns: 1fr;
-    }
-
-}
-
-/* ================================= */
-/* UPLOAD CARDS */
-/* ================================= */
-
-.upload-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-    width: 100%;
-}
-
-.upload-panel {
-    min-height: 170px;
-    padding: 22px !important;
-}
-
-.upload-panel .field,
-.upload-panel form > label,
-.upload-panel form > input,
-.upload-panel form > textarea,
-.upload-panel form > small,
-.upload-panel form > button:not(.upload-open-btn) {
-    display: none;
-}
-
-.upload-panel h2 {
-    margin-bottom: 6px;
-}
-
-.upload-panel .upload-description {
-    color: #999;
-    font-size: 13px;
-    margin-bottom: 20px;
-}
-
-.upload-open-btn {
-    display: inline-block !important;
-}
-
-@media (max-width: 700px) {
-
-    .upload-grid {
-        grid-template-columns: 1fr;
-    }
-
-}
-
-/* ================================= */
-/* DASHBOARD FINAL FIX */
-/* ================================= */
-
-#dashboardPage {
     color: #fff;
-    font-family: Arial, sans-serif;
 }
 
-/* Semua teks dashboard */
-
-#dashboardPage h1,
-#dashboardPage h2,
-#dashboardPage h3,
-#dashboardPage p,
-#dashboardPage label,
-#dashboardPage span,
-#dashboardPage small {
-    color: inherit;
-}
-
-/* Section title */
-
-#dashboardPage h2 {
-    font-size: 24px;
-    margin: 6px 0 8px;
-    font-weight: 800;
-}
-
-#dashboardPage h3 {
-    font-size: 19px;
-    margin: 8px 0;
-    font-weight: 800;
-}
-
-#dashboardPage .muted {
-    color: #999;
-    font-size: 13px;
-}
-
-/* Label */
-
-#dashboardPage label {
-    display: block;
-    color: #ddd;
-    font-size: 13px;
-    margin-bottom: 7px;
-}
-
-/* Input */
-
-#dashboardPage input:not([type="file"]),
-#dashboardPage textarea {
-    width: 100%;
-    min-height: 44px;
-    padding: 11px 13px;
-    margin-bottom: 14px;
-
-    background: rgba(255,255,255,0.055);
-    border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 9px;
-
-    color: #fff;
-    font-size: 14px;
-    outline: none;
-    box-sizing: border-box;
-}
-
-#dashboardPage textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-#dashboardPage input::placeholder,
-#dashboardPage textarea::placeholder {
-    color: #777;
-}
-
-#dashboardPage input:not([type="file"]):focus,
-#dashboardPage textarea:focus {
-    border-color: #ff7a00;
-}
-
-/* File input */
-
-#dashboardPage input[type="file"] {
-    width: 100%;
-    color: #aaa;
-    margin-bottom: 12px;
-}
-
-/* Buttons */
-
-#dashboardPage button {
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-
-    background: linear-gradient(
-        135deg,
-        #ff7a00,
-        #ff5b00
-    );
-
-    color: #fff;
-    font-size: 13px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-#dashboardPage button:hover {
+.primary-btn:hover {
     filter: brightness(1.1);
 }
 
-/* Logout */
-
-#dashboardPage #logoutBtn {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
+.primary-btn:active,
+.secondary-btn:active {
+    transform: scale(0.98);
 }
 
-/* Upload cards */
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.08);
 
-#dashboardPage .upload-choice {
-    background: rgba(0,0,0,0.45);
-    border: 1px solid rgba(255,122,0,0.18);
-    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+
+    color: #fff;
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.message {
+    min-height: 20px;
+
+    margin-top: 12px;
+
+    color: #aaa;
+
+    font-size: 13px;
+
+    text-align: center;
+}
+
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+#dashboardPage {
+    width: min(1050px, calc(100% - 30px));
+
+    margin: 30px auto;
+
     padding: 20px;
+
+    color: #fff;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background: rgba(0, 0, 0, 0.70);
+
+    border: 1px solid rgba(255, 122, 0, 0.12);
+
+    border-radius: 16px;
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
-/* Profile card */
 
-#dashboardPage > .card {
-    background: rgba(0,0,0,0.65);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-}
-
-/* Orange eyebrow */
-
-#dashboardPage .eyebrow {
-    color: #ff7a00;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-}
-
-/* Mobile */
-
-@media (max-width: 700px) {
-
-    #dashboardPage h2 {
-        font-size: 21px;
-    }
-
-    #dashboardPage h3 {
-        font-size: 17px;
-    }
-
-    #dashboardPage .upload-choice {
-        padding: 17px;
-    }
-
-}
-
-/* ================================= */
-/* DASHBOARD TOP HEADER */
-/* ================================= */
+/* =========================================
+   DASHBOARD TOPBAR
+========================================= */
 
 #dashboardPage .topbar {
     width: 100%;
+
     min-height: 72px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
+    gap: 15px;
+
     padding: 14px 20px;
-    margin: 0 0 22px;
 
-    background: rgba(0, 0, 0, 0.82);
+    margin-bottom: 20px;
+
+    background: rgba(0, 0, 0, 0.84);
+
     border: 1px solid rgba(255, 122, 0, 0.15);
-    border-radius: 12px;
 
-    box-sizing: border-box;
+    border-radius: 12px;
 }
 
 #dashboardPage .topbar .brand {
     display: flex;
+
     align-items: center;
-    gap: 12px;
 }
 
 #dashboardPage .topbar .brand h1 {
     margin: 0;
+
     color: #ff7a00;
+
     font-size: 24px;
+
     letter-spacing: 3px;
 }
 
 #dashboardPage .topbar .brand p {
-    margin: 2px 0 0;
+    margin: 3px 0 0;
+
     color: #aaa;
-    font-size: 10px;
+
+    font-size: 9px;
+
     letter-spacing: 4px;
 }
 
+
+/* =========================================
+   USER AREA
+========================================= */
+
 #dashboardPage .user-area {
     display: flex;
+
     align-items: center;
+
     gap: 12px;
 }
 
 #dashboardPage .user-area strong {
     display: block;
+
     color: #fff;
+
     font-size: 14px;
 }
 
 #dashboardPage .user-area small {
     display: block;
-    color: #ff7a00;
-    font-size: 10px;
+
     margin-top: 3px;
+
+    color: #ff7a00;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
 }
 
 #dashboardPage #logoutBtn {
     padding: 9px 14px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    border-radius: 8px;
+
     color: #fff;
-}
 
-/* HP */
+    font-size: 12px;
+    font-weight: 800;
 
-@media (max-width: 600px) {
-
-    #dashboardPage .topbar {
-        padding: 13px 14px;
-    }
-
-    #dashboardPage .topbar .brand h1 {
-        font-size: 20px;
-    }
-
-    #dashboardPage .topbar .brand p {
-        font-size: 8px;
-    }
-
-    #dashboardPage .user-area {
-        gap: 7px;
-    }
-
-}
-
-.upload-choice {
     cursor: pointer;
-    transition: 0.2s ease;
 }
 
-.upload-choice:hover {
-    transform: translateY(-3px);
-    border-color: rgba(255, 122, 0, 0.5);
-    background: rgba(255, 122, 0, 0.07);
+#dashboardPage #logoutBtn:hover {
+    background: rgba(255, 255, 255, 0.13);
 }
 
-.upload-choice:active {
-    transform: scale(0.98);
-}
 
-/* ===== FIX DASHBOARD TEXT ===== */
-
-#dashboardPage {
-    overflow: hidden;
-}
+/* =========================================
+   UPLOAD CHOICE
+========================================= */
 
 #dashboardPage .upload-grid {
+    width: 100%;
+
     display: grid;
-    grid-template-columns: 1fr 1fr;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
     gap: 18px;
-    margin-top: 20px;
 }
 
 #dashboardPage .upload-choice {
     min-height: 150px;
-    padding: 22px;
+
     display: flex;
+
     flex-direction: column;
+
     justify-content: center;
+
+    padding: 22px;
+
     background: rgba(0, 0, 0, 0.68);
+
     border: 1px solid rgba(255, 122, 0, 0.18);
+
     border-radius: 14px;
-    box-sizing: border-box;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
-#dashboardPage .upload-choice .choice-icon {
-    font-size: 28px;
+#dashboardPage .upload-choice:hover {
+    transform: translateY(-3px);
+
+    background: rgba(255, 122, 0, 0.07);
+
+    border-color: rgba(255, 122, 0, 0.5);
+}
+
+#dashboardPage .upload-choice:active {
+    transform: scale(0.98);
+}
+
+#dashboardPage .choice-icon {
     margin-bottom: 8px;
+
+    font-size: 28px;
+
+    line-height: 1;
 }
 
 #dashboardPage .upload-choice .eyebrow {
-    display: block;
     margin-bottom: 5px;
 }
 
 #dashboardPage .upload-choice h3 {
     margin: 0 0 6px;
-    font-size: 20px;
+
     color: #fff;
+
+    font-size: 20px;
+
+    font-weight: 800;
 }
 
 #dashboardPage .upload-choice .muted {
     margin: 0;
+
     color: #999;
+
+    font-size: 13px;
 }
 
-/* HP */
+
+/* =========================================
+   UPLOAD PAGE
+========================================= */
+
+.upload-page {
+    width: min(650px, 100%);
+
+    padding: 28px;
+}
+
+.upload-page-header {
+    margin-bottom: 35px;
+}
+
+.upload-page-title {
+    margin-bottom: 25px;
+}
+
+.upload-page-title h2 {
+    margin: 7px 0;
+
+    color: #fff;
+
+    font-size: 27px;
+}
+
+.upload-page-title p {
+    margin: 0;
+
+    line-height: 1.5;
+}
+
+.upload-page .field small {
+    display: block;
+
+    margin-top: -5px;
+
+    color: #777;
+
+    font-size: 11px;
+}
+
+
+/* =========================================
+   FILE INPUT
+========================================= */
+
+.field input[type="file"] {
+    width: 100%;
+
+    padding: 10px;
+
+    background: rgba(255, 255, 255, 0.055);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    border-radius: 9px;
+
+    color: #aaa;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+.field input[type="file"]::file-selector-button {
+    margin-right: 10px;
+
+    padding: 9px 13px;
+
+    background: #ff7a00;
+
+    border: none;
+
+    border-radius: 7px;
+
+    color: #fff;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================
+   UPLOAD PAGE BACK BUTTON
+========================================= */
+
+.upload-page > .secondary-btn {
+    width: 100%;
+
+    margin-top: 12px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 700px) {
+
+    .container {
+        padding: 15px;
+    }
+
+    .login-card {
+        padding: 25px 20px;
+    }
+
+    .login-content {
+        margin-top: 35px;
+    }
+
+    .login-content h2 {
+        font-size: 34px;
+    }
+
+
+    /* DASHBOARD */
+
     #dashboardPage {
         width: calc(100% - 28px);
+
         margin: 20px auto;
+
         padding: 14px;
+
+        border-radius: 15px;
     }
 
     #dashboardPage .topbar {
         min-height: 70px;
+
         padding: 12px 14px;
+
+        gap: 8px;
     }
 
     #dashboardPage .topbar .brand h1 {
         font-size: 20px;
+
+        letter-spacing: 3px;
+    }
+
+    #dashboardPage .topbar .brand p {
+        font-size: 8px;
+
+        letter-spacing: 3px;
     }
 
     #dashboardPage .user-area {
@@ -1511,12 +679,77 @@ body {
         font-size: 12px;
     }
 
+    #dashboardPage .user-area small {
+        font-size: 9px;
+    }
+
+    #dashboardPage #logoutBtn {
+        padding: 8px 10px;
+
+        font-size: 10px;
+    }
+
+
+    /* CARDS */
+
     #dashboardPage .upload-grid {
         grid-template-columns: 1fr;
+
         gap: 14px;
     }
 
     #dashboardPage .upload-choice {
-        min-height: 145px;
+        min-height: 135px;
+
+        padding: 20px;
     }
+
+
+    /* UPLOAD */
+
+    .upload-page {
+        padding: 22px 18px;
+    }
+
+    .upload-page-title h2 {
+        font-size: 24px;
+    }
+
+}
+
+
+/* =========================================
+   SMALL PHONE
+========================================= */
+
+@media (max-width: 400px) {
+
+    #dashboardPage {
+        width: calc(100% - 20px);
+
+        padding: 10px;
+    }
+
+    #dashboardPage .topbar {
+        padding: 11px;
+    }
+
+    #dashboardPage .topbar .brand h1 {
+        font-size: 17px;
+    }
+
+    #dashboardPage .user-area strong {
+        font-size: 11px;
+    }
+
+    #dashboardPage #logoutBtn {
+        padding: 7px 8px;
+
+        font-size: 9px;
+    }
+
+    #dashboardPage .upload-choice h3 {
+        font-size: 18px;
+    }
+
 }
