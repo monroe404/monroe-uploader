@@ -242,25 +242,31 @@
         <!-- UPLOAD -->
         <!-- ========================= -->
 
-        <!-- ================================= -->
-<!-- UPLOAD SECTION -->
-<!-- ================================= -->
-
 <div class="upload-grid">
 
     <!-- PUBLIC FILE -->
-    <div
-        class="panel upload-panel"
+
+    <section
+        class="card upload-panel"
         id="publicUploadPanel"
     >
 
-        <div class="upload-header">
-            <span class="upload-icon">🌐</span>
+        <div class="section-header">
 
             <div>
-                <h2>PUBLIC FILE</h2>
-                <p>File yang dapat diakses secara publik.</p>
+                <span class="eyebrow">
+                    PUBLIC
+                </span>
+
+                <h2>
+                    🌐 PUBLIC FILE
+                </h2>
+
+                <p class="muted">
+                    File yang dapat diakses secara publik.
+                </p>
             </div>
+
         </div>
 
         <form
@@ -274,53 +280,94 @@
                 value="public"
             >
 
-            <label>MOD / SHARE NAME</label>
+            <div class="field">
 
-            <input
-                type="text"
-                name="name"
-                placeholder="Contoh: Monroe Vehicle Pack"
-                required
+                <label>
+                    Mod / Share Name
+                </label>
+
+                <input
+                    name="name"
+                    type="text"
+                    placeholder="Contoh: Monroe BMW M4"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Credits / Maker
+                </label>
+
+                <input
+                    name="credits"
+                    type="text"
+                    placeholder="Contoh: SkyMods"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    rows="5"
+                    placeholder="Deskripsi file/mod..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Preview Image
+                </label>
+
+                <input
+                    name="preview"
+                    type="file"
+                    accept="image/*"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Mod Files
+                </label>
+
+                <input
+                    name="files"
+                    type="file"
+                    multiple
+                    required
+                >
+
+                <small class="muted">
+                    Semua file otomatis menjadi ZIP.
+                </small>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-btn"
             >
-
-            <label>CREDITS / MAKER</label>
-
-            <input
-                type="text"
-                name="credits"
-                placeholder="Nama pembuat"
-                required
-            >
-
-            <label>DESCRIPTION</label>
-
-            <textarea
-                name="description"
-                placeholder="Deskripsi file..."
-                required
-            ></textarea>
-
-            <label>PREVIEW IMAGE</label>
-
-            <input
-                type="file"
-                name="preview"
-                accept="image/*"
-                required
-            >
-
-            <label>MOD FILES</label>
-
-            <input
-                type="file"
-                name="files"
-                multiple
-                required
-            >
-
-            <button type="submit">
-                📤 PUBLISH PUBLIC FILE
+                📦 PUBLISH PUBLIC
             </button>
+
 
             <div
                 id="publicUploadMessage"
@@ -329,22 +376,32 @@
 
         </form>
 
-    </div>
+    </section>
 
 
     <!-- SPECIAL FILE -->
-    <div
-        class="panel upload-panel"
+
+    <section
+        class="card upload-panel"
         id="specialUploadPanel"
     >
 
-        <div class="upload-header">
-            <span class="upload-icon">🔒</span>
+        <div class="section-header">
 
             <div>
-                <h2>SPECIAL FILE</h2>
-                <p>File khusus uploader.</p>
+                <span class="eyebrow">
+                    PRIVATE
+                </span>
+
+                <h2>
+                    🔒 SPECIAL FILE
+                </h2>
+
+                <p class="muted">
+                    File khusus untuk Founder dan Uploader.
+                </p>
             </div>
+
         </div>
 
         <form
@@ -358,53 +415,95 @@
                 value="special"
             >
 
-            <label>MOD / SHARE NAME</label>
 
-            <input
-                type="text"
-                name="name"
-                placeholder="Contoh: Private Mod Pack"
-                required
+            <div class="field">
+
+                <label>
+                    Mod / Share Name
+                </label>
+
+                <input
+                    name="name"
+                    type="text"
+                    placeholder="Contoh: Private Mod Pack"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Credits / Maker
+                </label>
+
+                <input
+                    name="credits"
+                    type="text"
+                    placeholder="Contoh: Monroe"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    rows="5"
+                    placeholder="Deskripsi file/mod..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Preview Image
+                </label>
+
+                <input
+                    name="preview"
+                    type="file"
+                    accept="image/*"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Mod Files
+                </label>
+
+                <input
+                    name="files"
+                    type="file"
+                    multiple
+                    required
+                >
+
+                <small class="muted">
+                    Semua file otomatis menjadi ZIP.
+                </small>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-btn"
             >
-
-            <label>CREDITS / MAKER</label>
-
-            <input
-                type="text"
-                name="credits"
-                placeholder="Nama pembuat"
-                required
-            >
-
-            <label>DESCRIPTION</label>
-
-            <textarea
-                name="description"
-                placeholder="Deskripsi file..."
-                required
-            ></textarea>
-
-            <label>PREVIEW IMAGE</label>
-
-            <input
-                type="file"
-                name="preview"
-                accept="image/*"
-                required
-            >
-
-            <label>MOD FILES</label>
-
-            <input
-                type="file"
-                name="files"
-                multiple
-                required
-            >
-
-            <button type="submit">
-                🔒 PUBLISH SPECIAL FILE
+                🔒 PUBLISH SPECIAL
             </button>
+
 
             <div
                 id="specialUploadMessage"
@@ -413,7 +512,7 @@
 
         </form>
 
-    </div>
+    </section>
 
 </div>
 
