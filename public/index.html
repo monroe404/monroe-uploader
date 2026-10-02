@@ -1,615 +1,307 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Monroe File Share</title>
 
-    <link
-        rel="stylesheet"
-        href="/style.css"
-    >
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
 
 <div class="background"></div>
 
-<main class="container">
+<!-- ================= LOGIN ================= -->
 
-    <!-- ========================= -->
-    <!-- LOGIN -->
-    <!-- ========================= -->
+<main id="loginPage" class="container">
 
-    <section
-        id="loginPage"
-        class="card login-card"
-    >
+    <section class="card login-card">
 
         <div class="brand">
-            <div class="brand-icon">M</div>
-
             <div>
                 <h1>MONROE</h1>
                 <p>FILE SHARE</p>
             </div>
         </div>
 
-        <h2>Welcome Back</h2>
+        <div class="login-content">
 
-        <p class="muted">
-            Login untuk mengakses Monroe File Share.
-        </p>
+            <span class="eyebrow">WELCOME BACK</span>
 
-        <form id="loginForm">
+            <h2>Welcome<br>Back</h2>
 
-            <label>
-                Username
-            </label>
+            <p class="muted">
+                Login untuk mengakses<br>
+                Monroe File Share.
+            </p>
 
-            <input
-                id="username"
-                type="text"
-                placeholder="Username"
-                autocomplete="username"
-                required
-            >
+            <form id="loginForm">
 
-            <label>
-                Password
-            </label>
-
-            <input
-                id="password"
-                type="password"
-                placeholder="Password"
-                autocomplete="current-password"
-                required
-            >
-
-            <button
-                type="submit"
-                class="primary-btn"
-            >
-                LOGIN
-            </button>
-
-        </form>
-
-        <div
-            id="loginMessage"
-            class="message"
-        ></div>
-
-    </section>
-
-
-    <!-- ========================= -->
-    <!-- DASHBOARD -->
-    <!-- ========================= -->
-
-    <section
-        id="dashboardPage"
-        style="display:none;"
-    >
-
-        <header class="topbar">
-
-            <div class="brand">
-
-                <div class="brand-icon">
-                    M
-                </div>
-
-                <div>
-                    <h1>MONROE</h1>
-                    <p>FILE SHARE</p>
-                </div>
-
-            </div>
-
-            <div class="user-area">
-
-                <div>
-                    <strong id="currentUsername">
-                        -
-                    </strong>
-
-                    <small id="currentRole">
-                        -
-                    </small>
-                </div>
-
-                <button
-                    id="logoutBtn"
-                    class="secondary-btn"
-                >
-                    LOGOUT
-                </button>
-
-            </div>
-
-        </header>
-
-<!-- PROFILE -->
-
-<section class="card">
-
-    <div class="section-header">
-        ...
-    </div>
-
-    <form id="profileForm">
-        ...
-    </form>
-
-</section>
-      
-        <!-- ========================= -->
-        <!-- UPLOAD -->
-        <!-- ========================= -->
-
-<div class="upload-grid">
-
-    <div
-        class="upload-choice"
-        onclick="window.location.href='/upload.html?type=public'"
-    >
-
-        <div class="choice-icon">
-            🌐
-        </div>
-
-        <span class="eyebrow">
-            PUBLIC
-        </span>
-
-        <h3>
-            PUBLIC FILE
-        </h3>
-
-        <p class="muted">
-            Public Uploader
-        </p>
-
-    </div>
-
-
-    <div
-        class="upload-choice"
-        onclick="window.location.href='/upload.html?type=special'"
-    >
-
-        <div class="choice-icon">
-            🔒
-        </div>
-
-        <span class="eyebrow">
-            SPECIAL
-        </span>
-
-        <h3>
-            SPECIAL FILE
-        </h3>
-
-        <p class="muted">
-            Special Uploader
-        </p>
-
-    </div>
-
-</div>
-                    rows="5"
-                    placeholder="Deskripsi file/mod..."
-                ></textarea>
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Preview Image
-                </label>
-
-                <input
-                    name="preview"
-                    type="file"
-                    accept="image/*"
-                >
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Mod Files
-                </label>
-
-                <input
-                    name="files"
-                    type="file"
-                    multiple
-                    required
-                >
-
-                <small class="muted">
-                    Semua file otomatis menjadi ZIP.
-                </small>
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="primary-btn"
-            >
-                📦 PUBLISH PUBLIC
-            </button>
-
-
-            <div
-                id="publicUploadMessage"
-                class="message"
-            ></div>
-
-        </form>
-
-    </section>
-
-
-
-                </h2>
-
-                <p class="muted">
-                    File khusus untuk Founder dan Uploader.
-                </p>
-            </div>
-
-        </div>
-
-        <form
-            id="specialUploadForm"
-            enctype="multipart/form-data"
-        >
-
-            <input
-                type="hidden"
-                name="type"
-                value="special"
-            >
-
-
-            <div class="field">
-
-                <label>
-                    Mod / Share Name
-                </label>
-
-                <input
-                    name="name"
-                    type="text"
-                    placeholder="Contoh: Private Mod Pack"
-                    required
-                >
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Credits / Maker
-                </label>
-
-                <input
-                    name="credits"
-                    type="text"
-                    placeholder="Contoh: Monroe"
-                >
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Description
-                </label>
-
-                <textarea
-                    name="description"
-                    rows="5"
-                    placeholder="Deskripsi file/mod..."
-                ></textarea>
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Preview Image
-                </label>
-
-                <input
-                    name="preview"
-                    type="file"
-                    accept="image/*"
-                >
-
-            </div>
-
-
-            <div class="field">
-
-                <label>
-                    Mod Files
-                </label>
-
-                <input
-                    name="files"
-
-
-            
-        <!-- ========================= -->
-        <!-- RESULT -->
-        <!-- ========================= -->
-
-        <section
-            id="resultCard"
-            class="card result-card"
-            style="display:none;"
-        >
-
-            <div class="success-icon">
-                ✓
-            </div>
-
-            <span class="eyebrow">
-                PUBLISHED
-            </span>
-
-            <h2>
-                File berhasil dipublish
-            </h2>
-
-            <p
-                id="resultModName"
-                class="muted"
-            ></p>
-
-
-            <div class="result-box">
-
-                <label>
-                    Share Link
-                </label>
-
-                <div class="copy-row">
+                <div class="field">
+                    <label>USERNAME</label>
 
                     <input
-                        id="shareLink"
                         type="text"
-                        readonly
+                        id="username"
+                        placeholder="Username"
+                        autocomplete="username"
+                        required
                     >
-
-                    <button
-                        id="copyShareBtn"
-                        type="button"
-                        class="secondary-btn"
-                    >
-                        COPY
-                    </button>
-
                 </div>
 
-            </div>
+                <div class="field">
+                    <label>PASSWORD</label>
 
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
 
-            <div class="result-actions">
+                <button type="submit" class="primary-btn">
+                    LOGIN
+                </button>
 
-                <a
-                    id="openShareBtn"
-                    href="#"
-                    target="_blank"
-                    class="primary-btn"
-                >
-                    OPEN SHARE
-                </a>
+                <div id="loginMessage" class="message"></div>
 
-                <a
-                    id="downloadBtn"
-                    href="#"
-                    target="_blank"
-                    class="secondary-btn"
-                >
-                    DOWNLOAD ZIP
-                </a>
+            </form>
 
-            </div>
-
-
-            <div
-                id="discordStatus"
-                class="discord-status"
-            ></div>
-
-        </section>
+        </div>
 
     </section>
 
 </main>
 
 
+<!-- ================= DASHBOARD ================= -->
+
+<main id="dashboardPage" style="display:none;">
+
+    <!-- TOPBAR -->
+
+    <div class="topbar">
+
+        <div class="brand">
+
+            <div>
+                <h1>MONROE</h1>
+                <p>FILE SHARE</p>
+            </div>
+
+        </div>
+
+        <div class="user-area">
+
+            <div>
+                <strong id="currentUsername">-</strong>
+                <small id="currentRole">-</small>
+            </div>
+
+            <button id="logoutBtn" type="button">
+                LOGOUT
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- UPLOAD CHOICE -->
+
+    <div class="upload-grid">
+
+        <!-- PUBLIC -->
+
+        <div
+            class="upload-choice"
+            id="publicFileCard"
+        >
+
+            <div class="choice-icon">
+                🌐
+            </div>
+
+            <span class="eyebrow">
+                PUBLIC
+            </span>
+
+            <h3>
+                PUBLIC FILE
+            </h3>
+
+            <p class="muted">
+                Public Uploader
+            </p>
+
+        </div>
+
+
+        <!-- SPECIAL -->
+
+        <div
+            class="upload-choice"
+            id="specialFileCard"
+        >
+
+            <div class="choice-icon">
+                🔒
+            </div>
+
+            <span class="eyebrow">
+                SPECIAL
+            </span>
+
+            <h3>
+                SPECIAL FILE
+            </h3>
+
+            <p class="muted">
+                Special Uploader
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+
 <script>
 
-const loginPage =
-    document.getElementById("loginPage");
+/* ========================================= */
+/* ELEMENTS */
+/* ========================================= */
 
-const dashboardPage =
-    document.getElementById("dashboardPage");
+const loginPage = document.getElementById("loginPage");
+const dashboardPage = document.getElementById("dashboardPage");
 
-const loginForm =
-    document.getElementById("loginForm");
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
 
-const loginMessage =
-    document.getElementById("loginMessage");
+const currentUsername =
+    document.getElementById("currentUsername");
+
+const currentRole =
+    document.getElementById("currentRole");
 
 const logoutBtn =
     document.getElementById("logoutBtn");
 
-const uploadForm =
-    document.getElementById("uploadForm");
+const publicFileCard =
+    document.getElementById("publicFileCard");
 
-const publishBtn =
-    document.getElementById("publishBtn");
-
-const uploadMessage =
-    document.getElementById("uploadMessage");
-
-const profileForm =
-    document.getElementById("profileForm");
-
-const profileMessage =
-    document.getElementById("profileMessage");
-
-const filesInput =
-    document.getElementById("files");
-
-const fileList =
-    document.getElementById("fileList");
-
-const uploadProgress =
-    document.getElementById("uploadProgress");
-
-const progressFill =
-    document.getElementById("progressFill");
-
-const progressText =
-    document.getElementById("progressText");
-
-const resultCard =
-    document.getElementById("resultCard");
-
-const resultModName =
-    document.getElementById("resultModName");
-
-const shareLink =
-    document.getElementById("shareLink");
-
-const openShareBtn =
-    document.getElementById("openShareBtn");
-
-const downloadBtn =
-    document.getElementById("downloadBtn");
-
-const copyShareBtn =
-    document.getElementById("copyShareBtn");
-
-const discordStatus =
-    document.getElementById("discordStatus");
+const specialFileCard =
+    document.getElementById("specialFileCard");
 
 
-// =================================
-// MESSAGE
-// =================================
+/* ========================================= */
+/* SHOW LOGIN */
+/* ========================================= */
 
-function showMessage(
-    element,
-    text,
-    type = ""
-) {
+function showLogin() {
 
-    element.textContent = text;
+    loginPage.style.display = "flex";
 
-    element.className =
-        "message " + type;
+    dashboardPage.style.display = "none";
+
 }
 
 
-// =================================
-// LOAD CURRENT USER
-// =================================
+/* ========================================= */
+/* SHOW DASHBOARD */
+/* ========================================= */
 
-async function loadUser() {
+function showDashboard(user) {
+
+    loginPage.style.display = "none";
+
+    dashboardPage.style.display = "block";
+
+    currentUsername.textContent =
+        user.username || "-";
+
+    currentRole.textContent =
+        String(user.role || "-").toUpperCase();
+
+
+    /*
+     * PUBLIC FILE
+     * Hanya Founder
+     */
+
+    if (user.role === "founder") {
+
+        publicFileCard.style.display = "flex";
+
+    } else {
+
+        publicFileCard.style.display = "none";
+
+    }
+
+
+    /*
+     * SPECIAL FILE
+     * Founder + Uploader
+     */
+
+    specialFileCard.style.display = "flex";
+
+}
+
+
+/* ========================================= */
+/* CHECK LOGIN */
+/* ========================================= */
+
+async function checkLogin() {
 
     try {
 
         const response =
-            await fetch("/api/me");
+            await fetch("/api/me", {
+                credentials: "include"
+            });
 
-        const data =
-            await response.json();
-
-        if (!data.loggedIn) {
+        if (!response.ok) {
 
             showLogin();
 
             return;
+
         }
 
-        showDashboard(
-            data.user
-        );
+        const data =
+            await response.json();
 
-        await loadProfile();
+        if (data.loggedIn && data.user) {
+
+            showDashboard(data.user);
+
+        } else {
+
+            showLogin();
+
+        }
 
     } catch (error) {
 
         showLogin();
+
     }
+
 }
 
 
-// =================================
-// SHOW LOGIN
-// =================================
-
-function showLogin() {
-
-    loginPage.style.display =
-        "block";
-
-    dashboardPage.style.display =
-        "none";
-}
-
-
-// =================================
-// SHOW DASHBOARD
-// =================================
-
-function showDashboard(user) {
-
-    loginPage.style.display =
-        "none";
-
-    dashboardPage.style.display =
-        "block";
-
-    document.getElementById(
-        "currentUsername"
-    ).textContent =
-        user.username;
-
-    document.getElementById(
-        "currentRole"
-    ).textContent =
-        user.role === "founder"
-            ? "FOUNDER"
-            : "UPLOADER";
-}
-
-
-// =================================
-// LOGIN
-// =================================
+/* ========================================= */
+/* LOGIN */
+/* ========================================= */
 
 loginForm.addEventListener(
     "submit",
@@ -617,439 +309,156 @@ loginForm.addEventListener(
 
         event.preventDefault();
 
-        showMessage(
-            loginMessage,
-            "Checking login..."
-        );
+        loginMessage.textContent =
+            "Logging in...";
+
+        loginMessage.style.color =
+            "#aaa";
+
 
         const username =
-            document.getElementById(
-                "username"
-            ).value.trim();
+            document.getElementById("username").value.trim();
 
         const password =
-            document.getElementById(
-                "password"
-            ).value;
+            document.getElementById("password").value;
+
 
         try {
 
             const response =
-                await fetch(
-                    "/api/login",
-                    {
-                        method: "POST",
+                await fetch("/api/login", {
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                    method: "POST",
 
-                        body:
-                            JSON.stringify({
-                                username,
-                                password
-                            })
-                    }
-                );
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials: "include",
+
+                    body: JSON.stringify({
+                        username,
+                        password
+                    })
+
+                });
+
 
             const data =
                 await response.json();
 
+
             if (!response.ok) {
 
-                showMessage(
-                    loginMessage,
-                    data.message ||
-                    "Login gagal.",
-                    "error"
-                );
+                loginMessage.textContent =
+                    data.message || "Login gagal.";
+
+                loginMessage.style.color =
+                    "#ff5555";
 
                 return;
+
             }
 
-            showMessage(
-                loginMessage,
-                "Login berhasil.",
-                "success"
-            );
 
-            showDashboard(
-                data.user
-            );
+            loginMessage.textContent =
+                "Login berhasil.";
 
-            await loadProfile();
+            loginMessage.style.color =
+                "#ff7a00";
+
+
+            showDashboard(data.user);
+
 
         } catch (error) {
 
-            showMessage(
-                loginMessage,
-                "Tidak dapat terhubung ke server.",
-                "error"
-            );
+            loginMessage.textContent =
+                "Gagal terhubung ke server.";
+
+            loginMessage.style.color =
+                "#ff5555";
+
         }
+
     }
 );
 
 
-// =================================
-// LOGOUT
-// =================================
+/* ========================================= */
+/* LOGOUT */
+/* ========================================= */
 
 logoutBtn.addEventListener(
     "click",
     async function() {
 
-        await fetch(
-            "/api/logout",
-            {
-                method: "POST"
-            }
-        );
-
-        location.reload();
-    }
-);
-
-
-// =================================
-// LOAD PROFILE
-// =================================
-
-async function loadProfile() {
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/profile"
-            );
-
-        if (!response.ok) {
-            return;
-        }
-
-        const data =
-            await response.json();
-
-        const profile =
-            data.profile || {};
-
-        document.getElementById(
-            "displayName"
-        ).value =
-            profile.displayName || "";
-
-        document.getElementById(
-            "tiktok"
-        ).value =
-            profile.tiktok || "";
-
-        document.getElementById(
-            "youtube"
-        ).value =
-            profile.youtube || "";
-
-        document.getElementById(
-            "discord"
-        ).value =
-            profile.discord || "";
-
-    } catch (error) {
-
-        console.error(
-            "Profile error:",
-            error
-        );
-    }
-}
-
-
-// =================================
-// SAVE PROFILE
-// =================================
-
-profileForm.addEventListener(
-    "submit",
-    async function(event) {
-
-        event.preventDefault();
-
-        const payload = {
-
-            displayName:
-                document.getElementById(
-                    "displayName"
-                ).value.trim(),
-
-            tiktok:
-                document.getElementById(
-                    "tiktok"
-                ).value.trim(),
-
-            youtube:
-                document.getElementById(
-                    "youtube"
-                ).value.trim(),
-
-            discord:
-                document.getElementById(
-                    "discord"
-                ).value.trim()
-        };
-
         try {
 
-            const response =
-                await fetch(
-                    "/api/profile",
-                    {
-                        method: "POST",
+            await fetch("/api/logout", {
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                method: "POST",
 
-                        body:
-                            JSON.stringify(
-                                payload
-                            )
-                    }
-                );
+                credentials: "include"
 
-            const data =
-                await response.json();
-
-            if (!response.ok) {
-
-                showMessage(
-                    profileMessage,
-                    data.message ||
-                    "Gagal menyimpan profile.",
-                    "error"
-                );
-
-                return;
-            }
-
-            showMessage(
-                profileMessage,
-                "Profile berhasil disimpan.",
-                "success"
-            );
+            });
 
         } catch (error) {
-
-            showMessage(
-                profileMessage,
-                "Gagal terhubung ke server.",
-                "error"
-            );
+            // ignore
         }
+
+
+        showLogin();
+
+
+        document.getElementById("username").value = "";
+
+        document.getElementById("password").value = "";
+
+        loginMessage.textContent = "";
+
     }
 );
 
 
-// =================================
-// FILE LIST
-// =================================
+/* ========================================= */
+/* PUBLIC FILE */
+/* ========================================= */
 
-filesInput.addEventListener(
-    "change",
+publicFileCard.addEventListener(
+    "click",
     function() {
 
-        fileList.innerHTML = "";
+        window.location.href =
+            "/upload.html?type=public";
 
-        const files =
-            Array.from(
-                filesInput.files
-            );
-
-        if (!files.length) {
-            return;
-        }
-
-        files.forEach(
-            function(file, index) {
-
-                const item =
-                    document.createElement(
-                        "div"
-                    );
-
-                item.className =
-                    "file-item";
-
-                const size =
-                    formatBytes(
-                        file.size
-                    );
-
-                item.innerHTML = `
-                    <span>
-                        ${escapeHTML(file.name)}
-                    </span>
-
-                    <small>
-                                             ${size}
-                    </small>
-                `;
-
-                fileList.appendChild(
-                    item
-                );
-            }
-        );
     }
 );
 
 
-// =================================
-// FORMAT BYTES
-// =================================
+/* ========================================= */
+/* SPECIAL FILE */
+/* ========================================= */
 
-function formatBytes(bytes) {
-
-    if (!bytes) {
-        return "0 B";
-    }
-
-    const units = [
-        "B",
-        "KB",
-        "MB",
-        "GB"
-    ];
-
-    const index =
-        Math.floor(
-            Math.log(bytes) /
-            Math.log(1024)
-        );
-
-    return (
-        (
-            bytes /
-            Math.pow(
-                1024,
-                index
-            )
-        ).toFixed(
-            index === 0
-                ? 0
-                : 2
-        ) +
-        " " +
-        units[index]
-    );
-  }
-
-  // =================================
-// SHOW RESULT
-// =================================
-
-function showResult(
-    data,
-    modName
-) {
-
-    resultCard.style.display =
-        "block";
-
-    resultModName.textContent =
-        modName;
-
-    const shareURL =
-        new URL(
-            data.shareURL,
-            window.location.origin
-        ).href;
-
-    const downloadURL =
-        new URL(
-            data.downloadURL,
-            window.location.origin
-        ).href;
-
-    shareLink.value =
-        shareURL;
-
-    openShareBtn.href =
-        shareURL;
-
-    downloadBtn.href =
-        downloadURL;
-
-    if (data.discordPosted) {
-
-        discordStatus.textContent =
-            "🟢 Discord embed berhasil dikirim.";
-
-        discordStatus.className =
-            "discord-status success";
-
-    } else {
-
-        discordStatus.textContent =
-            "🟡 File berhasil dipublish, tetapi Discord embed belum terkirim.";
-
-        discordStatus.className =
-            "discord-status warning";
-    }
-
-    resultCard.scrollIntoView({
-        behavior: "smooth"
-    });
-}
-
-
-// =================================
-// COPY SHARE LINK
-// =================================
-
-copyShareBtn.addEventListener(
+specialFileCard.addEventListener(
     "click",
-    async function() {
+    function() {
 
-        try {
+        window.location.href =
+            "/upload.html?type=special";
 
-            await navigator.clipboard.writeText(
-                shareLink.value
-            );
-
-        } catch (error) {
-
-            shareLink.select();
-
-            document.execCommand(
-                "copy"
-            );
-        }
-
-        copyShareBtn.textContent =
-            "COPIED";
-
-        setTimeout(
-            function() {
-
-                copyShareBtn.textContent =
-                    "COPY";
-
-            },
-            1500
-        );
     }
 );
 
 
-// =================================
-// INITIALIZE
-// =================================
+/* ========================================= */
+/* START */
+/* ========================================= */
 
-loadUser();
+checkLogin();
 
-  </script>
+</script>
 
 </body>
 </html>
