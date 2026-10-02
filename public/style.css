@@ -883,3 +883,132 @@ body {
     background: rgba(255,122,0,.1);
     border-color: #ff7a00;
 }
+
+/* =========================
+   CHANNEL PICKER
+========================= */
+
+.channel-picker {
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+
+.channel-picker input {
+    width: 100%;
+    padding-right: 48px;
+}
+
+.channel-dropdown-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    width: 44px;
+    height: 100%;
+
+    border: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: transparent;
+    color: #aaa;
+
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.channel-dropdown-button:hover {
+    color: #ff7a00;
+}
+
+
+/* =========================
+   CHANNEL RESULTS
+========================= */
+
+.channel-results {
+    position: relative;
+
+    width: 100%;
+    max-height: 240px;
+
+    margin-top: 7px;
+
+    overflow-y: auto;
+
+    border: 1px solid rgba(255, 122, 0, 0.25);
+    border-radius: 9px;
+
+    background: #151515;
+
+    z-index: 50;
+}
+
+
+/* CHANNEL ITEM */
+
+.channel-item {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 12px 14px;
+
+    color: #ddd;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.channel-item:hover {
+    background: rgba(255, 122, 0, 0.10);
+    color: #ff7a00;
+}
+
+
+/* # */
+
+.channel-hash {
+    color: #777;
+    font-weight: bold;
+}
+
+
+/* EMPTY / LOADING */
+
+.channel-empty,
+.channel-loading {
+    padding: 13px 14px;
+
+    color: #888;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* SCROLLBAR */
+
+.channel-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.channel-results::-webkit-scrollbar-track {
+    background: #111;
+}
+
+.channel-results::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 10px;
+}
+
+.channel-results::-webkit-scrollbar-thumb:hover {
+    background: #ff7a00;
+}
