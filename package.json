@@ -1,14 +1,16 @@
 {
-  "name": "monroe-uploader",
+  "name": "monroe-file-share",
   "version": "1.0.0",
-  "description": "Discord Web File Uploader",
-  "main": "index.js",
+  "description": "Monroe File Share",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "discord.js": "^14.21.0",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "multer": "^2.0.2"
   }
 }
