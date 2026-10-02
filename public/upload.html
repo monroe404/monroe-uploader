@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Monroe File Uploader</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<main class="container">
+
+    <section class="card upload-page">
+
+        <!-- HEADER -->
+
+        <div class="upload-page-header">
+
+            <div class="brand">
+
+                <div>
+                    <h1>MONROE</h1>
+                    <p>FILE SHARE</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TITLE -->
+
+        <div class="upload-page-title">
+
+            <span class="eyebrow">
+                UPLOADER
+            </span>
+
+            <h2 id="uploadTitle">
+                PUBLIC FILE
+            </h2>
+
+            <p id="uploadDescription" class="muted">
+                Upload file yang dapat dibagikan secara publik.
+            </p>
+
+        </div>
+
+
+        <!-- UPLOAD FORM -->
+
+        <form
+            id="uploadForm"
+            enctype="multipart/form-data"
+        >
+
+            <input
+                id="fileType"
+                type="hidden"
+                name="type"
+                value="public"
+            >
+
+
+            <!-- NAME -->
+
+            <div class="field">
+
+                <label>
+                    MOD / SHARE NAME
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Contoh: Monroe BMW M4"
+                    required
+                >
+
+            </div>
+
+
+            <!-- CREDIT -->
+
+            <div class="field">
+
+                <label>
+                    MAKER BY / CREDIT
+                </label>
+
+                <input
+                    type="text"
+                    name="credits"
+                    placeholder="Contoh: SkyMods"
+                    required
+                >
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="field">
+
+                <label>
+                    DESCRIPTION
+                </label>
+
+                <textarea
+                    name="description"
+                    placeholder="Deskripsi file / mod..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- FILE -->
+
+            <div class="field">
+
+                <label>
+                    📁 MOD FILES
+                </label>
+
+                <input
+                    type="file"
+                    name="files"
+                    multiple
+                    required
+                >
+
+                <small>
+                    Semua file akan otomatis dijadikan ZIP.
+                </small>
+
+            </div>
+
+
+            <!-- PREVIEW -->
+
+            <div class="field">
+
+                <label>
+                    🖼️ PREVIEW IMAGE
+                </label>
+
+                <input
+                    type="file"
+                    name="preview"
+                    accept="image/*"
+                >
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                📦 PUBLISH FILE
+            </button>
+
+
+            <div
+                id="uploadMessage"
+                class="message"
+            ></div>
+
+        </form>
+
+
+        <!-- BACK -->
+
+        <button
+            type="button"
+            class="secondary-btn"
+            onclick="history.back()"
+        >
+            ← BACK
+        </button>
+
+    </section>
+
+</main>
+
+
+<script>
+
+/* =========================================
+   GET TYPE FROM URL
+========================================= */
+
+const params =
+    new URLSearchParams(window.location.search);
+
+const type =
+    params.get("type") === "special"
+        ? "special"
+        : "public";
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const uploadTitle =
+    document.getElementById("uploadTitle");
+
+const uploadDescription =
+    document.getElementById("uploadDescription");
+
+const fileType =
+    document.getElementById("fileType");
+
+
+/* =========================================
+   SET TYPE
+========================================= */
+
+fileType.value = type;
+
+
+if (type === "special") {
+
+    uploadTitle.textContent =
+        "SPECIAL FILE";
+
+    uploadDescription.textContent =
+        "Upload file khusus untuk Founder dan Uploader.";
+
+} else {
+
+    uploadTitle.textContent =
+        "PUBLIC FILE";
+
+    uploadDescription.textContent =
+        "Upload file yang dapat dibagikan secara publik.";
+
+}
+
+</script>
+
+</body>
+</html>
