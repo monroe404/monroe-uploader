@@ -1439,3 +1439,84 @@ body {
 .upload-choice:active {
     transform: scale(0.98);
 }
+
+/* ===== FIX DASHBOARD TEXT ===== */
+
+#dashboardPage {
+    overflow: hidden;
+}
+
+#dashboardPage .upload-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+#dashboardPage .upload-choice {
+    min-height: 150px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.68);
+    border: 1px solid rgba(255, 122, 0, 0.18);
+    border-radius: 14px;
+    box-sizing: border-box;
+}
+
+#dashboardPage .upload-choice .choice-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+#dashboardPage .upload-choice .eyebrow {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#dashboardPage .upload-choice h3 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    color: #fff;
+}
+
+#dashboardPage .upload-choice .muted {
+    margin: 0;
+    color: #999;
+}
+
+/* HP */
+@media (max-width: 700px) {
+    #dashboardPage {
+        width: calc(100% - 28px);
+        margin: 20px auto;
+        padding: 14px;
+    }
+
+    #dashboardPage .topbar {
+        min-height: 70px;
+        padding: 12px 14px;
+    }
+
+    #dashboardPage .topbar .brand h1 {
+        font-size: 20px;
+    }
+
+    #dashboardPage .user-area {
+        gap: 7px;
+    }
+
+    #dashboardPage .user-area strong {
+        font-size: 12px;
+    }
+
+    #dashboardPage .upload-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    #dashboardPage .upload-choice {
+        min-height: 145px;
+    }
+}
