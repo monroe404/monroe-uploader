@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -18,115 +17,116 @@
 
 <body>
 
-    <!-- BACKGROUND -->
-    <div class="background"></div>
+<div class="background"></div>
 
+<main class="container">
+
+    <!-- ========================= -->
     <!-- LOGIN -->
-    <main class="login-page" id="loginPage">
+    <!-- ========================= -->
 
-        <div class="login-card">
+    <section
+        id="loginPage"
+        class="card login-card"
+    >
 
-            <div class="logo">
-                MONROE
+        <div class="brand">
+            <div class="brand-icon">M</div>
+
+            <div>
+                <h1>MONROE</h1>
+                <p>FILE SHARE</p>
             </div>
-
-            <div class="subtitle">
-                FILE SHARE
-            </div>
-
-            <h1>Welcome Back</h1>
-
-            <p class="login-description">
-                Login to access the uploader panel.
-            </p>
-
-            <form id="loginForm">
-
-                <div class="input-group">
-
-                    <label>
-                        Username
-                    </label>
-
-                    <input
-                        type="text"
-                        id="username"
-                        placeholder="Enter username"
-                        autocomplete="username"
-                        required
-                    >
-
-                </div>
-
-                <div class="input-group">
-
-                    <label>
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        placeholder="Enter password"
-                        autocomplete="current-password"
-                        required
-                    >
-
-                </div>
-
-                <button
-                    type="submit"
-                    class="login-button"
-                >
-                    LOGIN
-                </button>
-
-                <div
-                    id="loginMessage"
-                    class="message"
-                ></div>
-
-            </form>
-
         </div>
 
-    </main>
+        <h2>Welcome Back</h2>
+
+        <p class="muted">
+            Login untuk mengakses Monroe File Share.
+        </p>
+
+        <form id="loginForm">
+
+            <label>
+                Username
+            </label>
+
+            <input
+                id="username"
+                type="text"
+                placeholder="Username"
+                autocomplete="username"
+                required
+            >
+
+            <label>
+                Password
+            </label>
+
+            <input
+                id="password"
+                type="password"
+                placeholder="Password"
+                autocomplete="current-password"
+                required
+            >
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                LOGIN
+            </button>
+
+        </form>
+
+        <div
+            id="loginMessage"
+            class="message"
+        ></div>
+
+    </section>
 
 
+    <!-- ========================= -->
     <!-- DASHBOARD -->
-    <main
-        class="dashboard"
+    <!-- ========================= -->
+
+    <section
         id="dashboardPage"
         style="display:none;"
     >
 
         <header class="topbar">
 
-            <div>
-                <div class="brand">
-                    MONROE
-                </div>
+            <div class="brand">
 
-                <div class="brand-sub">
-                    FILE SHARE
+                <div class="brand-icon">
+                    M
                 </div>
-            </div>
-
-            <div class="account">
 
                 <div>
-                    <strong id="accountUsername">
+                    <h1>MONROE</h1>
+                    <p>FILE SHARE</p>
+                </div>
+
+            </div>
+
+            <div class="user-area">
+
+                <div>
+                    <strong id="currentUsername">
                         -
                     </strong>
 
-                    <span id="accountRole">
+                    <small id="currentRole">
                         -
-                    </span>
+                    </small>
                 </div>
 
                 <button
-                    id="logoutButton"
-                    class="logout-button"
+                    id="logoutBtn"
+                    class="secondary-btn"
                 >
                     LOGOUT
                 </button>
@@ -136,22 +136,128 @@
         </header>
 
 
-        <section class="dashboard-content">
+        <!-- ========================= -->
+        <!-- PROFILE -->
+        <!-- ========================= -->
 
-            <div class="welcome-card">
+        <section class="card">
 
-                <div class="welcome-icon">
-                    👋
+            <div class="section-header">
+
+                <div>
+                    <span class="eyebrow">
+                        ACCOUNT
+                    </span>
+
+                    <h2>
+                        Your Profile
+                    </h2>
                 </div>
+
+            </div>
+
+            <form id="profileForm">
+
+                <div class="grid">
+
+                    <div class="field">
+
+                        <label>
+                            Display Name
+                        </label>
+
+                        <input
+                            id="displayName"
+                            type="text"
+                            placeholder="Nama yang akan tampil"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            TikTok
+                        </label>
+
+                        <input
+                            id="tiktok"
+                            type="text"
+                            placeholder="https://tiktok.com/@username"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            YouTube
+                        </label>
+
+                        <input
+                            id="youtube"
+                            type="text"
+                            placeholder="https://youtube.com/@username"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            Discord Community
+                        </label>
+
+                        <input
+                            id="discord"
+                            type="text"
+                            placeholder="https://discord.gg/..."
+                        >
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="secondary-btn"
+                >
+                    SAVE PROFILE
+                </button>
+
+                <div
+                    id="profileMessage"
+                    class="message"
+                ></div>
+
+            </form>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- UPLOAD -->
+        <!-- ========================= -->
+
+        <section class="card">
+
+            <div class="section-header">
 
                 <div>
 
+                    <span class="eyebrow">
+                        UPLOADER
+                    </span>
+
                     <h2>
-                        Welcome to Monroe File Share
+                        Publish File
                     </h2>
 
-                    <p id="accessText">
-                        Loading access...
+                    <p class="muted">
+                        Upload file mod dan publish menjadi satu share.
                     </p>
 
                 </div>
@@ -159,294 +265,254 @@
             </div>
 
 
-            <!-- PROFILE -->
+            <form
+                id="uploadForm"
+                enctype="multipart/form-data"
+            >
 
-            <section class="panel">
+                <!-- MOD NAME -->
 
-                <div class="panel-header">
+                <div class="field">
 
-                    <div>
-                        <h2>
-                            Uploader Profile
-                        </h2>
+                    <label>
+                        Mod / Share Name
+                    </label>
 
-                        <p>
-                            Profile ini akan tampil pada public share.
-                        </p>
-                    </div>
+                    <input
+                        id="modName"
+                        name="modName"
+                        type="text"
+                        placeholder="Contoh: Monroe BMW M4"
+                        required
+                    >
 
                 </div>
 
 
-                <form id="profileForm">
+                <!-- CREDITS -->
 
-                    <div class="form-grid">
+                <div class="field">
 
-                        <div class="input-group">
+                    <label>
+                        Credits / Maker
+                    </label>
 
-                            <label>
-                                Display Name
-                            </label>
+                    <input
+                        id="credits"
+                        name="credits"
+                        type="text"
+                        placeholder="Contoh: SkyMods"
+                    >
 
-                            <input
-                                type="text"
-                                id="displayName"
-                                placeholder="Contoh: Rell"
-                            >
-
-                        </div>
-
-
-                        <div class="input-group">
-
-                            <label>
-                                TikTok
-                            </label>
-
-                            <input
-                                type="text"
-                                id="tiktok"
-                                placeholder="@username"
-                            >
-
-                        </div>
+                </div>
 
 
-                        <div class="input-group">
+                <!-- DESCRIPTION -->
 
-                            <label>
-                                YouTube
-                            </label>
+                <div class="field">
 
-                            <input
-                                type="text"
-                                id="youtube"
-                                placeholder="YouTube channel"
-                            >
+                    <label>
+                        Description
+                    </label>
 
-                        </div>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="5"
+                        placeholder="Deskripsi file/mod..."
+                    ></textarea>
+
+                </div>
 
 
-                        <div class="input-group">
+                <!-- PREVIEW -->
 
-                            <label>
-                                Discord Community
-                            </label>
+                <div class="field">
 
-                            <input
-                                type="text"
-                                id="discord"
-                                placeholder="discord.gg/..."
-                            >
+                    <label>
+                        Preview Image
+                    </label>
 
-                        </div>
+                    <input
+                        id="preview"
+                        name="preview"
+                        type="file"
+                        accept="image/*"
+                    >
+
+                    <small class="muted">
+                        Opsional. Gunakan gambar sebagai preview.
+                    </small>
+
+                </div>
+
+
+                <!-- FILES -->
+
+                <div class="field">
+
+                    <label>
+                        Mod Files
+                    </label>
+
+                    <input
+                        id="files"
+                        name="files"
+                        type="file"
+                        multiple
+                        required
+                    >
+
+                    <small class="muted">
+                        Semua file akan otomatis dijadikan satu ZIP.
+                    </small>
+
+                </div>
+
+
+                <!-- FILE LIST -->
+
+                <div
+                    id="fileList"
+                    class="file-list"
+                ></div>
+
+
+                <!-- PROGRESS -->
+
+                <div
+                    id="uploadProgress"
+                    class="progress-wrapper"
+                    style="display:none;"
+                >
+
+                    <div class="progress-bar">
+
+                        <div
+                            id="progressFill"
+                            class="progress-fill"
+                        ></div>
 
                     </div>
-
-
-                    <button
-                        type="submit"
-                        class="primary-button"
-                    >
-                        SAVE PROFILE
-                    </button>
 
                     <div
-                        id="profileMessage"
-                        class="message"
-                    ></div>
-
-                </form>
-
-            </section>
-
-
-            <!-- UPLOAD -->
-
-            <section class="panel">
-
-                <div class="panel-header">
-
-                    <div>
-
-                        <h2>
-                            Upload Mod
-                        </h2>
-
-                        <p>
-                            Upload beberapa file sekaligus.
-                            Sistem nantinya akan membuat ZIP otomatis.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <form id="uploadForm">
-
-                    <div class="input-group">
-
-                        <label>
-                            Mod / Share Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="modName"
-                            placeholder="Nama mod"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>
-                            Credits / Maker
-                        </label>
-
-                        <input
-                            type="text"
-                            id="credits"
-                            placeholder="Nama pembuat"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>
-                            Description
-                        </label>
-
-                        <textarea
-                            id="description"
-                            placeholder="Deskripsi mod..."
-                        ></textarea>
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>
-                            Preview Image
-                        </label>
-
-                        <input
-                            type="file"
-                            id="preview"
-                            accept="image/*"
-                        >
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label>
-                            Mod Files
-                        </label>
-
-                        <input
-                            type="file"
-                            id="files"
-                            multiple
-                        >
-
-                        <small>
-                            Bisa pilih banyak file sekaligus.
-                        </small>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="primary-button"
+                        id="progressText"
+                        class="progress-text"
                     >
-                        PUBLISH SHARE
-                    </button>
-
-                    <div
-                        id="uploadMessage"
-                        class="message"
-                    ></div>
-
-                </form>
-
-            </section>
-
-
-            <!-- ACCESS INFO -->
-
-            <section class="panel">
-
-                <div class="panel-header">
-
-                    <div>
-
-                        <h2>
-                            Access
-                        </h2>
-
-                        <p>
-                            Status permission akun saat ini.
-                        </p>
-
+                        Uploading...
                     </div>
 
                 </div>
 
 
-                <div class="access-box">
+                <!-- PUBLISH -->
 
-                    <div>
-                        <span>
-                            Role
-                        </span>
+                <button
+                    id="publishBtn"
+                    type="submit"
+                    class="primary-btn publish-btn"
+                >
+                    📦 PUBLISH
+                </button>
 
-                        <strong id="accessRole">
-                            -
-                        </strong>
-                    </div>
+                <div
+                    id="uploadMessage"
+                    class="message"
+                ></div>
 
-
-                    <div>
-                        <span>
-                            All Access
-                        </span>
-
-                        <strong id="allAccess">
-                            -
-                        </strong>
-                    </div>
-
-
-                    <div>
-                        <span>
-                            Uploader Channel
-                        </span>
-
-                        <strong id="uploaderChannel">
-                            -
-                        </strong>
-                    </div>
-
-                </div>
-
-            </section>
+            </form>
 
         </section>
 
 
-        <footer>
-            MONROE COMMUNITY © 2026
-        </footer>
+        <!-- ========================= -->
+        <!-- RESULT -->
+        <!-- ========================= -->
 
-    </main>
+        <section
+            id="resultCard"
+            class="card result-card"
+            style="display:none;"
+        >
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <span class="eyebrow">
+                PUBLISHED
+            </span>
+
+            <h2>
+                File berhasil dipublish
+            </h2>
+
+            <p
+                id="resultModName"
+                class="muted"
+            ></p>
+
+
+            <div class="result-box">
+
+                <label>
+                    Share Link
+                </label>
+
+                <div class="copy-row">
+
+                    <input
+                        id="shareLink"
+                        type="text"
+                        readonly
+                    >
+
+                    <button
+                        id="copyShareBtn"
+                        type="button"
+                        class="secondary-btn"
+                    >
+                        COPY
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-actions">
+
+                <a
+                    id="openShareBtn"
+                    href="#"
+                    target="_blank"
+                    class="primary-btn"
+                >
+                    OPEN SHARE
+                </a>
+
+                <a
+                    id="downloadBtn"
+                    href="#"
+                    target="_blank"
+                    class="secondary-btn"
+                >
+                    DOWNLOAD ZIP
+                </a>
+
+            </div>
+
+
+            <div
+                id="discordStatus"
+                class="discord-status"
+            ></div>
+
+        </section>
+
+    </section>
+
+</main>
 
 
 <script>
@@ -463,21 +529,83 @@ const loginForm =
 const loginMessage =
     document.getElementById("loginMessage");
 
-const logoutButton =
-    document.getElementById("logoutButton");
-
-const profileForm =
-    document.getElementById("profileForm");
+const logoutBtn =
+    document.getElementById("logoutBtn");
 
 const uploadForm =
     document.getElementById("uploadForm");
 
+const publishBtn =
+    document.getElementById("publishBtn");
 
-/* =========================
-   CHECK LOGIN
-========================= */
+const uploadMessage =
+    document.getElementById("uploadMessage");
 
-async function checkLogin() {
+const profileForm =
+    document.getElementById("profileForm");
+
+const profileMessage =
+    document.getElementById("profileMessage");
+
+const filesInput =
+    document.getElementById("files");
+
+const fileList =
+    document.getElementById("fileList");
+
+const uploadProgress =
+    document.getElementById("uploadProgress");
+
+const progressFill =
+    document.getElementById("progressFill");
+
+const progressText =
+    document.getElementById("progressText");
+
+const resultCard =
+    document.getElementById("resultCard");
+
+const resultModName =
+    document.getElementById("resultModName");
+
+const shareLink =
+    document.getElementById("shareLink");
+
+const openShareBtn =
+    document.getElementById("openShareBtn");
+
+const downloadBtn =
+    document.getElementById("downloadBtn");
+
+const copyShareBtn =
+    document.getElementById("copyShareBtn");
+
+const discordStatus =
+    document.getElementById("discordStatus");
+
+
+// =================================
+// MESSAGE
+// =================================
+
+function showMessage(
+    element,
+    text,
+    type = ""
+) {
+
+    element.textContent = text;
+
+    element.className =
+        "message " + type;
+}
+
+
+// =================================
+// LOAD CURRENT USER
+// =================================
+
+async function loadUser() {
 
     try {
 
@@ -487,47 +615,45 @@ async function checkLogin() {
         const data =
             await response.json();
 
-        if (data.loggedIn) {
-
-            showDashboard(
-                data.user
-            );
-
-        } else {
+        if (!data.loggedIn) {
 
             showLogin();
 
+            return;
         }
 
-    } catch {
+        showDashboard(
+            data.user
+        );
+
+        await loadProfile();
+
+    } catch (error) {
 
         showLogin();
-
     }
-
 }
 
 
-/* =========================
-   SHOW LOGIN
-========================= */
+// =================================
+// SHOW LOGIN
+// =================================
 
 function showLogin() {
 
     loginPage.style.display =
-        "flex";
+        "block";
 
     dashboardPage.style.display =
         "none";
-
 }
 
 
-/* =========================
-   SHOW DASHBOARD
-========================= */
+// =================================
+// SHOW DASHBOARD
+// =================================
 
-async function showDashboard(user) {
+function showDashboard(user) {
 
     loginPage.style.display =
         "none";
@@ -536,45 +662,43 @@ async function showDashboard(user) {
         "block";
 
     document.getElementById(
-        "accountUsername"
+        "currentUsername"
     ).textContent =
         user.username;
 
     document.getElementById(
-        "accountRole"
+        "currentRole"
     ).textContent =
-        user.role.toUpperCase();
-
-    await loadDashboard();
-
-    await loadProfile();
-
+        user.role === "founder"
+            ? "FOUNDER"
+            : "UPLOADER";
 }
 
 
-/* =========================
-   LOGIN
-========================= */
+// =================================
+// LOGIN
+// =================================
 
 loginForm.addEventListener(
     "submit",
-    async (event) => {
+    async function(event) {
 
         event.preventDefault();
 
-        loginMessage.textContent =
-            "Logging in...";
+        showMessage(
+            loginMessage,
+            "Checking login..."
+        );
 
         const username =
             document.getElementById(
                 "username"
-            ).value;
+            ).value.trim();
 
         const password =
             document.getElementById(
                 "password"
             ).value;
-
 
         try {
 
@@ -600,44 +724,49 @@ loginForm.addEventListener(
             const data =
                 await response.json();
 
-
             if (!response.ok) {
 
-                loginMessage.textContent =
+                showMessage(
+                    loginMessage,
                     data.message ||
-                    "Login failed.";
+                    "Login gagal.",
+                    "error"
+                );
 
                 return;
-
             }
 
-
-            loginMessage.textContent =
-                "";
+            showMessage(
+                loginMessage,
+                "Login berhasil.",
+                "success"
+            );
 
             showDashboard(
                 data.user
             );
 
+            await loadProfile();
 
-        } catch {
+        } catch (error) {
 
-            loginMessage.textContent =
-                "Connection error.";
-
+            showMessage(
+                loginMessage,
+                "Tidak dapat terhubung ke server.",
+                "error"
+            );
         }
-
     }
 );
 
 
-/* =========================
-   LOGOUT
-========================= */
+// =================================
+// LOGOUT
+// =================================
 
-logoutButton.addEventListener(
+logoutBtn.addEventListener(
     "click",
-    async () => {
+    async function() {
 
         await fetch(
             "/api/logout",
@@ -647,223 +776,239 @@ logoutButton.addEventListener(
         );
 
         location.reload();
-
     }
 );
 
 
-/* =========================
-   DASHBOARD DATA
-========================= */
-
-async function loadDashboard() {
-
-    const response =
-        await fetch(
-            "/api/dashboard"
-        );
-
-    const data =
-        await response.json();
-
-
-    if (!data.success) {
-        return;
-    }
-
-
-    const role =
-        data.user.role;
-
-
-    document.getElementById(
-        "accessText"
-    ).textContent =
-        role === "founder"
-            ? "Founder access — semua area dapat diakses."
-            : "Uploader access — hanya area uploader yang dapat diakses.";
-
-
-    document.getElementById(
-        "accessRole"
-    ).textContent =
-        role.toUpperCase();
-
-
-    document.getElementById(
-        "allAccess"
-    ).textContent =
-        data.access.canAccessAll
-            ? "YES"
-            : "NO";
-
-
-    document.getElementById(
-        "uploaderChannel"
-    ).textContent =
-        data.access.uploaderChannel;
-
-}
-
-
-/* =========================
-   LOAD PROFILE
-========================= */
+// =================================
+// LOAD PROFILE
+// =================================
 
 async function loadProfile() {
 
-    const response =
-        await fetch(
-            "/api/profile"
-        );
-
-    const data =
-        await response.json();
-
-
-    if (!data.success) {
-        return;
-    }
-
-
-    document.getElementById(
-        "displayName"
-    ).value =
-        data.profile.displayName || "";
-
-
-    document.getElementById(
-        "tiktok"
-    ).value =
-        data.profile.tiktok || "";
-
-
-    document.getElementById(
-        "youtube"
-    ).value =
-        data.profile.youtube || "";
-
-
-    document.getElementById(
-        "discord"
-    ).value =
-        data.profile.discord || "";
-
-}
-
-
-/* =========================
-   SAVE PROFILE
-========================= */
-
-profileForm.addEventListener(
-    "submit",
-    async (event) => {
-
-        event.preventDefault();
-
-
-        const message =
-            document.getElementById(
-                "profileMessage"
-            );
-
-
-        message.textContent =
-            "Saving...";
-
-
-        const body = {
-
-            displayName:
-                document.getElementById(
-                    "displayName"
-                ).value,
-
-            tiktok:
-                document.getElementById(
-                    "tiktok"
-                ).value,
-
-            youtube:
-                document.getElementById(
-                    "youtube"
-                ).value,
-
-            discord:
-                document.getElementById(
-                    "discord"
-                ).value
-
-        };
-
+    try {
 
         const response =
             await fetch(
-                "/api/profile",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify(body)
-                }
+                "/api/profile"
             );
 
+        if (!response.ok) {
+            return;
+        }
 
         const data =
             await response.json();
 
+        const profile =
+            data.profile || {};
 
-        message.textContent =
-            data.message ||
-            "Profile saved.";
+        document.getElementById(
+            "displayName"
+        ).value =
+            profile.displayName || "";
 
+        document.getElementById(
+            "tiktok"
+        ).value =
+            profile.tiktok || "";
+
+        document.getElementById(
+            "youtube"
+        ).value =
+            profile.youtube || "";
+
+        document.getElementById(
+            "discord"
+        ).value =
+            profile.discord || "";
+
+    } catch (error) {
+
+        console.error(
+            "Profile error:",
+            error
+        );
     }
-);
+}
 
 
-/* =========================
-   UPLOAD
-   ========================= */
+// =================================
+// SAVE PROFILE
+// =================================
 
-uploadForm.addEventListener(
+profileForm.addEventListener(
     "submit",
-    async (event) => {
+    async function(event) {
 
         event.preventDefault();
 
+        const payload = {
 
-        const message =
-            document.getElementById(
-                "uploadMessage"
+            displayName:
+                document.getElementById(
+                    "displayName"
+                ).value.trim(),
+
+            tiktok:
+                document.getElementById(
+                    "tiktok"
+                ).value.trim(),
+
+            youtube:
+                document.getElementById(
+                    "youtube"
+                ).value.trim(),
+
+            discord:
+                document.getElementById(
+                    "discord"
+                ).value.trim()
+        };
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/profile",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (!response.ok) {
+
+                showMessage(
+                    profileMessage,
+                    data.message ||
+                    "Gagal menyimpan profile.",
+                    "error"
+                );
+
+                return;
+            }
+
+            showMessage(
+                profileMessage,
+                "Profile berhasil disimpan.",
+                "success"
             );
 
+        } catch (error) {
 
-        message.textContent =
-            "Upload system belum diaktifkan.";
-
-
-        /*
-         * Endpoint upload akan kita
-         * pasang di server.js berikutnya.
-         */
-
+            showMessage(
+                profileMessage,
+                "Gagal terhubung ke server.",
+                "error"
+            );
+        }
     }
 );
 
 
-/* =========================
-   START
-========================= */
+// =================================
+// FILE LIST
+// =================================
 
-checkLogin();
+filesInput.addEventListener(
+    "change",
+    function() {
 
-</script>
+        fileList.innerHTML = "";
 
-</body>
-</html>
+        const files =
+            Array.from(
+                filesInput.files
+            );
+
+        if (!files.length) {
+            return;
+        }
+
+        files.forEach(
+            function(file, index) {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+                item.className =
+                    "file-item";
+
+                const size =
+                    formatBytes(
+                        file.size
+                    );
+
+                item.innerHTML = `
+                    <span>
+                        ${escapeHTML(file.name)}
+                    </span>
+
+                    <small>
+                                             ${size}
+                    </small>
+                `;
+
+                fileList.appendChild(
+                    item
+                );
+            }
+        );
+    }
+);
+
+
+// =================================
+// FORMAT BYTES
+// =================================
+
+function formatBytes(bytes) {
+
+    if (!bytes) {
+        return "0 B";
+    }
+
+    const units = [
+        "B",
+        "KB",
+        "MB",
+        "GB"
+    ];
+
+    const index =
+        Math.floor(
+            Math.log(bytes) /
+            Math.log(1024)
+        );
+
+    return (
+        (
+            bytes /
+            Math.pow(
+                1024,
+                index
+            )
+        ).toFixed(
+            index === 0
+                ? 0
+                : 2
+        ) +
+        " " +
+        units[index]
+    );
+  }
