@@ -15,9 +15,6 @@ const {
     MediaGalleryBuilder,
     MediaGalleryItemBuilder,
     FileBuilder,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
     MessageFlags
 } = require("discord.js");
 
@@ -572,10 +569,6 @@ app.get(
                     }
 
 
-                    /*
-                     * Guild text channel
-                     */
-
                     if (
                         channel.type !== 0
                     ) {
@@ -738,7 +731,7 @@ function createZip(
 
 
 /* =========================================
-   DISCORD COMPONENTS V2
+   DISCORD SHARE
 ========================================= */
 
 async function sendDiscordShare(
@@ -753,10 +746,6 @@ async function sendDiscordShare(
     let channel;
 
 
-    /*
-     * SPECIAL
-     */
-
     if (
         mod.type ===
         "special"
@@ -767,14 +756,7 @@ async function sendDiscordShare(
                 config.UPLOADER_CHANNEL_ID
             );
 
-    }
-
-
-    /*
-     * PUBLIC
-     */
-
-    else {
+    } else {
 
         channel =
             await guild.channels.fetch(
@@ -816,16 +798,8 @@ async function sendDiscordShare(
     }
 
 
-    /*
-     * FILE YANG DIKIRIM KE DISCORD
-     */
-
     const discordFiles = [];
 
-
-    /*
-     * ZIP
-     */
 
     discordFiles.push({
 
@@ -837,10 +811,6 @@ async function sendDiscordShare(
 
     });
 
-
-    /*
-     * FILE ASLI
-     */
 
     const safeNames = [];
 
@@ -887,20 +857,12 @@ async function sendDiscordShare(
     }
 
 
-    /*
-     * CONTAINER
-     */
-
     const container =
         new ContainerBuilder()
             .setAccentColor(
                 0xff7a00
             );
 
-
-    /*
-     * TITLE
-     */
 
     container.addTextDisplayComponents(
 
@@ -912,10 +874,6 @@ async function sendDiscordShare(
     );
 
 
-    /*
-     * GARIS
-     */
-
     container.addSeparatorComponents(
 
         new SeparatorBuilder()
@@ -923,42 +881,15 @@ async function sendDiscordShare(
     );
 
 
-    /*
-     * CREDITS
-     */
-
     container.addTextDisplayComponents(
 
         new TextDisplayBuilder()
             .setContent(
-
                 `🎨 **Credits : ${mod.credits || "-"}**`
-
             )
 
     );
 
-
-    /*
-     * DESCRIPTION
-     */
-
-    container.addTextDisplayComponents(
-
-        new TextDisplayBuilder()
-            .setContent(
-
-                mod.description ||
-                "File telah dipersiapkan dan siap digunakan."
-
-            )
-
-    );
-
-
-    /*
-     * SOCIAL
-     */
 
     if (
         mod.tiktok ||
@@ -1001,24 +932,40 @@ async function sendDiscordShare(
     }
 
 
-    /*
-     * PREVIEW
-     */
-
     if (
-        mod.previewUrl
+        Array.isArray(
+            mod.previewUrls
+        ) &&
+        mod.previewUrls.length > 0
     ) {
 
         const gallery =
-            new MediaGalleryBuilder()
-                .addItems(
+            new MediaGalleryBuilder();
 
-                    new MediaGalleryItemBuilder()
-                        .setURL(
-                            mod.previewUrl
-                        )
 
-                );
+        for (
+            const previewUrl
+            of mod.previewUrls.slice(
+                0,
+                10
+            )
+        ) {
+
+            if (!previewUrl) {
+                continue;
+            }
+
+
+            gallery.addItems(
+
+                new MediaGalleryItemBuilder()
+                    .setURL(
+                        previewUrl
+                    )
+
+            );
+
+        }
 
 
         container.addMediaGalleryComponents(
@@ -1027,10 +974,6 @@ async function sendDiscordShare(
 
     }
 
-
-    /*
-     * NOTE
-     */
 
     container.addSeparatorComponents(
 
@@ -1043,60 +986,11 @@ async function sendDiscordShare(
 
         new TextDisplayBuilder()
             .setContent(
-
                 "File ini dibagikan oleh uploader. Harap tetap menghargai dan mencantumkan credit pembuat apabila diperlukan."
-
             )
 
     );
 
-
-    /*
-     * DOWNLOAD BUTTON
-     *
-     * Untuk sementara URL menggunakan
-     * endpoint website.
-     *
-     * Endpoint tersebut nanti mengambil
-     * attachment ZIP dari pesan Discord.
-     */
-
-    const downloadURL =
-        `${(
-            process.env.PUBLIC_URL ||
-            ""
-        ).replace(/\/$/, "")}/download/${mod.id}`;
-
-
-    const button =
-        new ButtonBuilder()
-            .setLabel(
-                "DOWNLOAD ALL"
-            )
-            .setEmoji(
-                "📦"
-            )
-            .setStyle(
-                ButtonStyle.Link
-            )
-            .setURL(
-                downloadURL
-            );
-
-
-    container.addActionRowComponents(
-
-        new ActionRowBuilder()
-            .addComponents(
-                button
-            )
-
-    );
-
-
-    /*
-     * FILE COMPONENTS
-     */
 
     for (
         const safeName
@@ -1115,10 +1009,6 @@ async function sendDiscordShare(
     }
 
 
-    /*
-     * SEND
-     */
-
     const sentMessage =
         await channel.send({
 
@@ -1134,10 +1024,6 @@ async function sendDiscordShare(
 
         });
 
-
-    /*
-     * CARI ATTACHMENT ZIP
-     */
 
     const zipAttachment =
         sentMessage.attachments.find(
@@ -1158,20 +1044,16 @@ async function sendDiscordShare(
     }
 
 
-    /*
-     * SIMPAN INFO PESAN DISCORD
-     *
-     * Jadi download tidak bergantung
-     * pada file lokal Railway.
-     */
-
     return {
 
         shareURL:
             `${(
                 process.env.PUBLIC_URL ||
                 ""
-            ).replace(/\/$/, "")}/share/${mod.id}`,
+            ).replace(
+                /\/$/,
+                ""
+            )}/share/${mod.id}`,
 
         discordChannelId:
             channel.id,
@@ -1185,7 +1067,6 @@ async function sendDiscordShare(
     };
 
 }
-
 
 /* =========================================
    UPLOAD
@@ -1220,10 +1101,9 @@ app.post(
                     : "public";
 
 
-            /*
-             * UPLOADER
-             * hanya special
-             */
+            /* =====================================
+               PERMISSION
+            ===================================== */
 
             if (
                 user.role ===
@@ -1244,10 +1124,6 @@ app.post(
             }
 
 
-            /*
-             * ROLE VALID
-             */
-
             if (
                 user.role !==
                     "founder" &&
@@ -1267,12 +1143,13 @@ app.post(
             }
 
 
-            /*
-             * FILE
-             */
+            /* =====================================
+               FILE CHECK
+            ===================================== */
 
             if (
-                uploadedFiles.length === 0
+                uploadedFiles.length ===
+                0
             ) {
 
                 return res
@@ -1287,27 +1164,13 @@ app.post(
             }
 
 
-            /*
-             * DATA
-             */
+            /* =====================================
+               FORM DATA
+            ===================================== */
 
             const credits =
                 String(
                     req.body.credits ||
-                    ""
-                ).trim();
-
-
-            const description =
-                String(
-                    req.body.description ||
-                    ""
-                ).trim();
-
-
-            const previewUrl =
-                String(
-                    req.body.previewUrl ||
                     ""
                 ).trim();
 
@@ -1326,20 +1189,65 @@ app.post(
                 ).trim();
 
 
-            /*
-             * CHANNEL
-             */
+            /* =====================================
+               PREVIEW URLS
+            ===================================== */
+
+            let previewUrls = [];
+
+
+            if (
+                Array.isArray(
+                    req.body.previewUrls
+                )
+            ) {
+
+                previewUrls =
+                    req.body.previewUrls
+                        .map(
+                            url =>
+                                String(
+                                    url ||
+                                    ""
+                                ).trim()
+                        )
+                        .filter(
+                            Boolean
+                        )
+                        .slice(
+                            0,
+                            10
+                        );
+
+            } else if (
+                req.body.previewUrls
+            ) {
+
+                previewUrls = [
+                    String(
+                        req.body.previewUrls
+                    ).trim()
+                ].filter(
+                    Boolean
+                );
+
+            }
+
+
+            /* =====================================
+               CHANNEL
+            ===================================== */
 
             let channelId =
-                      null;
+                null;
 
             let channelName =
                 null;
 
 
-            /*
-             * PUBLIC
-             */
+            /* =====================================
+               PUBLIC
+            ===================================== */
 
             if (
                 type ===
@@ -1402,9 +1310,9 @@ app.post(
             }
 
 
-            /*
-             * SPECIAL
-             */
+            /* =====================================
+               SPECIAL
+            ===================================== */
 
             if (
                 type ===
@@ -1448,19 +1356,23 @@ app.post(
             }
 
 
-            /*
-             * ID
-             */
+            /* =====================================
+               ID
+            ===================================== */
 
             const id =
                 crypto
-                    .randomBytes(10)
-                    .toString("hex");
+                    .randomBytes(
+                        10
+                    )
+                    .toString(
+                        "hex"
+                    );
 
 
-            /*
-             * NAMA FILE
-             */
+            /* =====================================
+               FILE NAME
+            ===================================== */
 
             const name =
                 path.basename(
@@ -1473,9 +1385,9 @@ app.post(
                 );
 
 
-            /*
-             * ZIP
-             */
+            /* =====================================
+               ZIP
+            ===================================== */
 
             const zipFileName =
                 `${id}.zip`;
@@ -1494,9 +1406,9 @@ app.post(
             );
 
 
-            /*
-             * DATA
-             */
+            /* =====================================
+               DATA
+            ===================================== */
 
             const mod = {
 
@@ -1508,9 +1420,7 @@ app.post(
 
                 credits,
 
-                description,
-
-                previewUrl,
+                previewUrls,
 
                 tiktok,
 
@@ -1530,7 +1440,8 @@ app.post(
                     zipFileName,
 
                 createdAt:
-                    new Date().toISOString(),
+                    new Date()
+                        .toISOString(),
 
                 discordChannelId:
                     null,
@@ -1544,9 +1455,9 @@ app.post(
             };
 
 
-            /*
-             * KIRIM KE DISCORD
-             */
+            /* =====================================
+               SEND DISCORD
+            ===================================== */
 
             const discordResult =
                 await sendDiscordShare(
@@ -1555,26 +1466,28 @@ app.post(
                 );
 
 
-            /*
-             * SIMPAN DATA DISCORD
-             */
+            /* =====================================
+               DISCORD DATA
+            ===================================== */
 
             mod.discordChannelId =
                 discordResult
                     .discordChannelId;
 
+
             mod.discordMessageId =
                 discordResult
                     .discordMessageId;
+
 
             mod.discordZipName =
                 discordResult
                     .discordZipName;
 
 
-            /*
-             * SIMPAN DATABASE
-             */
+            /* =====================================
+               SAVE DATABASE
+            ===================================== */
 
             const mods =
                 readJSON(
@@ -1594,9 +1507,9 @@ app.post(
             );
 
 
-            /*
-             * HAPUS FILE TEMPORARY
-             */
+            /* =====================================
+               CLEAN TEMP FILES
+            ===================================== */
 
             for (
                 const file
@@ -1617,7 +1530,9 @@ app.post(
 
                     }
 
-                } catch (error) {}
+                } catch (
+                    cleanupError
+                ) {}
 
             }
 
@@ -1636,12 +1551,14 @@ app.post(
 
                 }
 
-            } catch (error) {}
+            } catch (
+                cleanupError
+            ) {}
 
 
-            /*
-             * RESPONSE
-             */
+            /* =====================================
+               RESPONSE
+            ===================================== */
 
             res.json({
 
@@ -1659,7 +1576,9 @@ app.post(
             });
 
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
             console.error(
                 "UPLOAD ERROR:",
@@ -1667,9 +1586,9 @@ app.post(
             );
 
 
-            /*
-             * CLEANUP
-             */
+            /* =====================================
+               CLEANUP ON ERROR
+            ===================================== */
 
             for (
                 const file
@@ -1690,7 +1609,9 @@ app.post(
 
                     }
 
-                } catch (cleanupError) {}
+                } catch (
+                    cleanupError
+                ) {}
 
             }
 
@@ -1766,10 +1687,6 @@ app.get(
                 mod.credits ||
                 "",
 
-            description:
-                mod.description ||
-                "",
-
             uploader:
                 mod.uploader ||
                 "",
@@ -1785,9 +1702,16 @@ app.get(
             discord:
                 "",
 
-            previewUrl:
-                mod.previewUrl ||
-                "",
+            previewUrls:
+                Array.isArray(
+                    mod.previewUrls
+                )
+                    ? mod.previewUrls
+                    : mod.previewUrl
+                        ? [
+                            mod.previewUrl
+                        ]
+                        : [],
 
             channelName:
                 mod.channelName ||
@@ -1855,17 +1779,17 @@ app.get(
             }
 
 
-            /*
-             * AMBIL GUILD
-             */
+            /* =====================================
+               GUILD
+            ===================================== */
 
             const guild =
                 await getGuild();
 
 
-            /*
-             * AMBIL CHANNEL
-             */
+            /* =====================================
+               CHANNEL
+            ===================================== */
 
             const channel =
                 await guild.channels.fetch(
@@ -1887,9 +1811,9 @@ app.get(
             }
 
 
-            /*
-             * AMBIL PESAN
-             */
+            /* =====================================
+               MESSAGE
+            ===================================== */
 
             const message =
                 await channel.messages.fetch(
@@ -1908,9 +1832,9 @@ app.get(
             }
 
 
-            /*
-             * CARI ZIP
-             */
+            /* =====================================
+               ZIP
+            ===================================== */
 
             const attachment =
                 message.attachments.find(
@@ -1931,16 +1855,18 @@ app.get(
             }
 
 
-            /*
-             * REDIRECT KE DISCORD CDN
-             */
+            /* =====================================
+               REDIRECT
+            ===================================== */
 
             return res.redirect(
                 attachment.url
             );
 
 
-        } catch (error) {
+        } catch (
+            error
+        ) {
 
             console.error(
                 "DOWNLOAD ERROR:",
@@ -1959,7 +1885,6 @@ app.get(
     }
 );
 
-
 /* =========================================
    SHARE PAGE
 ========================================= */
@@ -1973,8 +1898,7 @@ app.get(
 
         res.sendFile(
             path.join(
-                __dirname,
-                "public",
+                PUBLIC_DIR,
                 "share.html"
             )
         );
@@ -1984,7 +1908,7 @@ app.get(
 
 
 /* =========================================
-   HEALTH
+   HEALTH CHECK
 ========================================= */
 
 app.get(
@@ -1999,11 +1923,12 @@ app.get(
             status:
                 "ok",
 
-            discord:
-                discordReady,
+            service:
+                "Monroe File Share",
 
             time:
-                new Date().toISOString()
+                new Date()
+                    .toISOString()
 
         });
 
@@ -2016,11 +1941,11 @@ app.get(
 ========================================= */
 
 app.listen(
-    PORT,
+    config.PORT,
     () => {
 
         console.log(
-            `Monroe File Share berjalan di port ${PORT}`
+            `Monroe File Share running on port ${config.PORT}`
         );
 
     }
