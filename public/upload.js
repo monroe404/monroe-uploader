@@ -1,17 +1,12 @@
-const params =
-    new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 
 const type =
     params.get("type") === "special"
         ? "special"
         : "public";
 
-
-const form =
-    document.getElementById("uploadForm");
-
-const fileType =
-    document.getElementById("fileType");
+const form = document.getElementById("uploadForm");
+const fileType = document.getElementById("fileType");
 
 const uploadTitle =
     document.getElementById("uploadTitle");
@@ -38,12 +33,12 @@ const message =
     document.getElementById("uploadMessage");
 
 
-/* ================================
-   TYPE
-================================ */
-
 fileType.value = type;
 
+
+/* =========================
+   TYPE
+========================= */
 
 if (type === "special") {
 
@@ -53,11 +48,11 @@ if (type === "special") {
     uploadDescription.textContent =
         "Upload file khusus untuk Founder dan Uploader.";
 
-    // Special tidak memilih channel
-    channelField.style.display = "none";
+    channelField.style.display =
+        "none";
 
-    // Tampilkan TikTok + YouTube
-    socialFields.style.display = "block";
+    socialFields.style.display =
+        "block";
 
 } else {
 
@@ -67,18 +62,20 @@ if (type === "special") {
     uploadDescription.textContent =
         "Upload file yang dapat dibagikan secara publik.";
 
-    channelField.style.display = "block";
+    channelField.style.display =
+        "block";
 
-    socialFields.style.display = "none";
+    socialFields.style.display =
+        "none";
 
 }
 
 
-/* ================================
-   SEARCH PUBLIC CHANNEL
-================================ */
+/* =========================
+   CHANNEL SEARCH
+========================= */
 
-let searchTimer;
+let searchTimer = null;
 
 channelSearch.addEventListener(
     "input",
@@ -97,6 +94,7 @@ channelSearch.addEventListener(
             return;
         }
 
+
         searchTimer = setTimeout(
             async function () {
 
@@ -106,9 +104,11 @@ channelSearch.addEventListener(
                         await fetch(
                             `/api/channels?search=${encodeURIComponent(query)}`,
                             {
-                                credentials: "include"
+                                credentials:
+                                    "include"
                             }
                         );
+
 
                     const data =
                         await response.json();
@@ -118,7 +118,10 @@ channelSearch.addEventListener(
 
                         channelResults.innerHTML =
                             `<div class="channel-empty">
-                                ${data.message || "Gagal mengambil channel."}
+                                ${escapeHtml(
+                                    data.message ||
+                                    "Gagal mengambil channel."
+                                )}
                             </div>`;
 
                         return;
@@ -140,46 +143,45 @@ channelSearch.addEventListener(
 
 
                     channelResults.innerHTML =
-                        data.channels.map(
-                            function (channel) {
+                        data.channels
+                            .map(function (channel) {
 
                                 return `
                                     <div
                                         class="channel-item"
-                                        data-id="${channel.id}"
+                                        data-id="${escapeHtml(channel.id)}"
                                         data-name="${escapeHtml(channel.name)}"
                                     >
                                         # ${escapeHtml(channel.name)}
                                     </div>
                                 `;
 
-                            }
-                        ).join("");
+                            })
+                            .join("");
 
 
                     document
                         .querySelectorAll(".channel-item")
-                        .forEach(
-                            function (item) {
+                        .forEach(function (item) {
 
-                                item.addEventListener(
-                                    "click",
-                                    function () {
+                            item.addEventListener(
+                                "click",
+                                function () {
 
-                                        channelId.value =
-                                            this.dataset.id;
+                                    channelId.value =
+                                        this.dataset.id;
 
-                                        channelSearch.value =
-                                            this.dataset.name;
+                                    channelSearch.value =
+                                        this.dataset.name;
 
-                                        channelResults.innerHTML =
-                                            "";
+                                    channelResults.innerHTML =
+                                        "";
 
-                                    }
-                                );
+                                }
+                            );
 
-                            }
-                        );
+                        });
+
 
                 } catch (error) {
 
@@ -198,9 +200,32 @@ channelSearch.addEventListener(
 );
 
 
-/* ================================
-   SUBMIT
-================================ */
+/* =========================
+   CLOSE DROPDOWN
+========================= */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            !channelField.contains(
+                event.target
+            )
+        ) {
+
+            channelResults.innerHTML =
+                "";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   UPLOAD
+========================= */
 
 form.addEventListener(
     "submit",
@@ -208,10 +233,6 @@ form.addEventListener(
 
         event.preventDefault();
 
-
-        /*
-         * PUBLIC wajib memilih channel.
-         */
 
         if (
             type === "public" &&
@@ -225,6 +246,7 @@ form.addEventListener(
                 "#ff5555";
 
             return;
+
         }
 
 
@@ -238,22 +260,17 @@ form.addEventListener(
         const formData =
             new FormData(form);
 
-
         formData.set(
             "type",
             type
         );
 
 
-        /*
-         * Special tidak mengirim channel pilihan.
-         * Backend akan otomatis memakai
-         * UPLOADER_CHANNEL_ID.
-         */
-
         if (type === "special") {
 
-            formData.delete("channelId");
+            formData.delete(
+                "channelId"
+            );
 
         }
 
@@ -265,9 +282,7 @@ form.addEventListener(
                     "/api/upload",
                     {
                         method: "POST",
-
                         credentials: "include",
-
                         body: formData
                     }
                 );
@@ -287,6 +302,7 @@ form.addEventListener(
                     "#ff5555";
 
                 return;
+
             }
 
 
@@ -322,9 +338,9 @@ form.addEventListener(
 );
 
 
-/* ================================
+/* =========================
    ESCAPE HTML
-================================ */
+========================= */
 
 function escapeHtml(text) {
 
@@ -332,7 +348,8 @@ function escapeHtml(text) {
         document.createElement("div");
 
     div.textContent =
-        text;
+        String(text);
 
     return div.innerHTML;
+
 }
