@@ -448,6 +448,98 @@ app.get(
     }
 );
 
+app.post("/api/source", function(req, res) {
+
+    if (!req.session.user) {
+        return res.status(401).json({
+            message: "Belum login."
+        });
+    }
+
+    if (req.session.user.role !== "founder") {
+        return res.status(403).json({
+            message: "Hanya founder yang bisa menambahkan source."
+        });
+    }
+
+    const link =
+        String(req.body.link || "").trim();
+
+    if (!link) {
+        return res.status(400).json({
+            message: "Link Discord wajib diisi."
+        });
+    }
+
+    let url;
+
+    try {
+        url = new URL(link);
+    } catch (error) {
+        return res.status(400).json({
+            message: "Link tidak valid."
+        });
+    }
+
+    const validDiscord =
+        (
+            url.hostname === "discord.gg" ||
+            url.hostname === "www.discord.gg" ||
+            url.hostname === "discord.com" ||
+            url.hostname === "www.discord.com"
+        ) &&
+        (
+            url.hostname.includes("discord.gg") ||
+            url.pathname.startsWith("/invite/")
+        );
+
+    if (!validDiscord) {
+        return res.status(400).json({
+            message:
+                "Gunakan link Discord seperti https://discord.gg/..."
+        });
+    }
+
+    let sources = [];
+
+    try {
+        sources = JSON.parse(
+            fs.readFileSync(
+                SOURCE_FILE,
+                "utf8"
+            )
+        );
+    } catch (error) {
+        sources = [];
+    }
+
+    const source = {
+        id: crypto.randomUUID(),
+        link: link,
+        createdBy: req.session.user.username,
+        createdAt: new Date().toISOString()
+    };
+
+    sources.push(source);
+
+    fs.writeFileSync(
+        SOURCE_FILE,
+        JSON.stringify(
+            sources,
+            null,
+            4
+        ),
+        "utf8"
+    );
+
+    return res.json({
+        success: true,
+        message: "Source berhasil disimpan.",
+        source: source
+    });
+});
+
+
 app.get("/api/sources", function(req, res) {
 
     if (!req.session.user) {
@@ -459,19 +551,21 @@ app.get("/api/sources", function(req, res) {
     let sources = [];
 
     try {
-
         sources = JSON.parse(
             fs.readFileSync(
                 SOURCE_FILE,
                 "utf8"
             )
         );
-
     } catch (error) {
-
         sources = [];
-
     }
+
+    return res.json({
+        success: true,
+        sources: sources
+    });
+});
 
     return res.json({
         success: true,
