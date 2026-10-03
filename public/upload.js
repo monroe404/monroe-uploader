@@ -662,59 +662,6 @@ form.addEventListener(
     }
 );
 
-const sourceModsToggle =
-    document.getElementById(
-        "sourceModsToggle"
-    );
-
-const sourceModsContent =
-    document.getElementById(
-        "sourceModsContent"
-    );
-
-const sourceModsArrow =
-    document.getElementById(
-        "sourceModsArrow"
-    );
-
-
-if (
-    sourceModsToggle &&
-    sourceModsContent
-) {
-
-    sourceModsToggle.addEventListener(
-        "click",
-        function () {
-
-            const isOpen =
-                sourceModsContent.style.display !==
-                "none";
-
-
-            if (isOpen) {
-
-                sourceModsContent.style.display =
-                    "none";
-
-                sourceModsArrow.textContent =
-                    "▼";
-
-            } else {
-
-                sourceModsContent.style.display =
-                    "block";
-
-                sourceModsArrow.textContent =
-                    "▲";
-
-            }
-
-        }
-    );
-
-}
-
 
 /* =========================
    ESCAPE HTML
