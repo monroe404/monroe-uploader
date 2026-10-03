@@ -29,6 +29,20 @@ const PUBLIC_DIR = path.join(__dirname, "public");
 const MODS_FILE = path.join(DATA_DIR, "mods.json");
 const SOURCE_FILE = path.join(DATA_DIR, "sources.json");
 
+if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, {
+        recursive: true
+    });
+}
+
+if (!fs.existsSync(SOURCE_FILE)) {
+    fs.writeFileSync(
+        SOURCE_FILE,
+        "[]",
+        "utf8"
+    );
+}
+
 fs.mkdirSync(DATA_DIR, {
     recursive: true
 });
