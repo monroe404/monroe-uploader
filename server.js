@@ -1241,13 +1241,12 @@ app.get(
 
             });
 
-        } catch (error) {
+                } catch (error) {
 
             console.error(
                 "SHARE API ERROR:",
                 error
             );
-
 
             res
                 .status(500)
