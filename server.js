@@ -554,7 +554,6 @@ app.get("/api/sources", function(req, res) {
         message: "Source berhasil disimpan.",
         source: source
     });
-});
 
 
 /* =========================================
