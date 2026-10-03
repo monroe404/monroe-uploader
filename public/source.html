@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Monroe Source Mods</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<main class="container">
+
+    <section class="card upload-card">
+
+        <div class="brand">
+            <div>
+                <h1>MONROE</h1>
+                <p>SOURCE MODS</p>
+            </div>
+        </div>
+
+        <div class="login-content">
+
+            <span class="eyebrow">SOURCE</span>
+
+            <h2>Discord<br>Server</h2>
+
+            <p class="muted">
+                Masukkan link Discord server source mods.
+            </p>
+
+            <form id="sourceForm">
+
+                <div class="field">
+
+                    <label>DISCORD SERVER LINK</label>
+
+                    <input
+                        type="url"
+                        id="sourceLink"
+                        placeholder="https://discord.gg/..."
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    PUBLISH SOURCE
+                </button>
+
+                <div
+                    id="sourceMessage"
+                    class="message"
+                ></div>
+
+            </form>
+
+            <button
+                type="button"
+                id="backBtn"
+                class="secondary-btn"
+                style="margin-top:10px;"
+            >
+                BACK
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="/source.js"></script>
+
+</body>
+</html>
