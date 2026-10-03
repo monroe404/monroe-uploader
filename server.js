@@ -477,7 +477,6 @@ app.get("/api/sources", function(req, res) {
         success: true,
         sources: sources
     });
-});
 
     const link =
         String(req.body.link || "").trim();
