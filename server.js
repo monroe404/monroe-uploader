@@ -479,7 +479,7 @@ app.get("/api/sources", function(req, res) {
     });
 
     const link =
-        String(req.body.link || "").trim();
+    String(req.body.link || "").trim();
 
     if (!link) {
         return res.status(400).json({
