@@ -732,6 +732,7 @@ async function sendDiscordShare(
     );
 
 
+  
     container.addTextDisplayComponents(
         new TextDisplayBuilder()
             .setContent(
