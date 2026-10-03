@@ -27,7 +27,7 @@ const DATA_DIR = path.join(__dirname, "data");
 const UPLOAD_DIR = path.join(__dirname, "uploads");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const MODS_FILE = path.join(DATA_DIR, "mods.json");
-
+const SOURCE_FILE = path.join(DATA_DIR, "sources.json");
 
 fs.mkdirSync(DATA_DIR, {
     recursive: true
