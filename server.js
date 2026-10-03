@@ -1501,3 +1501,88 @@ app.get(
 
     }
 );
+
+/* =========================================
+   API 404
+========================================= */
+
+app.use(
+    "/api",
+    function (
+        req,
+        res
+    ) {
+
+        res
+            .status(404)
+            .json({
+
+                message:
+                    "API tidak ditemukan."
+
+            });
+
+    }
+);
+
+
+/* =========================================
+   ERROR HANDLER
+========================================= */
+
+app.use(
+    function (
+        error,
+        req,
+        res,
+        next
+    ) {
+
+        console.error(
+            "SERVER ERROR:",
+            error
+        );
+
+        if (
+            res.headersSent
+        ) {
+
+            return next(
+                error
+            );
+
+        }
+
+        res
+            .status(500)
+            .json({
+
+                message:
+                    "Terjadi kesalahan pada server."
+
+            });
+
+    }
+);
+
+
+/* =========================================
+   START SERVER
+========================================= */
+
+const PORT =
+    config.PORT ||
+    process.env.PORT ||
+    3000;
+
+
+app.listen(
+    PORT,
+    function () {
+
+        console.log(
+            `Monroe File Share running on port ${PORT}`
+        );
+
+    }
+);
