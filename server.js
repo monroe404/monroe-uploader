@@ -27,7 +27,6 @@ const DATA_DIR = path.join(__dirname, "data");
 const UPLOAD_DIR = path.join(__dirname, "uploads");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const MODS_FILE = path.join(DATA_DIR, "mods.json");
-const SOURCE_FILE = path.join(DATA_DIR, "sources.json");
 
 if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, {
@@ -39,14 +38,6 @@ if (!fs.existsSync(UPLOAD_DIR)) {
     fs.mkdirSync(UPLOAD_DIR, {
         recursive: true
     });
-}
-
-if (!fs.existsSync(SOURCE_FILE)) {
-    fs.writeFileSync(
-        SOURCE_FILE,
-        "[]",
-        "utf8"
-    );
 }
 
 if (!fs.existsSync(MODS_FILE)) {
@@ -63,9 +54,7 @@ if (!fs.existsSync(MODS_FILE)) {
 ========================================= */
 
 function readJSON(file, fallback) {
-
     try {
-
         if (!fs.existsSync(file)) {
             return fallback;
         }
@@ -75,7 +64,6 @@ function readJSON(file, fallback) {
         );
 
     } catch (error) {
-
         console.error(
             "JSON ERROR:",
             error
@@ -85,9 +73,7 @@ function readJSON(file, fallback) {
     }
 }
 
-
 function writeJSON(file, data) {
-
     fs.writeFileSync(
         file,
         JSON.stringify(
@@ -131,12 +117,15 @@ app.set(
 );
 
 app.use(
-    express.json()
+    express.json({
+        limit: "10mb"
+    })
 );
 
 app.use(
     express.urlencoded({
-        extended: true
+        extended: true,
+        limit: "10mb"
     })
 );
 
@@ -472,231 +461,6 @@ app.get(
 
 
 /* =========================================
-   SOURCE MODS
-========================================= */
-
-app.post(
-    "/api/source",
-    function (
-        req,
-        res
-    ) {
-
-        if (!req.session.user) {
-
-            return res
-                .status(401)
-                .json({
-
-                    message:
-                        "Belum login."
-
-                });
-
-        }
-
-        if (
-            req.session.user.role !==
-            "founder"
-        ) {
-
-            return res
-                .status(403)
-                .json({
-
-                    message:
-                        "Hanya founder yang bisa menambahkan source."
-
-                });
-
-        }
-
-        const link =
-            String(
-                req.body.link || ""
-            ).trim();
-
-        if (!link) {
-
-            return res
-                .status(400)
-                .json({
-
-                    message:
-                        "Link Discord wajib diisi."
-
-                });
-
-        }
-
-        let url;
-
-        try {
-
-            url =
-                new URL(link);
-
-        } catch (error) {
-
-            return res
-                .status(400)
-                .json({
-
-                    message:
-                        "Link tidak valid."
-
-                });
-
-        }
-
-        const hostname =
-            url.hostname.toLowerCase();
-
-        const validDiscord =
-            (
-                hostname ===
-                "discord.gg" ||
-
-                hostname ===
-                "www.discord.gg" ||
-
-                (
-                    (
-                        hostname ===
-                        "discord.com" ||
-
-                        hostname ===
-                        "www.discord.com"
-                    ) &&
-
-                    url.pathname.startsWith(
-                        "/invite/"
-                    )
-                )
-            );
-
-        if (!validDiscord) {
-
-            return res
-                .status(400)
-                .json({
-
-                    message:
-                        "Gunakan link Discord seperti https://discord.gg/..."
-
-                });
-
-        }
-
-        let sources =
-            readJSON(
-                SOURCE_FILE,
-                []
-            );
-
-        if (
-            !Array.isArray(
-                sources
-            )
-        ) {
-
-            sources = [];
-
-        }
-
-        const source = {
-
-            id:
-                crypto.randomUUID(),
-
-            link:
-                link,
-
-            createdBy:
-                req.session.user.username,
-
-            createdAt:
-                new Date().toISOString()
-
-        };
-
-        sources.push(
-            source
-        );
-
-        writeJSON(
-            SOURCE_FILE,
-            sources
-        );
-
-        return res.json({
-
-            success:
-                true,
-
-            message:
-                "Source berhasil disimpan.",
-
-            source:
-                source
-
-        });
-
-    }
-);
-
-
-app.get(
-    "/api/sources",
-    function (
-        req,
-        res
-    ) {
-
-        if (!req.session.user) {
-
-            return res
-                .status(401)
-                .json({
-
-                    message:
-                        "Belum login."
-
-                });
-
-        }
-
-        let sources =
-            readJSON(
-                SOURCE_FILE,
-                []
-            );
-
-        if (
-            !Array.isArray(
-                sources
-            )
-        ) {
-
-            sources = [];
-
-        }
-
-        return res.json({
-
-            success:
-                true,
-
-            sources:
-                sources
-
-        });
-
-    }
-);
-
-
-/* =========================================
    DISCORD
 ========================================= */
 
@@ -940,10 +704,6 @@ async function sendDiscordShare(
     }
 
 
-    /* =====================================
-       FILE SHARE CONTAINER
-    ===================================== */
-
     const container =
         new ContainerBuilder()
             .setAccentColor(
@@ -991,10 +751,6 @@ async function sendDiscordShare(
 
     });
 
-
-    /* =====================================
-       PREVIEW
-    ===================================== */
 
     const previews =
         Array.isArray(
@@ -1052,10 +808,6 @@ async function sendDiscordShare(
 
     }
 
-
-    /* =====================================
-       FILE
-    ===================================== */
 
     for (
         const file
@@ -1115,16 +867,10 @@ app.post(
         const uploadedFiles =
             req.files || [];
 
-
         try {
 
             const user =
                 req.session.user;
-
-
-            /* =====================================
-               FILE CHECK
-            ===================================== */
 
             if (
                 uploadedFiles.length ===
@@ -1142,23 +888,296 @@ app.post(
 
             }
 
-
-            /* =====================================
-               PUBLIC / SPECIAL
-            ===================================== */
-
             const uploadType =
                 req.body.type ===
                 "special"
                     ? "special"
                     : "public";
 
+            if (
+                uploadType ===
+                "public" &&
+                user.role !==
+                "founder"
+            ) {
+
+                for (
+                    const file
+                    of uploadedFiles
+                ) {
+
+                    try {
+
+                        fs.unlinkSync(
+                            file.path
+                        );
+
+                    } catch (error) {}
+
+                }
+
+                return res
+                    .status(403)
+                    .json({
+
+                        message:
+                            "Hanya Founder yang dapat upload Public File."
+
+                    });
+
+            }
+
+            let channelId =
+                String(
+                    req.body.channelId || ""
+                ).trim();
 
             if (
                 uploadType ===
+                "special"
+            ) {
+
+                channelId =
+                    config.UPLOADER_CHANNEL_ID;
+
+            }
+
+            if (!channelId) {
+
+                return res
+                    .status(400)
+                    .json({
+
+                        message:
+                            "Channel Discord belum dipilih."
+
+                    });
+
+            }
+
+            const credits =
+                String(
+                    req.body.credits || ""
+                ).trim();
+
+            let previewUrls = [];
+
+            if (
+                Array.isArray(
+                    req.body.previewUrls
+                )
+            ) {
+
+                previewUrls =
+                    req.body.previewUrls;
+
+            } else if (
+                typeof req.body.previewUrls ===
+                "string"
+            ) {
+
+                previewUrls =
+                    req.body.previewUrls
+                        .split(/\r?\n/)
+                        .map(
+                            function (url) {
+                                return url.trim();
+                            }
+                        )
+                        .filter(Boolean);
+
+            }
+
+            previewUrls =
+                previewUrls
+                    .filter(
+                        function (url) {
+
+                            return /^https?:\/\//i.test(
+                                url
+                            );
+
+                        }
+                    )
+                    .slice(
+                        0,
+                        10
+                    );
+
+            let mods =
+                readJSON(
+                    MODS_FILE,
+                    []
+                );
+
+            if (
+                !Array.isArray(
+                    mods
+                )
+            ) {
+
+                mods = [];
+
+            }
+
+            const modId =
+                crypto.randomUUID();
+
+            const mod = {
+
+                id:
+                    modId,
+
+                type:
+                    uploadType,
+
+                uploader:
+                    user.username,
+
+                credits:
+                    credits,
+
+                channelId:
+                    channelId,
+
+                previewUrls:
+                    previewUrls,
+
+                files:
+                    uploadedFiles.map(
+                        function (file) {
+
+                            return {
+
+                                originalname:
+                                    file.originalname,
+
+                                filename:
+                                    file.filename,
+
+                                path:
+                                    file.path,
+
+                                size:
+                                    file.size,
+
+                                mimetype:
+                                    file.mimetype
+
+                            };
+
+                        }
+                    ),
+
+                createdAt:
+                    new Date().toISOString()
+
+            };
+
+            mods.push(
+                mod
+            );
+
+            writeJSON(
+                MODS_FILE,
+                mods
+            );
+
+                      let discordResult =
+                null;
+
+            try {
+
+                discordResult =
+                    await sendDiscordShare(
+                        mod,
+                        uploadedFiles
+                    );
+
+            } catch (discordError) {
+
+                console.error(
+                    "DISCORD SHARE ERROR:",
+                    discordError
+                );
+
+                return res
+                    .status(500)
+                    .json({
+
+                        message:
+                            "File tersimpan, tetapi gagal dikirim ke Discord."
+
+                    });
+
+            }
+
+            return res.json({
+
+                success:
+                    true,
+
+                message:
+                    "File berhasil diupload.",
+
+                id:
+                    mod.id,
+
+                shareURL:
+                    `/share/${mod.id}`,
+
+                discord:
+                    discordResult
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                "UPLOAD ERROR:",
+                error
+            );
+
+            for (
+                const file
+                of uploadedFiles
+            ) {
+
+                try {
+
+                    if (
+                        fs.existsSync(
+                            file.path
+                        )
+                    ) {
+
+                        fs.unlinkSync(
+                            file.path
+                        );
+
+                    }
+
+                } catch (deleteError) {}
+
+            }
+
+            return res
+                .status(500)
+                .json({
+
+                    message:
+                        "Gagal mengupload file."
+
+                });
+
+        }
+
+    }
+);
+
 
 /* =========================================
-   SHARE API
+   SHARE DATA
 ========================================= */
 
 app.get(
@@ -1176,7 +1195,6 @@ app.get(
                     []
                 );
 
-
             const mod =
                 mods.find(
                     function (item) {
@@ -1188,7 +1206,6 @@ app.get(
 
                     }
                 );
-
 
             if (!mod) {
 
@@ -1203,52 +1220,69 @@ app.get(
 
             }
 
+            const files =
+                Array.isArray(
+                    mod.files
+                )
+                    ? mod.files.map(
+                        function (file) {
 
-            res.json({
+                            return {
+
+                                name:
+                                    file.originalname,
+
+                                size:
+                                    file.size,
+
+                                mimetype:
+                                    file.mimetype,
+
+                                download:
+                                    `/api/download/${mod.id}/${encodeURIComponent(file.filename)}`
+
+                            };
+
+                        }
+                    )
+                    : [];
+
+            return res.json({
+
+                success:
+                    true,
 
                 id:
                     mod.id,
 
-                name:
-                    mod.name,
+                type:
+                    mod.type,
 
-                description:
-                    mod.description ||
-                    "",
+                uploader:
+                    mod.uploader,
 
                 credits:
-                    mod.credits ||
-                    "",
-
-                tiktok:
-                    mod.tiktok ||
-                    "",
-
-                youtube:
-                    mod.youtube ||
-                    "",
+                    mod.credits,
 
                 previewUrls:
-                    mod.previewUrls ||
-                    [],
-
-                files:
-                    mod.files ||
-                    [],
+                    mod.previewUrls || [],
 
                 createdAt:
-                    mod.createdAt
+                    mod.createdAt,
+
+                files:
+                    files
 
             });
 
-                } catch (error) {
+        } catch (error) {
 
             console.error(
                 "SHARE API ERROR:",
                 error
             );
 
-            res
+            return res
                 .status(500)
                 .json({
 
@@ -1268,8 +1302,8 @@ app.get(
 ========================================= */
 
 app.get(
-    "/download/:id/:index",
-    function (
+    "/api/download/:id/:filename",
+    async function (
         req,
         res
     ) {
@@ -1281,7 +1315,6 @@ app.get(
                     MODS_FILE,
                     []
                 );
-
 
             const mod =
                 mods.find(
@@ -1295,49 +1328,70 @@ app.get(
                     }
                 );
 
-
             if (!mod) {
 
                 return res
                     .status(404)
-                    .send(
-                        "File tidak ditemukan."
-                    );
+                    .json({
+
+                        message:
+                            "File tidak ditemukan."
+
+                    });
 
             }
 
+            const file =
+                mod.files.find(
+                    function (item) {
 
-            const index =
-                Number(
-                    req.params.index
+                        return (
+                            item.filename ===
+                            req.params.filename
+                        );
+
+                    }
                 );
 
-
-            if (
-                !Number.isInteger(index) ||
-                index < 0 ||
-                index >= mod.files.length
-            ) {
+            if (!file) {
 
                 return res
                     .status(404)
-                    .send(
-                        "File tidak ditemukan."
-                    );
+                    .json({
+
+                        message:
+                            "File tidak ditemukan."
+
+                    });
 
             }
 
-
-            const file =
-                mod.files[index];
-
-
             const filePath =
-                path.join(
-                    UPLOAD_DIR,
-                    file.fileName
+                path.resolve(
+                    file.path
                 );
 
+            const uploadPath =
+                path.resolve(
+                    UPLOAD_DIR
+                );
+
+            if (
+                !filePath.startsWith(
+                    uploadPath
+                )
+            ) {
+
+                return res
+                    .status(403)
+                    .json({
+
+                        message:
+                            "Akses file ditolak."
+
+                    });
+
+            }
 
             if (
                 !fs.existsSync(
@@ -1347,16 +1401,18 @@ app.get(
 
                 return res
                     .status(404)
-                    .send(
-                        "File sudah tidak tersedia."
-                    );
+                    .json({
+
+                        message:
+                            "File fisik tidak ditemukan."
+
+                    });
 
             }
 
-
             return res.download(
                 filePath,
-                file.originalName
+                file.originalname
             );
 
         } catch (error) {
@@ -1366,12 +1422,14 @@ app.get(
                 error
             );
 
-
             return res
                 .status(500)
-                .send(
-                    "Gagal download file."
-                );
+                .json({
+
+                    message:
+                        "Gagal mengambil data file."
+
+                });
 
         }
 
@@ -1396,25 +1454,23 @@ app.get(
                 "share.html"
             );
 
-
         if (
-            fs.existsSync(
+            !fs.existsSync(
                 shareFile
             )
         ) {
 
-            return res.sendFile(
-                shareFile
-            );
+            return res
+                .status(404)
+                .send(
+                    "share.html tidak ditemukan."
+                );
 
         }
 
-
-        return res
-            .status(404)
-            .send(
-                "share.html tidak ditemukan."
-            );
+        res.sendFile(
+            shareFile
+        );
 
     }
 );
@@ -1434,98 +1490,14 @@ app.get(
         res.json({
 
             status:
-                "online",
+                "ok",
 
             discord:
                 discordReady
+                    ? "online"
+                    : "offline"
 
         });
-
-    }
-);
-
-
-/* =========================================
-   API 404
-========================================= */
-
-app.use(
-    "/api",
-    function (
-        req,
-        res
-    ) {
-
-        res
-            .status(404)
-            .json({
-
-                message:
-                    "API endpoint tidak ditemukan."
-
-            });
-
-    }
-);
-
-
-/* =========================================
-   SERVER ERROR
-========================================= */
-
-app.use(
-    function (
-        error,
-        req,
-        res,
-        next
-    ) {
-
-        console.error(
-            "SERVER ERROR:",
-            error
-        );
-
-
-        if (
-            res.headersSent
-        ) {
-
-            return next(error);
-
-        }
-
-
-        res
-            .status(500)
-            .json({
-
-                message:
-                    "Terjadi kesalahan pada server."
-
-            });
-
-    }
-);
-
-
-/* =========================================
-   START
-========================================= */
-
-const PORT =
-    process.env.PORT ||
-    config.PORT ||
-    3000;
-
-
-app.listen(
-    PORT,
-    function () {
-
-        console.log(
-            `Monroe File Share running on port ${PORT}`
-        );
 
     }
 );
