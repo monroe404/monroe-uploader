@@ -565,7 +565,6 @@ app.get("/api/sources", function(req, res) {
         success: true,
         sources: sources
     });
-});
 
     return res.json({
         success: true,
