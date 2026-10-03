@@ -26,15 +26,40 @@
 
         <div class="login-content">
 
-            <span class="eyebrow">SOURCE</span>
+            <div class="source-header">
 
-            <h2>Discord<br>Server</h2>
+                <div>
+                    <span class="eyebrow">SOURCE</span>
+
+                    <h2>Discord<br>Servers</h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="addSourceBtn"
+                    class="source-add-btn"
+                >
+                    +
+                </button>
+
+            </div>
 
             <p class="muted">
-                Masukkan link Discord server source mods.
+                Discord server source mods.
             </p>
 
-            <form id="sourceForm">
+            <div id="sourceList" class="source-list">
+                <div class="source-loading">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- ADD SOURCE FORM -->
+
+            <form
+                id="sourceForm"
+                style="display:none;"
+            >
 
                 <div class="field">
 
@@ -53,7 +78,7 @@
                     type="submit"
                     class="primary-btn"
                 >
-                    PUBLISH SOURCE
+                    ADD SOURCE
                 </button>
 
                 <div
