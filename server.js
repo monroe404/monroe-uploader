@@ -448,13 +448,36 @@ app.get(
     }
 );
 
-app.post("/api/source", function(req, res) {
+app.get("/api/sources", function(req, res) {
 
     if (!req.session.user) {
         return res.status(401).json({
             message: "Belum login."
         });
     }
+
+    let sources = [];
+
+    try {
+
+        sources = JSON.parse(
+            fs.readFileSync(
+                SOURCE_FILE,
+                "utf8"
+            )
+        );
+
+    } catch (error) {
+
+        sources = [];
+
+    }
+
+    return res.json({
+        success: true,
+        sources: sources
+    });
+});
 
     const link =
         String(req.body.link || "").trim();
