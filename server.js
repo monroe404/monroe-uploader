@@ -99,7 +99,7 @@ const USERS = {
 
     skymods404: {
         password: "sky1239091",
-        role: "uploader"
+        role: "founder"
     }
 
 };
